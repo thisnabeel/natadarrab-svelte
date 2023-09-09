@@ -28,5 +28,13 @@
 		"vite": "^4.2.0",
 		"vitest": "^0.25.3"
 	},
-	"type": "module"
+	"type": "module",
+	"dependencies": {
+		"@svelte-web-fonts/google": "^1.0.4",
+		"axios": "^1.4.0",
+		"moment": "^2.29.4",
+		"sv-bootstrap-modal": "^1.0.3",
+		"svelte-modals": "^1.2.1",
+		"svelte-outclick": "^3.5.0"
+	}
 }

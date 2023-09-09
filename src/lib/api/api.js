@@ -8,7 +8,8 @@ import storage from '$lib/stores/storage';
 const axiosAPI = axios.create({
 	// baseURL: BASE_URL
 	
-	baseURL: 'https://natadarrab-api.onrender.com' // it's not recommended to have this info here.
+	// baseURL: 'https://natadarrab-api.onrender.com' // it's not recommended to have this info here.
+	baseURL: "https://natadarrab-api-7-4298623a0ae3.herokuapp.com/"
 	// baseURL: 'http://localhost:3000/'
 });
 

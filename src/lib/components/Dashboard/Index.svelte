@@ -6,7 +6,10 @@
     import LeftBar from "./LeftBar/LeftBar.svelte";
     import {onMount} from "svelte";
 
+    import Search from "./Search/Search.svelte"
+
     export let selectedTab = Progress;
+    
 
     function selectTab(tab) {
         selectedTab = tab;
@@ -42,6 +45,8 @@
         {/if}
     </div>
 </div>
+
+<Search></Search>
 
 <style>
     .dashboard {

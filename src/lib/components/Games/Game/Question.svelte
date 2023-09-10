@@ -3,6 +3,8 @@
 
     export let question;
     export let showStatus;
+    export let sendStatusUp;
+    export let percentage;
 
     $: q = question;
     $: selectedChoice && console.log(question);
@@ -21,16 +23,61 @@
     function status(choice, question, showStatus) {
         if (showStatus) {
             if (question.selected) {
-                console.log("cimpa", choice.id);
+                // console.log("cimpa", choice.id);
                 console.log("com", question.selected);
                 console.log("answer", question.correct);
 
                 if (question.correct === question.selected) {
+                    sendStatusUp({
+                        question: question,
+                        choice: selectedChoice,
+                        status: true
+                    });
                     return "correct";
                 } else {
+                    sendStatusUp({
+                        question: question,
+                        choice: selectedChoice,
+                        status: false
+                    });
                     return "incorrect";
                 }
+            } 
+
+            if (q.selectors) {
+                // if (q.selectors.options[q.selectors.correct] === )
+                // console.log({selections})
+                // q.selectors 
+                // for (let s of q.selectors) {
+
+                // }
+                let allGood = false;
+                q.selectors.forEach((s,i) => {
+                    if (question.selectors[i].correct !== selections[i]) {
+                        allGood = false;
+
+                        sendStatusUp({
+                            question: question,
+                            choice: selections,
+                            status: false
+                        });
+                        return "incorrect";
+                    }
+                });
+
+                sendStatusUp({
+                    question: question,
+                    choice: selections,
+                    status: true
+                });
+                return "correct";
             }
+            
+
+            sendStatusUp({
+                question: question,
+                status: false
+            });
             return "incorrect";
         }
         return "";

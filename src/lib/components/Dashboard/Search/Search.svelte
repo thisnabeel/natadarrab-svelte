@@ -1,0 +1,126 @@
+<script>
+import { onMount } from "svelte";
+
+
+    let showSpotlight = false;
+    
+    let searchInput = "";
+    let searchElement = null;
+    // Function to handle keyboard events
+    const handleKeyDown = (event) => {
+        // Check if the user pressed Cmd+/ on macOS or Ctrl+/ on Windows/Linux
+        if ((event.metaKey || event.ctrlKey) && event.key === "/") {
+            showSpotlight = !showSpotlight; // Toggle the showSpotlight variable
+        }
+    };
+
+    onMount(() => {
+        // Add an event listener for keydown events
+        window.addEventListener("keydown", handleKeyDown);
+
+        // Cleanup the event listener when the component is unmounted
+        return () => {
+            window.removeEventListener("keydown", handleKeyDown);
+        };
+    });
+
+
+
+</script>
+
+{#if showSpotlight}
+<div class="bgFiller">
+
+        <div id="spotlight_wrapper">
+            <input type="text" id="spotlight" placeholder="Spotlight-Search" bind:value={searchInput} bind:this={searchElement}/>
+            {#if searchInput.length > 0}
+                <div class="searchArabicRoots">Find Arabic Words by Root: {searchInput}</div>
+            {/if}
+        </div>
+</div>
+{/if}
+    
+<style>
+
+    .searchArabicRoots {
+        max-width: 628px;
+        background: #ffa7a7;
+        font-size: 24px;
+        text-align: left;
+        margin: 0 auto;
+        padding: 10px;
+    }
+.bgFiller {
+    background-color: #00000041;
+    width: 100vw;
+    height: 100vh;
+    display: block;
+    position: absolute;
+    top: 0;
+}
+
+#spotlight_wrapper {
+  position: absolute;
+  top: 15%;
+  left: 0;
+  right: 0;
+  width: 100%;
+  /* display: none; */
+}
+
+#spotlight {
+  display: block;
+  width: 628px;
+  height: 56px;
+  margin: auto;
+  -moz-border-radius: 5px;
+  -webkit-border-radius: 5px;
+  border-radius: 5px;
+  -moz-appearance: none;
+  -webkit-appearance: none;
+  -moz-box-shadow: 0 25px 60px 10px rgba(0, 0, 0, 0.3);
+  -webkit-box-shadow: 0 25px 60px 10px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 25px 60px 10px rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  outline: none;
+  font-size: 1.6rem;
+  font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
+  color: #000;
+  backgroundcolor: #f8f5f4;
+  background-image: url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz48c3ZnIHZlcnNpb249IjEuMSIgaWQ9IkViZW5lXzEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHg9IjBweCIgeT0iMHB4IiB2aWV3Qm94PSIwIDAgMjIuNyAyMi41IiBlbmFibGUtYmFja2dyb3VuZD0ibmV3IDAgMCAyMi43IDIyLjUiIHhtbDpzcGFjZT0icHJlc2VydmUiPjxjaXJjbGUgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjNjY2NzY2IiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1taXRlcmxpbWl0PSIxMCIgY3g9IjguMSIgY3k9IjguNCIgcj0iNi44Ii8+PGxpbmUgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjNjY2NzY2IiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1taXRlcmxpbWl0PSIxMCIgeDE9IjEzLjIiIHkxPSIxMi45IiB4Mj0iMjEuNSIgeTI9IjIxLjQiLz48L3N2Zz4=);
+  background-position: left 17px center;
+  background-repeat: no-repeat;
+  background-size: 3.5%;
+  padding: 0 52px;
+}
+#spotlight:-moz-placeholder {
+  color: #666666;
+}
+#spotlight::-moz-placeholder {
+  color: #666666;
+}
+#spotlight:-ms-input-placeholder {
+  color: #666666;
+}
+#spotlight::-webkit-input-placeholder {
+  color: #666666;
+}
+
+#desc {
+  position: absolute;
+  top: 35%;
+  left: 0;
+  right: 0;
+  width: 100%;
+  text-align: center;
+  padding: 0 40%;
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+  font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
+  font-size: 1.4rem;
+  line-height: 1.5;
+  color: #666666;
+}
+
+</style>

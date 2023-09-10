@@ -3,7 +3,7 @@
     import {onMount} from "svelte";
     import shuffler from "$lib/functions/shuffler.js";
     import { closeModal } from 'svelte-modals';
-import Game from "./Game.svelte";
+    import Game from "./Game.svelte";
 
     export let game;
     onMount(async () => {

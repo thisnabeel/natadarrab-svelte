@@ -1,6 +1,7 @@
 
 <script>
-	import '../app.css';
+  import '../app.css';
+  import "sweetalert2/dist/sweetalert2.min.css";
 	import { fade } from 'svelte/transition';
 	import { Modals, closeModal } from 'svelte-modals';	// 
 

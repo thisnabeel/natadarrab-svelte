@@ -4,6 +4,7 @@ import API from "$lib/api/api";
     import Game from "$lib/components/Games/Game/Game.svelte"
     import { onMount } from "svelte";
     import {page} from "$app/stores"
+    import shuffler from "$lib/functions/shuffler"
 
     let game = null;
 

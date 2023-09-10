@@ -100,8 +100,12 @@ img {
 
 .select-holder {
     display: table;
-    margin: 0 auto;
+    /* margin: 0 auto; */
     max-width: 740px;
+    font-size: 34px;
+}
+
+.select-holder select {
     font-size: 34px;
 }
 

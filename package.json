@@ -35,6 +35,7 @@
 		"moment": "^2.29.4",
 		"sv-bootstrap-modal": "^1.0.3",
 		"svelte-modals": "^1.2.1",
-		"svelte-outclick": "^3.5.0"
+		"svelte-outclick": "^3.5.0",
+		"sweetalert2": "^9.7.2"
 	}
 }

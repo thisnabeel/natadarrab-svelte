@@ -12,6 +12,7 @@
   export let skill;
   export let game;
   export let session;
+  export let preventOutClick = false;
 
     onMount(async function(){
         document.body.style["overflow-y"] = 'hidden';
@@ -22,7 +23,9 @@
     })
 
     const handleOutsideClick = () => {
+      if (!preventOutClick) {
         closeModal()
+      }
     }
 
 </script>

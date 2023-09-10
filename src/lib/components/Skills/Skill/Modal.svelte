@@ -8,13 +8,18 @@
     import {user} from "$lib/stores/user";
     import MeetingCards from "./MeetingCards/Index.svelte"
 
+    let openedChapter;
     onMount(async () => {
         const response = await api.get(`/skills/${skill.id}.json`);
         skill.games = response.games;
         skill.meeting_cards = response.meeting_cards;
+        
+        const chapters = skill.games.map(game => game.chapter);
+        if (chapters.length === 1) {
+            openedChapter = chapters[0].id;
+        }
     })
 
-    let openedChapter;
 </script>
 
 
@@ -49,7 +54,8 @@
             <div class="btn btn-primary" on:click={() => {
                 closeModal()
                 openModal(Modal, {
-                    game: game
+                    game: game,
+                    preventOutClick: true
                 })
             }}>Take Quiz: {game.title}</div>
         {/each}

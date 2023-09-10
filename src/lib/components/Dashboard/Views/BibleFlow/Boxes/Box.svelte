@@ -45,6 +45,7 @@
     }
     .box:hover {
         background: #fff;
+        z-index: 999999999;
     }
     .box:hover .english { 
         display:block
@@ -63,7 +64,8 @@
         margin-right: 10px;
         margin-left: 0;
         position: relative;
-        z-index: 999999;
+        /* z-index: 999999; */
+        z-index: 999999999;
     }
 
     .hebrew.box {

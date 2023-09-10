@@ -15,14 +15,14 @@
     }
 </script>
 
-<li class="verse">
+<div class="verse">
     <div class="english">
         <span class="ref">{verse.ref.split(":").slice(1, 3).join(':')}</span>
         <span class="content">{verse.english}</span>
     </div>
 
     <OriginalVerse {verse} hover={setHovered} unHover={unHover} {hoveredIndex}  {index}></OriginalVerse>
-</li>
+</div>
 <style>
     .english, .original {
         display: flex;

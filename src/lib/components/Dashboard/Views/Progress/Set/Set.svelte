@@ -82,7 +82,7 @@
 
     <div class="skills">
         {#each set.skills as skill}
-            <div class="skill" >
+            <div class="skill" class:passing={$user.bank_skills.filter(bs => bs.skill_id === skill.id && bs.status === 100).length > 0}>
                 <div class="content">
                     <span on:click={() => openModal(Modal, {
                         skill: skill
@@ -124,6 +124,9 @@
 
 <style>
 
+    .passing {
+        background: #e2ffe3;
+    }
     .set {
         margin: 2em;
     }

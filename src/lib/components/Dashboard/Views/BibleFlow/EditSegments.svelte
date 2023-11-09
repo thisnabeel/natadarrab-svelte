@@ -73,15 +73,17 @@ import SegmentEdit from "./Segment/Edit.svelte";
 
     {#if activeContainer.id}
     <br><br>
-    <h3>Add a Segment</h3>
-    <textarea class="form-control" placeholder="Title" bind:value={newSegmentDescription}></textarea>
-    <select name="" id="" bind:value={selectedBookPosition}>
-        {#each bibleBooks as book, index}
-        <option value="{index + 1}">{book}</option>
-        {/each}
-    </select>
-    <div class="btn btn-info" on:click={addSegment}>Add</div>
-    <hr>
+    <div class="segment-adder">
+        <h3>Add a Segment</h3>
+        <textarea class="form-control" placeholder="Title" bind:value={newSegmentDescription}></textarea>
+        <select name="" id="" bind:value={selectedBookPosition}>
+            {#each bibleBooks as book, index}
+            <option value="{index + 1}">{book}</option>
+            {/each}
+        </select>
+        <div class="btn btn-info" on:click={addSegment}>Add</div>
+    </div>
+    <hr style="margin-top: 13em;">
     
     <div class="segments clean-list">
         {#each segments as segment, index}
@@ -100,5 +102,15 @@ import SegmentEdit from "./Segment/Edit.svelte";
     .containers {
         list-style: none;
         display: inline;
+    }
+
+    .segment-adder {
+        position: fixed;
+        z-index: 999;
+        background: #c1f5ff;
+        display: block;
+        width: 100%;
+        border: 2px solid #0dcbf0;
+        padding: 24px;
     }
 </style>

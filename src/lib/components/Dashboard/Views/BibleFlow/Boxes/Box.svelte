@@ -65,7 +65,7 @@
         margin-left: 0;
         position: relative;
         /* z-index: 999999; */
-        z-index: 999999999;
+        z-index: 9999;
     }
 
     .hebrew.box {

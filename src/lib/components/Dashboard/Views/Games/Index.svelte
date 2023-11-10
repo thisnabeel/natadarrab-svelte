@@ -4,16 +4,22 @@
 	import API from '$lib/api/api';
 	import SelectedGame from './Game/Selected.svelte';
 	import ListItem from './ListItem.svelte';
+	import debounceSave from '$lib/functions/debounce';
 
 	let games = [];
 	let selectedGame = null;
 	let visitingGame = null;
 	let organizedGames = [];
 
+	let unsaved = false;
+	let saving = false;
+
 	onMount(async () => {
 		const res = await API.get('/games.json');
 		games = res;
+		console.log('first game fetch', games);
 		organizedGames = organizeGames(games);
+		console.log('organized games', organizedGames);
 	});
 
 	afterUpdate(() => {
@@ -66,6 +72,35 @@
 			}
 			return game;
 		});
+
+		unsaved = true;
+
+		// saveOrder(organizedGames);
+		// saveOrder(updatePositions(organizedGames));
+	}
+
+	async function saveOrder() {
+		// console.log({ array });
+		saving = true;
+		const array = updatePositions(organizedGames);
+		await debounceSave('/games/reorder', {
+			list: flattenTree(array).map((g) => {
+				return { id: g.id, game_id: g.game_id, position: g.position };
+			})
+		});
+		saving = false;
+		unsaved = false;
+	}
+
+	function updatePositions(array) {
+		// console.log('GOTTEN', array);
+		if (!array) return;
+		for (let i = 0; i < array.length; i++) {
+			array[i].position = i + 1;
+			array[i].children = updatePositions(array[i].children);
+		}
+
+		return array;
 	}
 
 	function handleUpDownKey(event, container, index) {
@@ -112,28 +147,36 @@
 			return;
 		} else {
 			const grandparentId = findGrandparentId(organizedGames, selectedGame.game_id);
-
+			let newParent;
+			let currentParent;
+			let currentParentIndex;
 			if (grandparentId !== null) {
-				const newParent = findGame(organizedGames, grandparentId);
-				const currentParent = findGame(organizedGames, selectedGame.game_id);
-				const currentParentIndex = newParent.children.findIndex(
-					(game) => game.id === currentParent.id
-				);
+				newParent = findGame(organizedGames, grandparentId);
+				currentParent = findGame(organizedGames, selectedGame.game_id);
+				currentParentIndex = newParent.children.findIndex((game) => game.id === currentParent.id);
 
 				console.log({ newParent });
 				console.log({ currentParent });
 				console.log({ currentParentIndex });
+			} else {
+				newParent = organizedGames;
+				currentParent = findGame(organizedGames, selectedGame.game_id);
+				currentParentIndex = newParent.findIndex((game) => game.id === currentParent.id);
+			}
 
-				if (currentParentIndex >= 0) {
-					// Remove the selected game from its parent
-					const removedElement = currentParent.children.splice(index, 1)[0];
-					console.log(currentParent.children);
-					removedElement.game_id = newParent.id;
+			if (currentParentIndex >= 0) {
+				// Remove the selected game from its parent
+				const removedElement = currentParent.children.splice(index, 1)[0];
+				console.log(currentParent.children);
+				removedElement.game_id = newParent.id;
+				if (Array.isArray(newParent)) {
+					newParent.splice(currentParentIndex + 1, 0, removedElement);
+				} else {
 					newParent.children.splice(currentParentIndex + 1, 0, removedElement);
-					return;
 				}
 				return;
 			}
+			return;
 		}
 	}
 
@@ -209,46 +252,20 @@
 		return [];
 	}
 
-	function updatePositions() {
-		// Update positions based on the new order
-		// organizedGames.forEach((game, index) => {
-		// 	game.position = index + 1;
-		// });
-	}
-
 	// $: organizedGames = organizeGames(games);
 	// $: console.log({ organizedGames });
 
-	function organizeGames(games) {
-		// Create a map to store games by their game_id
-		const gameMap = new Map();
+	function organizeGames(games, parentId = null) {
+		// Filter games based on the current parent ID
+		const filteredGames = games.filter((game) => game.game_id === parentId);
 
-		games.forEach((game) => {
-			const gameId = game.game_id;
-
-			if (!gameMap.has(gameId)) {
-				gameMap.set(gameId, { game, children: [] });
-			} else {
-				gameMap.get(gameId).children.push(game);
-			}
+		// Recursively organize children for each filtered game
+		const organizedChildren = filteredGames.map((parentGame) => {
+			const children = organizeGames(games, parentGame.id);
+			return { ...parentGame, children };
 		});
 
-		// Find games without a parent (game_id = null)
-		const rootGames = games.filter((game) => game.game_id === null);
-
-		// Organize games into a tree structure
-		rootGames.forEach((rootGame) => organizeChildren(rootGame));
-
-		function organizeChildren(parentGame) {
-			if (gameMap.has(parentGame.id)) {
-				parentGame.children = gameMap.get(parentGame.id).children;
-				parentGame.children.forEach((child) => organizeChildren(child));
-			}
-		}
-
-		console.log(rootGames);
-
-		return rootGames;
+		return organizedChildren;
 	}
 
 	function selectGame(game) {
@@ -276,9 +293,26 @@
 			<SelectedGame selectedGame={visitingGame} goBack={() => (visitingGame = null)} />
 		{/if}
 	</div>
+
+	<div class="saveProgress">
+		{#if unsaved && !saving}
+			<div class="btn btn-warning" on:click={saveOrder}>Unsaved Progress</div>
+		{:else}
+			<div class="btn btn-success"><i class="fa fa-check" /></div>
+		{/if}
+
+		{#if saving}
+			<div class="btn btn-info">Saving</div>
+		{/if}
+	</div>
 </div>
 
 <style>
+	.saveProgress {
+		position: fixed;
+		bottom: 10px;
+		right: 10px;
+	}
 	/* ... (your existing styles) */
 	.selected {
 		background-color: #b8eeff !important;

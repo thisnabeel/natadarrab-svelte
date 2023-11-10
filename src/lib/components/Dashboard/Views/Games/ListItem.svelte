@@ -1,5 +1,4 @@
 <script>
-	import { children } from 'svelte/internal';
 	import ListItem from './ListItem.svelte';
 
 	export let game;
@@ -17,7 +16,7 @@
 
 	<div class="children">
 		{#each game.children || [] as child}
-			<ListItem {selectedGame} game={child} {selectGame} />
+			<ListItem {selectedGame} game={child} {selectGame} {visitGame} />
 		{/each}
 	</div>
 </li>

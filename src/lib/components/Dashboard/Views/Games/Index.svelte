@@ -2,7 +2,7 @@
 	import { onMount, afterUpdate } from 'svelte';
 	import Nav from './Nav/Index.svelte';
 	import API from '$lib/api/api';
-	import SelectedGame from './Game/Selected.svelte';
+	import SelectedGame from './Game/Edit.svelte';
 	import ListItem from './ListItem.svelte';
 	import debounceSave from '$lib/functions/debounce';
 

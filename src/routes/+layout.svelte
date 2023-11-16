@@ -1,27 +1,28 @@
-
 <script>
-  import '../app.css';
-  import "sweetalert2/dist/sweetalert2.min.css";
+	import '../app.css';
+	import 'sweetalert2/dist/sweetalert2.min.css';
 	import { fade } from 'svelte/transition';
-	import { Modals, closeModal } from 'svelte-modals';	// 
+	import { Modals, closeModal } from 'svelte-modals'; //
 
+	import Dashboard from '$lib/components/Dashboard/Index.svelte';
+	import { user } from '$lib/stores/user';
 </script>
 
-
 <div>
-    <slot></slot>
+	{#if !$user}
+		<slot />
+	{:else}
+		<Dashboard>
+			<slot />
+		</Dashboard>
+	{/if}
 </div>
 <Modals>
-  <div
-    slot="backdrop"
-	class="backdrop"
-	transition:fade
-    on:click={closeModal}
-  />
+	<div slot="backdrop" class="backdrop" transition:fade on:click={closeModal} />
 </Modals>
 
 <style>
-    div {
-        font-family: 'Poppins', sans-serif;
-    }
+	div {
+		font-family: 'Poppins', sans-serif;
+	}
 </style>

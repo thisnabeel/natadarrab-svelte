@@ -1,4 +1,5 @@
 <script>
+	import { goto } from '$app/navigation';
 	import ListItem from './ListItem.svelte';
 
 	export let game;
@@ -11,7 +12,23 @@
 	<div class="head" on:click={() => selectGame(game)}>
 		{game.title}
 
-		<div class="btn btn-warning" on:click={() => visitGame(game)}><i class="fa fa-link" /></div>
+		<div
+			class="btn btn-warning"
+			on:click={() => {
+				goto(`/games/${game.id}/edit`);
+			}}
+		>
+			<i class="fa fa-link" />
+		</div>
+
+		<div
+			class="btn btn-outline-primary"
+			on:click={() => {
+				goto(`/games/${game.id}`);
+			}}
+		>
+			<i class="fa fa-eye" />
+		</div>
 	</div>
 
 	<div class="children">

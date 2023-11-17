@@ -21,25 +21,39 @@
 	});
 
 	async function nextVerse(randomize = false) {
-		loadingVerse = true;
-		let res;
+		try {
+			loadingVerse = true;
+			let res;
 
-		if (randomize || !verseRef) {
-			res = await API.get(`/quran/test.json`);
-		} else if (verseRef) {
-			res = await API.get(`/quran/test/${verseRef}.json`);
-		} else {
+			if (randomize || !verseRef) {
+				res = await API.get(`/quran/test.json`);
+			} else if (verseRef) {
+				res = await API.get(`/quran/test/${verseRef}.json`);
+			} else {
+				loadingVerse = false;
+				return;
+			}
+			blocks = res.blocks;
+			console.log({ blocks });
+			verse = res.verse;
+			refreshed = refreshed + 1;
+			showingGraded = false;
 			loadingVerse = false;
-			return;
+			selectedSlice = null;
+			questionIndex = 0;
+
+			while (blocks[questionIndex] && blocks[questionIndex].questions.length === 0) {
+				questionIndex += 1;
+			}
+
+			if (!blocks[questionIndex] || !blocks[questionIndex].questions) {
+				nextVerse(randomize);
+			}
+		} catch (error) {
+			// Code to handle the exception
+			console.log('An error occurred:', error.message);
+			nextVerse(randomize);
 		}
-		blocks = res.blocks;
-		console.log({ blocks });
-		verse = res.verse;
-		refreshed = refreshed + 1;
-		showingGraded = false;
-		loadingVerse = false;
-		selectedSlice = null;
-		questionIndex = 0;
 	}
 
 	afterUpdate(() => {
@@ -313,7 +327,11 @@
 	}
 
 	.verse :global(.sliced span) {
-		/* display: inherit; */
+		display: initial;
+	}
+
+	.verse :global(.sliced span[id='char_614']) {
+		display: inherit;
 	}
 
 	.oneByOne {

@@ -307,7 +307,7 @@
 	}
 
 	.verse :global(.sliced span) {
-		display: inherit;
+		/* display: inherit; */
 	}
 
 	.oneByOne {

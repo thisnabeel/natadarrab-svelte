@@ -253,10 +253,10 @@
 				</div>
 				<p class="percentage text-center">{Math.round(progressBarPercentage)}%</p>
 				<hr />
-				<div class="btn btn-primary btn-lg" style="display:block;" on:click={() => nextVerse(true)}>
-					Next Random Verse
-				</div>
 			{/if}
+			<div class="btn btn-primary btn-lg" style="display:block;" on:click={() => nextVerse(true)}>
+				Next Random Verse
+			</div>
 		{/if}
 	{/if}
 </div>

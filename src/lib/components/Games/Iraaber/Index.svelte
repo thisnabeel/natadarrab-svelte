@@ -159,7 +159,13 @@
 		</div>
 	{:else}
 		{#if verse && verse.folder}
-			<div class="text-center">{verse.ref}</div>
+			<div class="text-center">
+				{verse.ref}
+				{' '}
+				<span class="btn btn-info" on:click={() => nextVerse(true)}
+					><i class="fa fa-refresh" /></span
+				>
+			</div>
 			{#if verse.folder.finale}
 				<div class="verse" bind:this={verseHTML}>{@html verse.folder.finale}</div>
 			{:else}
@@ -253,10 +259,10 @@
 				</div>
 				<p class="percentage text-center">{Math.round(progressBarPercentage)}%</p>
 				<hr />
+				<div class="btn btn-primary btn-lg" style="display:block;" on:click={() => nextVerse(true)}>
+					Next Random Verse
+				</div>
 			{/if}
-			<div class="btn btn-primary btn-lg" style="display:block;" on:click={() => nextVerse(true)}>
-				Next Random Verse
-			</div>
 		{/if}
 	{/if}
 </div>

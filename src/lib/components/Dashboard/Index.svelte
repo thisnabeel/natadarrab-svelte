@@ -4,12 +4,18 @@
 
 	import Search from './Search/Search.svelte';
 	import { user } from '$lib/stores/user';
+	let expanded = false;
 </script>
 
 <div class="dashboard">
 	{#if $user}
-		<div class="leftShelf">
-			<LeftBar />
+		<div class="leftShelf" class:expanded>
+			<LeftBar
+				expand={() => {
+					expanded = !expanded;
+				}}
+				{expanded}
+			/>
 		</div>
 	{/if}
 	<div class="main">
@@ -25,6 +31,9 @@
 {/if}
 
 <style>
+	.leftShelf.expanded {
+		width: 160px;
+	}
 	.dashboard {
 		height: 100vh;
 		min-width: 1200px;

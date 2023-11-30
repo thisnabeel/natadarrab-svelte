@@ -2,6 +2,14 @@
 	import API from '$lib/api/api';
 	import { afterUpdate, onMount } from 'svelte';
 	import Question from './Question.svelte';
+	import VerseSliced from '$lib/components/Quran/Verses/Verse/VerseSliced.svelte';
+
+	import { page } from '$app/stores';
+
+	// Access the query object from the $page store
+
+	// Access specific query parameters
+	const verbs = $page.url.searchParams.get('verbs');
 
 	let blocks = null;
 	export let verseRef = null;
@@ -9,6 +17,9 @@
 	let selectedSlice = null;
 	let verseHTML;
 	let refreshed = 0;
+
+	let showNextButton = false;
+	let fakeLoad = false;
 
 	let questionIndex = 0;
 	let oneByOne = true;
@@ -28,7 +39,11 @@
 			if (randomize || !verseRef) {
 				res = await API.get(`/quran/test.json`);
 			} else if (verseRef) {
-				res = await API.get(`/quran/test/${verseRef}.json`);
+				let query = '?';
+				if (verbs) {
+					query += 'verbs=' + verbs;
+				}
+				res = await API.get(`/quran/test/${verseRef + query}.json`);
 			} else {
 				loadingVerse = false;
 				return;
@@ -36,6 +51,7 @@
 			blocks = res.blocks;
 			console.log({ blocks });
 			verse = res.verse;
+
 			refreshed = refreshed + 1;
 			showingGraded = false;
 			loadingVerse = false;
@@ -54,6 +70,24 @@
 			console.log('An error occurred:', error.message);
 			nextVerse(randomize);
 		}
+	}
+
+	afterUpdate(() => {
+		sanitizeVerse();
+	});
+
+	function sanitizeVerse() {
+		const spans = document.querySelectorAll('.verse span');
+		console.log('starting', spans);
+		spans.forEach(function (span) {
+			console.log({ span });
+			// Check if the content of the span includes a specific text
+			if (span.textContent.includes('ﻴ')) {
+				// span.style.color = 'red';
+				span.style.display = 'inherit';
+				// Add more styles as needed
+			}
+		});
 	}
 
 	afterUpdate(() => {
@@ -189,57 +223,82 @@
 
 		{#if blocks}
 			<!-- svelte-ignore empty-block -->
+
 			{#if oneByOne}
 				<div class="oneByOne">
-					{#if showingGraded}
-						<div>
-							<br />
-							Click each <span class="selectedGradedBlock">word</span> above to see your graded
-							blocks.
-							<br /><br />
-						</div>
+					{#if fakeLoad}
+						<h3>Loading...</h3>
 					{:else}
-						<div>
-							For the <span class="guideSelected">highlighted</span> portion, select each
-							characteristic
-							<br /><br />
-						</div>
-					{/if}
+						{#if showingGraded}
+							<div>
+								<br />
+								Click each <span class="selectedGradedBlock">word</span> above to see your graded
+								blocks.
+								<br /><br />
+							</div>
+						{:else}
+							<div>
+								For the <span class="guideSelected">highlighted</span> portion, select each
+								characteristic
+								<br /><br />
+							</div>
+						{/if}
 
-					{#each selectedGradedBlockIndex !== null ? blocks[selectedGradedBlockIndex].questions : blocks[questionIndex].questions as question}
-						{#key question}
-							<li>
-								<Question
-									{question}
-									{refreshed}
-									{showingGraded}
-									done={(payload, correct, chosenOption) => {
-										question.done = true;
-										question.correct = correct;
-										question.chosenOption = chosenOption;
-										console.log({ question });
-										console.log({ blocks });
-										// console.log(blocks[questionIndex]);
-										if (
-											blocks[questionIndex].questions.every((question) => question.done === true)
-										) {
-											if (!blocks[questionIndex + 1]) return;
-											setTimeout(function () {
-												questionIndex += 1;
-												while (
-													blocks[questionIndex] &&
-													blocks[questionIndex].questions.length === 0
-												) {
-													questionIndex += 1;
-												}
-											}, 500);
-										}
-									}}
-								/>
-							</li>
-							<hr />
-						{/key}
-					{/each}
+						{#each selectedGradedBlockIndex !== null ? blocks[selectedGradedBlockIndex].questions : blocks[questionIndex].questions as question}
+							{#key question}
+								<li>
+									<Question
+										{question}
+										{refreshed}
+										{showingGraded}
+										done={(payload, correct, chosenOption) => {
+											question.done = true;
+											question.correct = correct;
+											question.chosenOption = chosenOption;
+											console.log({ question });
+											console.log({ blocks });
+											// console.log(blocks[questionIndex]);
+											if (
+												blocks[questionIndex].questions.every((question) => question.done === true)
+											) {
+												if (!blocks[questionIndex + 1]) return;
+												setTimeout(function () {
+													showNextButton = true;
+													// questionIndex += 1;
+													// while (
+													// 	blocks[questionIndex] &&
+													// 	blocks[questionIndex].questions.length === 0
+													// ) {
+													// 	questionIndex += 1;
+													// }
+												}, 0);
+											}
+										}}
+									/>
+								</li>
+								<hr />
+							{/key}
+						{/each}
+						{#if showNextButton}
+							<div
+								class="btn btn-primary"
+								on:click={() => {
+									showNextButton = false;
+									fakeLoad = true;
+									questionIndex += 1;
+									while (blocks[questionIndex] && blocks[questionIndex].questions.length === 0) {
+										questionIndex += 1;
+									}
+									setTimeout(function () {
+										fakeLoad = false;
+									}, 400);
+								}}
+							>
+								Next Question
+								<br />
+							</div>
+						{/if}
+					{/if}
 				</div>
 			{:else}
 				<ul>
@@ -288,6 +347,22 @@
 		margin: 0 auto;
 	}
 
+	.guideSelected {
+		color: #ca56ff;
+		border-bottom: 1px dashed;
+		padding: 0;
+	}
+
+	.oneByOne {
+		max-width: 350px;
+		margin: 0 auto;
+		display: block;
+	}
+
+	.oneByOne li {
+		list-style: none;
+	}
+
 	.verse {
 		font-family: 'me_quran2' !important;
 		line-height: 3.5em;
@@ -319,13 +394,6 @@
 		height: 87px;
 		padding: 0;
 	}
-
-	.guideSelected {
-		color: #ca56ff;
-		border-bottom: 1px dashed;
-		padding: 0;
-	}
-
 	.verse :global(.sliced span) {
 		display: initial;
 	}
@@ -333,17 +401,6 @@
 	.verse :global(.sliced span[id='char_614']) {
 		display: inherit;
 	}
-
-	.oneByOne {
-		max-width: 350px;
-		margin: 0 auto;
-		display: block;
-	}
-
-	.oneByOne li {
-		list-style: none;
-	}
-
 	.verse :global(.sliced.graded) {
 		padding: 0px 10px !important;
 		border-radius: 10px;

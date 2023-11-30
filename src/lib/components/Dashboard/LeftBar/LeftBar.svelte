@@ -4,6 +4,9 @@
 	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
 
+	export let expand;
+	export let expanded;
+
 	let buttons = [
 		{
 			tooltip: 'Profile',
@@ -108,7 +111,8 @@
 	<div class="sections">
 		<nav>
 			<div class="buttons">
-				<div class="expand">
+				<!-- svelte-ignore a11y-click-events-have-key-events -->
+				<div class="expand" on:click={expand}>
 					<div class="button">
 						<svg
 							xmlns="http://www.w3.org/2000/svg"
@@ -144,6 +148,10 @@
 								{:else}
 									<div class="fa {button.icon}" />
 								{/if}
+
+								{#if expanded}
+									<span class="title">{button.tooltip}</span>
+								{/if}
 							</div>
 						</a>
 					{/if}
@@ -155,6 +163,11 @@
 </div>
 
 <style>
+	.title {
+		position: absolute;
+		left: 50px;
+		top: 18%;
+	}
 	img.icon {
 		width: 24px;
 		height: 24px;
@@ -175,7 +188,7 @@
 		border-right: 1px solid rgba(0, 0, 0, 0.12);
 		transition: width 0.2s ease 0s;
 		height: 100vh;
-		width: 60px;
+		width: inherit;
 	}
 
 	.sections {

@@ -1,6 +1,7 @@
 <script>
 	import API from '$lib/api/api';
 	import { onMount, onDestroy } from 'svelte';
+	import thirteen_liner from '$lib/functions/thirteen_liner';
 
 	let imageSrc = '/L246.gif';
 	let canvas;
@@ -12,7 +13,12 @@
 	let showPaths = true; // New variable to toggle path visibility
 	let drawnPaths = [];
 	let img; // Declare img as a global variable
+
+	// let highlightTransparency = 0.9; // Adjust the value as needed
+	// let highlightColor = `rgba(0, 0, 0, ${highlightTransparency})`;
+
 	let highlightTransparency = 0.3; // Adjust the value as needed
+	let highlightColor = `rgba(255, 255, 0, ${highlightTransparency})`;
 
 	let pageNumber = '246';
 
@@ -20,6 +26,14 @@
 	let touchPos; // To store the touch position
 
 	onMount(() => {
+		beginPage();
+	});
+
+	onDestroy(() => {
+		closePage();
+	});
+
+	function beginPage() {
 		img = new Image();
 		img.src = imageSrc;
 
@@ -38,17 +52,16 @@
 			canvas.addEventListener('touchmove', handleTouchMove);
 			canvas.addEventListener('touchend', handleTouchEnd);
 		}
-	});
+	}
 
-	onDestroy(() => {
-		// Cleanup event listener on component destruction
+	function closePage() {
 		if (typeof document !== 'undefined') {
 			// document.removeEventListener('click', handleDebugClick);
 			canvas.removeEventListener('touchstart', handleTouchStart);
 			canvas.removeEventListener('touchmove', handleTouchMove);
 			canvas.removeEventListener('touchend', handleTouchEnd);
 		}
-	});
+	}
 
 	function handleTouchStart(event) {
 		event.preventDefault();
@@ -66,9 +79,7 @@
 			isDrawing = true;
 			touchId = touch.identifier;
 			touchPos = getTouchPos(touch);
-			drawnPaths.push([
-				{ x: touchPos.x, y: touchPos.y, color: `rgba(255, 255, 0, ${highlightTransparency})` }
-			]);
+			drawnPaths.push([{ x: touchPos.x, y: touchPos.y, color: highlightColor }]);
 		}
 	}
 
@@ -80,7 +91,7 @@
 			drawnPaths[drawnPaths.length - 1].push({
 				x: touchPos.x,
 				y: touchPos.y,
-				color: `rgba(255, 255, 0, ${highlightTransparency})`
+				color: highlightColor
 			});
 			redrawCanvas();
 		}
@@ -115,8 +126,9 @@
 	}
 
 	async function getPage() {
-		const res = await API.get('/mushaf_pages/by_page/' + pageNumber + '.json');
-		console.log({ res });
+		imageSrc = thirteen_liner(pageNumber - 2);
+		closePage();
+		beginPage();
 	}
 
 	function getMousePos(event) {
@@ -135,7 +147,7 @@
 	function handleMouseDown(event) {
 		isDrawing = true;
 		const pos = getMousePos(event);
-		drawnPaths.push([{ x: pos.x, y: pos.y, color: `rgba(255, 255, 0, ${highlightTransparency})` }]); // Default color is yellow
+		drawnPaths.push([{ x: pos.x, y: pos.y, color: highlightColor }]); // Default color is yellow
 	}
 
 	function handleMouseMove(event) {
@@ -145,7 +157,7 @@
 		drawnPaths[drawnPaths.length - 1].push({
 			x: pos.x,
 			y: pos.y,
-			color: `rgba(255, 255, 0, ${highlightTransparency})`
+			color: highlightColor
 		});
 		redrawCanvas();
 	}
@@ -314,8 +326,22 @@
 	<button on:click={saveDrawingToDatabase}>Save Drawing</button>
 
 	<br />
-	<input type="text" class="form-control" bind:value={pageNumber} />
-	<div class="btn btn-info" on:click={getPage}>Go To Page</div>
+	<input type="number" class="form-control" bind:value={pageNumber} on:change={getPage} />
+	<span
+		class="btn btn-info"
+		on:click={() => {
+			pageNumber = pageNumber - 1;
+			getPage();
+		}}><i class="fa fa-arrow-left" /></span
+	>
+	<span class="btn btn-info" on:click={getPage}>Go To Page</span>
+	<span
+		class="btn btn-info"
+		on:click={() => {
+			pageNumber = pageNumber + 1;
+			getPage();
+		}}><i class="fa fa-arrow-right" /></span
+	>
 </div>
 
 <style>

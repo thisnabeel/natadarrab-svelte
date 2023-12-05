@@ -16,6 +16,9 @@
 
 	let pageNumber = '246';
 
+	let touchId; // To track the touch ID for drawing
+	let touchPos; // To store the touch position
+
 	onMount(() => {
 		img = new Image();
 		img.src = imageSrc;
@@ -31,6 +34,9 @@
 		// Setup the event listener when the component is mounted
 		if (typeof document !== 'undefined') {
 			document.addEventListener('click', handleDebugClick);
+			canvas.addEventListener('touchstart', handleTouchStart);
+			canvas.addEventListener('touchmove', handleTouchMove);
+			canvas.addEventListener('touchend', handleTouchEnd);
 		}
 	});
 
@@ -38,8 +44,61 @@
 		// Cleanup event listener on component destruction
 		if (typeof document !== 'undefined') {
 			document.removeEventListener('click', handleDebugClick);
+			canvas.removeEventListener('touchstart', handleTouchStart);
+			canvas.removeEventListener('touchmove', handleTouchMove);
+			canvas.removeEventListener('touchend', handleTouchEnd);
 		}
 	});
+
+	function handleTouchStart(event) {
+		event.preventDefault();
+		const touch = event.touches[0];
+		isDrawing = true;
+		touchId = touch.identifier;
+		touchPos = getTouchPos(touch);
+		drawnPaths.push([
+			{ x: touchPos.x, y: touchPos.y, color: `rgba(255, 255, 0, ${highlightTransparency})` }
+		]);
+	}
+
+	function handleTouchMove(event) {
+		event.preventDefault();
+		const touch = getTouchById(event, touchId);
+		if (touch && isDrawing) {
+			touchPos = getTouchPos(touch);
+			drawnPaths[drawnPaths.length - 1].push({
+				x: touchPos.x,
+				y: touchPos.y,
+				color: `rgba(255, 255, 0, ${highlightTransparency})`
+			});
+			redrawCanvas();
+		}
+	}
+
+	function handleTouchEnd(event) {
+		const touch = getTouchById(event, touchId);
+		if (touch) {
+			isDrawing = false;
+			saveToUndoStack();
+		}
+	}
+
+	function getTouchPos(touch) {
+		const rect = canvas.getBoundingClientRect();
+		return {
+			x: touch.clientX - rect.left,
+			y: touch.clientY - rect.top
+		};
+	}
+
+	function getTouchById(event, id) {
+		for (let i = 0; i < event.changedTouches.length; i++) {
+			if (event.changedTouches[i].identifier === id) {
+				return event.changedTouches[i];
+			}
+		}
+		return null;
+	}
 
 	async function getPage() {
 		const res = await API.get('/mushaf_pages/by_page/' + pageNumber + '.json');

@@ -1,4 +1,5 @@
 <script>
+	import API from '$lib/api/api';
 	import { onMount, onDestroy } from 'svelte';
 
 	let imageSrc = '/L246.gif';
@@ -12,6 +13,11 @@
 	let drawnPaths = [];
 	let img; // Declare img as a global variable
 	let highlightTransparency = 0.3; // Adjust the value as needed
+
+	let pageNumber = '246';
+
+	let touchId; // To track the touch ID for drawing
+	let touchPos; // To store the touch position
 
 	onMount(() => {
 		img = new Image();
@@ -27,16 +33,91 @@
 
 		// Setup the event listener when the component is mounted
 		if (typeof document !== 'undefined') {
-			document.addEventListener('click', handleDebugClick);
+			// document.addEventListener('click', handleDebugClick);
+			canvas.addEventListener('touchstart', handleTouchStart);
+			canvas.addEventListener('touchmove', handleTouchMove);
+			canvas.addEventListener('touchend', handleTouchEnd);
 		}
 	});
 
 	onDestroy(() => {
 		// Cleanup event listener on component destruction
 		if (typeof document !== 'undefined') {
-			document.removeEventListener('click', handleDebugClick);
+			// document.removeEventListener('click', handleDebugClick);
+			canvas.removeEventListener('touchstart', handleTouchStart);
+			canvas.removeEventListener('touchmove', handleTouchMove);
+			canvas.removeEventListener('touchend', handleTouchEnd);
 		}
 	});
+
+	function handleTouchStart(event) {
+		event.preventDefault();
+		const touch = event.touches[0];
+
+		// Check if the touch is within an existing path
+		clickedIndex = getClickedPathIndex(getTouchPos(touch));
+
+		if (debugMode && clickedIndex !== -1) {
+			// If in debug mode and touched an existing path, remove it
+			drawnPaths.splice(clickedIndex, 1);
+			redrawCanvas();
+		} else {
+			// If not in debug mode or didn't touch an existing path, start drawing
+			isDrawing = true;
+			touchId = touch.identifier;
+			touchPos = getTouchPos(touch);
+			drawnPaths.push([
+				{ x: touchPos.x, y: touchPos.y, color: `rgba(255, 255, 0, ${highlightTransparency})` }
+			]);
+		}
+	}
+
+	function handleTouchMove(event) {
+		event.preventDefault();
+		const touch = getTouchById(event, touchId);
+		if (touch && isDrawing) {
+			touchPos = getTouchPos(touch);
+			drawnPaths[drawnPaths.length - 1].push({
+				x: touchPos.x,
+				y: touchPos.y,
+				color: `rgba(255, 255, 0, ${highlightTransparency})`
+			});
+			redrawCanvas();
+		}
+	}
+
+	function handleTouchEnd(event) {
+		const touch = getTouchById(event, touchId);
+		if (touch) {
+			if (isDrawing) {
+				// If drawing, save the path
+				isDrawing = false;
+				saveToUndoStack();
+			}
+		}
+	}
+
+	function getTouchPos(touch) {
+		const rect = canvas.getBoundingClientRect();
+		return {
+			x: touch.clientX - rect.left,
+			y: touch.clientY - rect.top
+		};
+	}
+
+	function getTouchById(event, id) {
+		for (let i = 0; i < event.changedTouches.length; i++) {
+			if (event.changedTouches[i].identifier === id) {
+				return event.changedTouches[i];
+			}
+		}
+		return null;
+	}
+
+	async function getPage() {
+		const res = await API.get('/mushaf_pages/by_page/' + pageNumber + '.json');
+		console.log({ res });
+	}
 
 	function getMousePos(event) {
 		const rect = canvas.getBoundingClientRect();
@@ -167,7 +248,9 @@
 		if (!debugMode) return;
 
 		event.preventDefault(); // Prevent the default click behavior
-		const pos = getMousePos(event);
+
+		// Use the appropriate event coordinates based on the event type
+		const pos = event.type === 'click' ? getMousePos(event) : getTouchPos(event.changedTouches[0]);
 		clickedIndex = getClickedPathIndex(pos);
 
 		if (clickedIndex !== -1) {
@@ -218,9 +301,9 @@
 	/>
 
 	<br />
-	<button on:click={undo}>Undo</button>
-	<button on:click={redo}>Redo</button>
-	<button on:click={toggleDebugMode}>{debugMode ? 'Pen' : 'Eraser'} Mode</button>
+	<!-- <button on:click={undo}>Undo</button>
+	<button on:click={redo}>Redo</button> -->
+	<button on:click={toggleDebugMode}>{debugMode ? 'Eraser' : 'Pen'} Mode</button>
 	<button
 		on:click={() => {
 			showPaths = !showPaths;
@@ -229,6 +312,10 @@
 	>
 
 	<button on:click={saveDrawingToDatabase}>Save Drawing</button>
+
+	<br />
+	<input type="text" class="form-control" bind:value={pageNumber} />
+	<div class="btn btn-info" on:click={getPage}>Go To Page</div>
 </div>
 
 <style>

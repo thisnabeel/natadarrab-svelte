@@ -33,7 +33,7 @@
 
 		// Setup the event listener when the component is mounted
 		if (typeof document !== 'undefined') {
-			document.addEventListener('click', handleDebugClick);
+			// document.addEventListener('click', handleDebugClick);
 			canvas.addEventListener('touchstart', handleTouchStart);
 			canvas.addEventListener('touchmove', handleTouchMove);
 			canvas.addEventListener('touchend', handleTouchEnd);
@@ -43,7 +43,7 @@
 	onDestroy(() => {
 		// Cleanup event listener on component destruction
 		if (typeof document !== 'undefined') {
-			document.removeEventListener('click', handleDebugClick);
+			// document.removeEventListener('click', handleDebugClick);
 			canvas.removeEventListener('touchstart', handleTouchStart);
 			canvas.removeEventListener('touchmove', handleTouchMove);
 			canvas.removeEventListener('touchend', handleTouchEnd);
@@ -53,12 +53,23 @@
 	function handleTouchStart(event) {
 		event.preventDefault();
 		const touch = event.touches[0];
-		isDrawing = true;
-		touchId = touch.identifier;
-		touchPos = getTouchPos(touch);
-		drawnPaths.push([
-			{ x: touchPos.x, y: touchPos.y, color: `rgba(255, 255, 0, ${highlightTransparency})` }
-		]);
+
+		// Check if the touch is within an existing path
+		clickedIndex = getClickedPathIndex(getTouchPos(touch));
+
+		if (debugMode && clickedIndex !== -1) {
+			// If in debug mode and touched an existing path, remove it
+			drawnPaths.splice(clickedIndex, 1);
+			redrawCanvas();
+		} else {
+			// If not in debug mode or didn't touch an existing path, start drawing
+			isDrawing = true;
+			touchId = touch.identifier;
+			touchPos = getTouchPos(touch);
+			drawnPaths.push([
+				{ x: touchPos.x, y: touchPos.y, color: `rgba(255, 255, 0, ${highlightTransparency})` }
+			]);
+		}
 	}
 
 	function handleTouchMove(event) {
@@ -78,8 +89,11 @@
 	function handleTouchEnd(event) {
 		const touch = getTouchById(event, touchId);
 		if (touch) {
-			isDrawing = false;
-			saveToUndoStack();
+			if (isDrawing) {
+				// If drawing, save the path
+				isDrawing = false;
+				saveToUndoStack();
+			}
 		}
 	}
 
@@ -234,7 +248,9 @@
 		if (!debugMode) return;
 
 		event.preventDefault(); // Prevent the default click behavior
-		const pos = getMousePos(event);
+
+		// Use the appropriate event coordinates based on the event type
+		const pos = event.type === 'click' ? getMousePos(event) : getTouchPos(event.changedTouches[0]);
 		clickedIndex = getClickedPathIndex(pos);
 
 		if (clickedIndex !== -1) {

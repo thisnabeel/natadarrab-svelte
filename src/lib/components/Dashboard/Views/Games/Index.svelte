@@ -277,10 +277,27 @@
 		visitingGame = game;
 		console.log({ visitingGame });
 	}
+	let newGameTitle;
+	async function createGame() {
+		if (newGameTitle.length < 2) return;
+		const res = await API.post('/games', {
+			title: newGameTitle,
+			positon: organizedGames.length + 1
+		});
+		console.log({ res });
+		games = [...games, res];
+		organizedGames = organizeGames(games);
+		newGameTitle = '';
+	}
 </script>
 
 <div class="content">
 	<Nav />
+
+	<div class="createGame inline-form">
+		<input type="text" class="form-control" placeholder="Create Game" bind:value={newGameTitle} />
+		<div class="btn btn-info" on:click={createGame}><i class="fa fa-plus" /></div>
+	</div>
 
 	<div class="wrapper">
 		{#if !visitingGame}

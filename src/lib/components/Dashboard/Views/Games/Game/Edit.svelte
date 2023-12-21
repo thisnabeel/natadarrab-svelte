@@ -85,6 +85,29 @@
 		// console.log(selector);
 	}
 
+	function addSelectorBlock(id) {
+		// Create a copy of the selectedGame object
+		let updatedGame = { ...selectedGame };
+
+		// Find the index of the question in the array
+		const questionIndex = updatedGame.folder.questions.findIndex((q) => q.id === id);
+
+		// Update the choices of the specific question
+		updatedGame.folder.questions[questionIndex].selectors = [
+			...updatedGame.folder.questions[questionIndex].selectors,
+			{
+				options: ['Empty'],
+				correct: 0
+			}
+		];
+
+		// console.log({ current });
+		// // Update the selectedGame variable, triggering a re-render
+
+		console.log({ updatedGame });
+		selectedGame = updatedGame;
+	}
+
 	function selectorCorrect(selector, id, index) {
 		// Create a copy of the selectedGame object
 		let updatedGame = { ...selectedGame };
@@ -198,6 +221,12 @@
 						{/if}
 
 						{#if q.question_type === 'selector'}
+							<div class="mode-selector">
+								<select name="" id="" class="mode form-control" bind:value={q.selection_style}>
+									<option />
+									<option value="blockable">Blockable</option>
+								</select>
+							</div>
 							{#each q.selectors as selector}
 								<li class="selector">
 									{#each selector.options as option, index}
@@ -218,9 +247,9 @@
 								</li>
 							{/each}
 
-							<!-- <div class="btn btn-outline-info" on:click={() => addMultipleChoice(q.choices, q.id)}>
+							<div class="btn btn-outline-info" on:click={() => addSelectorBlock(q.id)}>
 								<i class="fa fa-plus" />
-							</div> -->
+							</div>
 						{/if}
 					</div>
 				</li>
@@ -349,5 +378,11 @@
 
 	.choice .selectCorrect {
 		left: -20px;
+	}
+
+	.mode-selector {
+		/* position: absolute; */
+		top: 10px;
+		right: 10px;
 	}
 </style>

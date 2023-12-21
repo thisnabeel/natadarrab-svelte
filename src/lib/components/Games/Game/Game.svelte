@@ -15,6 +15,7 @@
 
 	let results = [];
 	let percentage = null;
+	let showingVideo = false;
 
 	function retry() {
 		results = [];
@@ -79,6 +80,17 @@
 <div class="title">
 	<h1>{game.title}</h1>
 </div>
+<br />
+{#if game.video && !showingVideo}
+	<div class="btn btn-outline-info" on:click={() => (showingVideo = !showingVideo)}>
+		Show Tutorial Video
+	</div>
+{/if}
+{#if showingVideo}
+	{#if game.video}
+		{@html game.video}
+	{/if}
+{/if}
 <div class="description">{@html game.description}</div>
 <div class="wrapper">
 	<ol class="clean-list">

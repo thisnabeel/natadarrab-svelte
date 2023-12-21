@@ -45,32 +45,74 @@
 			}
 
 			if (q.selectors) {
-				// if (q.selectors.options[q.selectors.correct] === )
-				// console.log({selections})
-				// q.selectors
-				// for (let s of q.selectors) {
+				if (q.selection_style === 'blockable') {
+					console.log('BLOCAKBLE TEST');
+					let allGood = true;
 
-				// }
-				let allGood = false;
-				q.selectors.forEach((s, i) => {
-					if (question.selectors[i].correct !== selections[i]) {
-						allGood = false;
+					for (let i = 0; i < question.selectors.length; i++) {
+						let selectedBlock = selectedBlocks[i];
+						let selector = question.selectors[i];
 
-						sendStatusUp({
-							question: question,
-							choice: selections,
-							status: false
-						});
-						return 'incorrect';
+						if (!selectedBlock) {
+							sendStatusUp({
+								question: question,
+								choice: selections,
+								status: false
+							});
+							return 'incorrect';
+						}
+
+						let foundBlock = question.selectors[i].options.find((o) => o === selectedBlock);
+
+						if (foundBlock) {
+							console.log(selector, foundBlock);
+							if (selector.correct === selector.options.indexOf(foundBlock)) {
+							} else {
+								sendStatusUp({
+									question: question,
+									choice: selections,
+									status: false
+								});
+								return 'incorrect';
+							}
+						} else {
+							sendStatusUp({
+								question: question,
+								choice: selections,
+								status: false
+							});
+							return 'incorrect';
+						}
 					}
-				});
 
-				sendStatusUp({
-					question: question,
-					choice: selections,
-					status: true
-				});
-				return 'correct';
+					sendStatusUp({
+						question: question,
+						choice: selections,
+						status: true
+					});
+					return 'correct';
+				} else {
+					let allGood = false;
+					q.selectors.forEach((s, i) => {
+						if (question.selectors[i].correct !== selections[i]) {
+							allGood = false;
+
+							sendStatusUp({
+								question: question,
+								choice: selections,
+								status: false
+							});
+							return 'incorrect';
+						}
+					});
+
+					sendStatusUp({
+						question: question,
+						choice: selections,
+						status: true
+					});
+					return 'correct';
+				}
 			}
 
 			sendStatusUp({

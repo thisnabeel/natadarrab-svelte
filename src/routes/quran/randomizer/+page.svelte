@@ -36,7 +36,7 @@
 		</div>
 	{/if}
 
-	{#if verse}
+	{#if verse && !loading}
 		<div class="verse-container">
 			<!-- {verse} -->
 

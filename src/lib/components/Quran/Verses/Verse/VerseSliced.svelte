@@ -8,6 +8,7 @@
 	let verseBox;
 	let selectedSlice;
 	let selectedSliceIndex;
+	export let tips = true;
 	export let selectSlice;
 	export let fontSize = '32px';
 	export let lineHeight = '3.5em';
@@ -107,8 +108,10 @@
 				// Set content or attributes for the new span
 				newSpan.textContent = getTip(word);
 
-				// Append the new span element to the parent
-				word.appendChild(newSpan);
+				if (tips) {
+					// Append the new span element to the parent
+					word.appendChild(newSpan);
+				}
 			}
 		}
 

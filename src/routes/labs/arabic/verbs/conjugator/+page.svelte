@@ -4,7 +4,7 @@
 	let words = [];
 	let stickers = {
 		prefixes: ['ي', 'ت', 'ن'],
-		suffixes: ['َت', 'تِ', 'تُ', 'تْ', 'َن', 'نَا', 'تُمَا', 'تُنَّ', 'تُمْ'],
+		suffixes: ['َت', 'تِ', 'تُ', 'تْ', 'َن', 'نَا', 'تُمَا', 'تُنَّ', 'تُمْ', 'وْنَ', 'ِينَ'],
 		harakaat: ['َ', 'ِ', 'ُ', 'ْ'],
 		stretches: ['ا', 'ي', 'و']
 	};
@@ -20,24 +20,31 @@
 
 	let popup = {
 		visible: false,
-		root: null
+		root: null,
+		prefix: null
 	};
 
-	function showPopup(root) {
+	function showPopupRoot(root) {
 		popup = { visible: true, root };
 	}
 
+	function showPopupPrefix(prefix) {
+		popup = { visible: true, prefix };
+	}
+
 	function hidePopup() {
-		popup = { visible: false, root: null };
+		popup = { visible: false, root: null, prefix: null };
 	}
 
 	function appendHaraka(haraka) {
 		chosenLetters = [...chosenLetters, haraka];
 		hidePopup();
 	}
+
+	$: console.log(chosenLetters);
 </script>
 
-<h1>Verb Conjugator:</h1>
+<h1>Verb Lab:</h1>
 
 <Search deliver={handleDelivery} show={true} searchInput={''} {words} />
 <hr />
@@ -57,7 +64,11 @@
 		</div>
 
 		<div class="inputted">
-			<h1>{chosenLetters.join('')}</h1>
+			<h1>
+				{#each chosenLetters as letter}
+					<span class={letter.category}>{letter.content}</span>
+				{/each}
+			</h1>
 			<!-- svelte-ignore a11y-click-events-have-key-events -->
 			{#if chosenLetters}
 				<div class="fa fa-times clear" on:click={() => (chosenLetters = [])} />
@@ -71,7 +82,17 @@
 		<ul class="stickers suffixes">
 			<h1>Suffixes:</h1>
 			{#each stickers.suffixes as suffix}
-				<li class="sticker" on:click={() => (chosenLetters = [...chosenLetters, suffix])}>
+				<li
+					class="sticker"
+					on:click={() =>
+						(chosenLetters = [
+							...chosenLetters,
+							{
+								content: suffix,
+								category: 'suffix'
+							}
+						])}
+				>
 					{suffix}
 				</li>
 			{/each}
@@ -89,17 +110,38 @@
 				<!-- svelte-ignore a11y-click-events-have-key-events -->
 				<li
 					class="sticker"
-					on:click={() => (chosenLetters = [...chosenLetters, root])}
-					on:mouseenter={() => showPopup(root)}
+					on:mouseenter={() => showPopupRoot(root)}
 					on:mouseleave={() => hidePopup()}
 				>
-					{root}
+					<span
+						on:click={(e) => {
+							chosenLetters = [
+								...chosenLetters,
+								{
+									content: root,
+									category: 'root'
+								}
+							];
+						}}
+					>
+						{root}
+					</span>
 					{#if popup.visible && popup.root === root}
-						<!-- <div class="popup">
+						<div class="popup">
 							{#each stickers.harakaat as haraka}
-								<button class="btn btn-info" on:click={() => appendHaraka(haraka)}>{haraka}</button>
+								<button
+									class="btn btn-outline-info"
+									on:click={() =>
+										(chosenLetters = [
+											...chosenLetters,
+											{
+												content: root + haraka,
+												category: 'root'
+											}
+										])}>{haraka}</button
+								>
 							{/each}
-						</div> -->
+						</div>
 					{/if}
 				</li>
 			{/each}
@@ -109,8 +151,29 @@
 			<h1>Prefixes:</h1>
 			{#each stickers.prefixes as prefix}
 				<!-- svelte-ignore a11y-click-events-have-key-events -->
-				<li class="sticker" on:click={() => (chosenLetters = [prefix, ...chosenLetters])}>
+				<li
+					class="sticker"
+					on:mouseenter={() => showPopupPrefix(prefix)}
+					on:mouseleave={() => hidePopup()}
+				>
 					{prefix}
+					{#if popup.visible && popup.prefix === prefix}
+						<div class="popup">
+							{#each stickers.harakaat as haraka}
+								<button
+									class="btn btn-outline-info"
+									on:click={() =>
+										(chosenLetters = [
+											{
+												content: prefix + haraka,
+												category: 'prefix'
+											},
+											...chosenLetters
+										])}>{haraka}</button
+								>
+							{/each}
+						</div>
+					{/if}
 				</li>
 			{/each}
 		</ul>
@@ -206,18 +269,29 @@
 
 	.inputted h1 {
 		font-size: 76px;
-		color: #1010da;
+		color: #4c77ff;
 	}
 
 	.popup {
 		position: absolute;
-		bottom: -100px;
+		bottom: -75px;
+		width: max-content;
+		right: 0;
+		left: 0;
+		padding: 10px;
 	}
 
 	.popup button {
+		margin: 2px;
+		font-size: 32px;
 	}
 
 	.sticker {
 		position: relative;
+	}
+
+	.suffix,
+	.prefix {
+		color: #ff4545;
 	}
 </style>

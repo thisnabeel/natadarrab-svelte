@@ -2,7 +2,7 @@
 	import LeftBar from './LeftBar/LeftBar.svelte';
 	import { onMount } from 'svelte';
 
-	import Search from './Search/Search.svelte';
+	import SpotlightSearch from './Search/Spotlight.svelte';
 	import { user } from '$lib/stores/user';
 	let expanded = false;
 </script>
@@ -27,7 +27,7 @@
 </div>
 
 {#if $user}
-	<Search />
+	<SpotlightSearch />
 {/if}
 
 <style>

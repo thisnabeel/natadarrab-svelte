@@ -39,10 +39,10 @@
                           <button class="btn btn-primary btn-lg" style="background: #021423;">{segment.verses}</button>
                       </h3>
                     <div class="row">
-                        <div class="col-sm-6 col-md-6 col-lg-6">
+                        <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
                             <article class="summary">{segment.summary}</article> 
                         </div>
-                        <div class="col-sm-6 col-md-6 col-lg-6">
+                        <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
                             <img class="img-responsive" src={segment.gifs[0]} alt="Image"/>
                         </div>
                       </div>
@@ -175,6 +175,10 @@
 
     .verses {
         width: 90vw;
+    }
+
+    .row>* {
+        width: 45%;
     }
 }
 </style>

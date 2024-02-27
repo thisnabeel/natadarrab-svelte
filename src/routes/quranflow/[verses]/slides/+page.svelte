@@ -32,8 +32,7 @@
     <div class="verses-ref">{$page.params.verses}</div>
     <Presentation>
         {#each segments as segment}
-            <section>
-                <section>
+                <section data-transition="slide">
 
                     <h3>
                           <button class="btn btn-primary btn-lg" style="background: #021423;">{segment.verses}</button>
@@ -47,38 +46,9 @@
                         </div>
                       </div>
                 </section>
-                 <section>
-                    
-                    <h3>
-                          <button class="btn btn-primary btn-lg" style="background: #021423;">{segment.verses}</button>
-                      </h3>
-                      <div class="row">
-                          <div class="col-sm-12 col-md-12 col-lg-6">
-                              <article >
-                                <div class="verses">
-                                    {#each segment.printed_verses as verse}
-                                        <li class="verse">
-          
-          
-                                            <VerseSliced {selectSlice} lineHeight={'2em'} html={verse.iraab} clickable={false} />
-                                        </li>
-                                        
-                                    {/each}
-                                </div>
-                            </article> 
-                        </div>
-                        <div class="col-sm-12 col-md-6 col-lg-6 hide-small">
-                            <article class="summary">{segment.summary}</article> 
-                            <br>
-                            <hr>
-                            <br>
-                            <img class="img-responsive" src={segment.gifs[0]} alt="Image"/>
-                        </div>
-                      </div>
-                 </section>
+
 
                  
-            </section>
         {/each}
     </Presentation>
     {/if}

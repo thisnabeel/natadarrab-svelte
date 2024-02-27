@@ -27,7 +27,8 @@
 			plugins: [Markdown, Highlight, Notes],
 			autoAnimateEasing: 'ease',
 			autoAnimateDuration: 1,
-			hash: true
+			hash: true,
+			backgroundTransition: 'slide'
 			// controls: false,
 			// progress: false
 		});

@@ -178,7 +178,11 @@
     }
 
     .row>* {
-        width: 45%;
+        width: 50%;
+    }
+
+    .summary {
+        font-size: 0.4em !important;
     }
 }
 </style>

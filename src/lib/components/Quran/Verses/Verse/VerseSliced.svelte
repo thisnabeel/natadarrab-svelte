@@ -10,6 +10,7 @@
 	let selectedSliceIndex;
 	export let tips = true;
 	export let selectSlice;
+	export let clickable = true;
 	export let fontSize = '32px';
 	export let lineHeight = '3.5em';
 	export let textAlign = 'right';
@@ -78,6 +79,7 @@
 	}
 
 	function handleClick(event) {
+		if (!clickable) return;
 		selectedSlice = event.target.closest('.sliced');
 		console.log({ selectedSlice });
 		// selectedSlice.classList.toggle('selected', true);

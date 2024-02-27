@@ -1,5 +1,5 @@
 <script>
-	import '../app.css';
+	import "../app.pcss";
 	import 'sweetalert2/dist/sweetalert2.min.css';
 	import { fade } from 'svelte/transition';
 	import { Modals, closeModal } from 'svelte-modals'; //
@@ -10,15 +10,15 @@
 
 <div>
 	{#if !$user}
-		<slot />
+		<slot></slot>
 	{:else}
 		<Dashboard>
-			<slot />
+			<slot></slot>
 		</Dashboard>
 	{/if}
 </div>
 <Modals>
-	<div slot="backdrop" class="backdrop" transition:fade on:click={closeModal} />
+	<div slot="backdrop" class="backdrop" transition:fade on:click="{closeModal}"></div>
 </Modals>
 
 <style>

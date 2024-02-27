@@ -117,21 +117,6 @@
 	@import url('https://fonts.googleapis.com/css?family=Calistoga&display=swap');
 	/* font-family: 'Calistoga', cursive; !important;*/
 
-	html,
-	body {
-		width: 100%;
-		height: 100%;
-		overflow: hidden;
-		/*font-family: 'Calistoga', cursive;*/
-	}
-
-	body {
-		position: relative;
-		line-height: 1;
-
-		background-color: #000 !important;
-		color: #fff !important;
-	}
 
 	.add-slide {
 		position: absolute;
@@ -221,12 +206,6 @@
 	:global(.reveal) {
 		position: static;
 	}
-
-	/*    img {
-		max-height: 80vh !important;
-    	max-width: 100% !important;
-    }
-*/
 	:global(.slides) {
 		/* width: 78vw !important;
 		height: 700px !important; */
@@ -234,10 +213,7 @@
 		transform: none !important;
 	}
 
-	:global(.slides > section:nth-child(n + 2)) {
-		width: 100%;
-		height: 90%;
-	}
+
 
 	:global(img + p) {
 		text-align: center;

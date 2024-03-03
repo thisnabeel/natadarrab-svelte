@@ -1,5 +1,6 @@
 <script>
 	import API from '$lib/api/api';
+	import Gif from "./Gif.svelte"
 
 	export let segment;
 	export let selected;
@@ -33,6 +34,15 @@
 	function changed() {
 		unsaved = true;
 	}
+
+	async function saveSegment() {
+		springs = await API.put(`/segments/${segment.id}.json`, 
+		{
+			gifs: segment.gifs
+		});
+		console.log({ springs });
+		unsaved = false;
+	}
 </script>
 
 <div class="segment">
@@ -60,6 +70,15 @@
 					bind:value={segment.summary}
 					on:keyup={changed}
 				/>
+				<div class="gifs">
+					<ul class="clean-list">
+						{#each segment.gifs as gif, index}
+							<Gif {gif} update={(payload) => {segment.gifs[index] = payload;  unsaved = true;} } remove={() => segment.gifs = segment.gifs.filter(g => g !== gif)}></Gif>
+						{/each}
+						<div class="btn btn-info" on:click={() => segment.gifs = [...segment.gifs, "gif"]} ><i class="fa fa-plus" /></div>
+						<div class="btn btn-warning" on:click={() => saveSegment()} ><i class="fa fa-save" /></div>
+					</ul>
+				</div>
 				{#if springs}
 					<div class="springs">
 						<ul class="clean-list">
@@ -109,5 +128,14 @@
 		margin: 3px;
 		border-radius: 6px;
 		background: #c5f0ff;
+	}
+
+	.gifs {
+		background: #d08300;
+		padding: 10px;
+	}
+
+	.gif img {
+		max-width: 100%;
 	}
 </style>

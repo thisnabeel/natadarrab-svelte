@@ -9322,7 +9322,11 @@ let surahs = [
 	}
 ];
 
-function findSurah(position) {
+export function findSurah(position) {
 	return surahs[position - 1];
 }
-export default findSurah;
+
+export function allSurahs() {
+	return surahs;
+}
+

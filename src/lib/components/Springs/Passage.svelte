@@ -1,7 +1,7 @@
 <script>
 	import API from '$lib/api/api';
 	import { onMount } from 'svelte';
-	import findSurah from '$lib/functions/surahs';
+	import {findSurah} from '$lib/functions/surahs';
 
 	export let segment;
 

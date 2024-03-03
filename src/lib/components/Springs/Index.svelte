@@ -4,7 +4,7 @@
 	import Nav from './Nav/Index.svelte';
 	import API from '$lib/api/api.js';
 	import Passage from './Passage.svelte';
-	import findSurah from '$lib/functions/surahs';
+	import {findSurah} from '$lib/functions/surahs';
 
 	let springs;
 	let blankTopic = 'Select A Topic';

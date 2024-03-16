@@ -1,9 +1,9 @@
 <script>
 	import API from '$lib/api/api';
-	import Gif from "./Gif.svelte"
+	import { selectedSegment } from '$lib/stores/quranflow';
+	import Gif from './Gif.svelte';
 
 	export let segment;
-	export let selected;
 	export let select;
 	export let editMode;
 
@@ -36,8 +36,7 @@
 	}
 
 	async function saveSegment() {
-		springs = await API.put(`/segments/${segment.id}.json`, 
-		{
+		springs = await API.put(`/segments/${segment.id}.json`, {
 			gifs: segment.gifs
 		});
 		console.log({ springs });
@@ -73,10 +72,21 @@
 				<div class="gifs">
 					<ul class="clean-list">
 						{#each segment.gifs as gif, index}
-							<Gif {gif} update={(payload) => {segment.gifs[index] = payload;  unsaved = true;} } remove={() => segment.gifs = segment.gifs.filter(g => g !== gif)}></Gif>
+							<Gif
+								{gif}
+								update={(payload) => {
+									segment.gifs[index] = payload;
+									unsaved = true;
+								}}
+								remove={() => (segment.gifs = segment.gifs.filter((g) => g !== gif))}
+							/>
 						{/each}
-						<div class="btn btn-info" on:click={() => segment.gifs = [...segment.gifs, "gif"]} ><i class="fa fa-plus" /></div>
-						<div class="btn btn-warning" on:click={() => saveSegment()} ><i class="fa fa-save" /></div>
+						<div class="btn btn-info" on:click={() => (segment.gifs = [...segment.gifs, 'gif'])}>
+							<i class="fa fa-plus" />
+						</div>
+						<div class="btn btn-warning" on:click={() => saveSegment()}>
+							<i class="fa fa-save" />
+						</div>
 					</ul>
 				</div>
 				{#if springs}
@@ -92,8 +102,16 @@
 			</div>
 		</div>
 	{:else}
-		<span class="verses" on:click={select} class:selected={selected && selected.id === segment.id}>
-			{segment.summary}
+		<span
+			class="verses"
+			on:click={select}
+			class:selected={$selectedSegment && $selectedSegment.id === segment.id}
+		>
+			{#if segment.summary.indexOf('-') === 0}
+				{@html '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'}{segment.summary.substring(1)}
+			{:else}
+				{segment.summary}
+			{/if}
 		</span>
 	{/if}
 </div>

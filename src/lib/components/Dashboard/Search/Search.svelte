@@ -1,14 +1,17 @@
 <script>
+	import { goto } from '$app/navigation';
 	import API from '$lib/api/api';
 	import { onMount } from 'svelte';
 
-	export let deliver = function () {};
+	export let deliver;
 
 	export let searchInput = '';
 	let searchElement = null;
 	let error = '';
+	let suggesting = false;
 
 	export let words = [];
+	let rows = [];
 
 	async function findArabicWordsByRoot() {
 		// console.log(convertRomanToArabic(searchInput));
@@ -20,7 +23,7 @@
 		console.log({ res });
 		words = res;
 		if (res.length === 0) error = 'No Words for ' + searchInput;
-		searchInput = '';
+		rows = [];
 	}
 
 	function convertRomanToArabic(letters) {
@@ -114,20 +117,80 @@
 		helper([], 0);
 		return r;
 	}
+
+	function isRoot(str) {
+		return /^[a-zA-Z\s]+$/.test(str);
+	}
+
+	function isVerse(str) {
+		return /^[0-9:-]+$/.test(str);
+	}
 </script>
 
 <input
 	type="text"
 	id="spotlight"
-	placeholder="Spotlight-Search"
+	class="spotlight"
+	placeholder="Search ..."
 	bind:value={searchInput}
 	bind:this={searchElement}
+	on:keyup={() => {
+		rows = [];
+		error = '';
+		suggesting = true;
+	}}
 />
-{#if searchInput.length > 0}
+{#if searchInput.length > 0 && suggesting}
 	<!-- svelte-ignore a11y-click-events-have-key-events -->
-	<div class="searchArabicRoots" on:click={findArabicWordsByRoot}>
-		Find Arabic Words by Root: {searchInput}
-	</div>
+	{#if isRoot(searchInput)}
+		<div class="query" on:click={findArabicWordsByRoot}>
+			Find Arabic Words by Root: {searchInput}
+		</div>
+	{/if}
+
+	{#if isVerse(searchInput)}
+		<!-- svelte-ignore a11y-click-events-have-key-events -->
+		<div
+			class="query"
+			on:click={async () => {
+				await deliver({
+					action: 'verse',
+					query: searchInput
+				});
+				rows = [];
+				suggesting = false;
+			}}
+		>
+			{#if searchInput.includes(':')}
+				{#if searchInput.includes('-')}
+					Go To Aayaat: {searchInput}
+				{:else}
+					Go To Aayah: {searchInput}
+				{/if}
+			{:else}
+				Go To Surah: {searchInput}
+			{/if}
+		</div>
+	{/if}
+{/if}
+{#if rows}
+	{#each words as word}
+		<!-- svelte-ignore a11y-click-events-have-key-events -->
+		<div
+			class="word"
+			on:click={async () => {
+				await deliver({
+					action: 'word',
+					query: searchInput
+				});
+				rows = [];
+				words = [];
+				suggesting = false;
+			}}
+		>
+			{word.v_word} <br />{word.v_translation}
+		</div>
+	{/each}
 {/if}
 
 {#if error.length > 0}
@@ -136,17 +199,10 @@
 	</div>
 {/if}
 
-{#each words as word}
-	<!-- svelte-ignore a11y-click-events-have-key-events -->
-	<div class="word" on:click={() => deliver(word)}>
-		{word.v_word} <br />{word.v_translation}
-	</div>
-{/each}
-
 <style>
-	.searchArabicRoots {
+	.query {
 		max-width: 628px;
-		background: #ffa7a7;
+		background: #a7ffd2;
 		font-size: 24px;
 		text-align: left;
 		margin: 0 auto;
@@ -195,5 +251,9 @@
 		padding: 1em;
 		font-size: 34px;
 		background: #fbffd7;
+	}
+
+	.spotlight {
+		padding: 0 10px;
 	}
 </style>

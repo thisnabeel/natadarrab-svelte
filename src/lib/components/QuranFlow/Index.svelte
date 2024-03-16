@@ -3,178 +3,219 @@
 	import Api from '$lib/api/api.js';
 	import Nav from './Nav.svelte';
 	import Segment from './Segment.svelte';
+	import API from '$lib/api/api.js';
+	import Spinner from '../Spinner/Spinner.svelte';
+	import Playlist from './Dig/Playlist.svelte';
+	import { grid, playlists, selectedSegment, rightNavTab, segments } from '$lib/stores/quranflow';
+	import { page } from '$app/stores';
+	import { user } from '$lib/stores/user';
 
-	let surah = '1';
-	let segments = null;
+	let trans = null;
+
+	// Function to fetch and parse JSON from a local file
+	const fetchJsonData = async () => {
+		try {
+			const response = await fetch('/translations/english/eng-abdelhaleem.json');
+
+			if (!response.ok) {
+				throw new Error('Failed to fetch JSON data');
+			}
+			trans = await response.json();
+			console.log(trans);
+		} catch (error) {
+			console.error(error);
+		}
+	};
+
+	// Call the function to fetch JSON data when the component is mounted
+
 	let loadingSurah = false;
-	let selected;
+	let loadingSegment = false;
+
 	let editMode = false;
+	let listMode = false;
+	let verses;
+	let content_playlists;
+
 	onMount(() => {
-		fetchSurah();
+		fetchJsonData();
+		fetchPlaylists();
 	});
 
-	async function fetchSurah() {
+	async function fetchPlaylists() {
+		playlists.set(await API.get('/content_playlists.json'));
+	}
+
+	function expandRange(rangeString) {
+		if (!rangeString.includes('-')) return [rangeString];
+		const [start, end] = rangeString.split('-');
+
+		const [startLine, startColumn] = start.split(':').map(Number);
+		const [endLine, endColumn] = end.split(':').map(Number);
+
+		const result = [];
+
+		for (let line = startLine; line <= endLine; line++) {
+			for (
+				let column = line === startLine ? startColumn : 1;
+				column <= (line === endLine ? endColumn : Infinity);
+				column++
+			) {
+				result.push(`${line}:${column}`);
+			}
+		}
+
+		return result;
+	}
+	async function fetchSurah(surah) {
 		loadingSurah = true;
-		segments = null;
-		segments = await Api.get(`/quranflow/surah/${surah}.json`);
-		console.log(segments);
+		segments.set([]);
+		selectedSegment.set(null);
+		verses = false;
+		let verse = surah;
+		const s = surah.split(':')[0];
+		surah = s;
+
+		segments.set(await Api.get(`/quranflow/surah/${surah}.json`));
+		console.log('segments', $segments);
 		loadingSurah = false;
+
+		findSegmentByVerse(verse.split('-')[0]);
+	}
+
+	function findSegmentByVerse(verse) {
+		const list = $segments.map((s) => {
+			return { id: s.id, verses: expandRange(s.verses) };
+		});
+		const found = list.find((s) => s.verses.includes(verse));
+		console.log({ found });
+		console.log($segments);
+		selectedSegment.set($segments.find((s) => s.id === found.id));
+		selectSegment($selectedSegment);
 	}
 
 	function selectSegment(segment) {
-		if (selected === segment) {
-			selected = null;
+		selectedSegment.set(null);
+		verses = false;
+		if (selectedSegment.id === segment.id) {
+			return;
 		} else {
-			selected = segment;
+			selectedSegment.set(segment);
+			loadingSegment = true;
+			getSegment(segment);
 		}
+	}
+
+	async function getSegment(segment) {
+		verses = await API.get('/quran/verses/' + segment.verses + '.json');
+		console.log({ verses });
+		loadingSegment = false;
+	}
+
+	function goBack() {}
+
+	function getVerseText(chapterNumber, verseNumber) {
+		if (!trans || !trans.quran) return '';
+		const arr = Array.from(trans.quran);
+		console.log({ arr });
+		for (let i = 0; i < arr.length; i++) {
+			const verse = trans.quran[i];
+			if (verse.chapter === chapterNumber && verse.verse === verseNumber) {
+				return verse.text;
+			}
+		}
+		return '';
+	}
+
+	function findEng(ref) {
+		const [c, v] = ref.split(':');
+
+		getVerseText(Number(c), Number(v));
 	}
 </script>
 
-<Nav />
-<div class="wrapper">
+<Nav {fetchSurah} />
+<div class={'wrapper ' + $grid}>
 	<div class="left-col">
-		<div class="select-holder">
-			<select class="surah-select" bind:value={surah} on:change={fetchSurah}>
-				<option value="1">1. الفاتحة</option>
-				<option value="2">2. البقرة</option>
-				<option value="3">3. آل عمران</option>
-				<option value="4">4. النساء</option>
-				<option value="5">5. المائدة</option>
-				<option value="6">6. الأنعام</option>
-				<option value="7">7. الأعراف</option>
-				<option value="8">8. الأنفال</option>
-				<option value="9">9. التوبة</option>
-				<option value="10">10. يونس</option>
-				<option value="11">11. هود</option>
-				<option value="12">12. يوسف</option>
-				<option value="13">13. الرّعد</option>
-				<option value="14">14. إبراهيم</option>
-				<option value="15">15. الحجر</option>
-				<option value="16">16. النحل</option>
-				<option value="17">17. الإسراء</option>
-				<option value="18">18. الكهف</option>
-				<option value="19">19. مريم</option>
-				<option value="20">20. طه</option>
-				<option value="21">21. الأنبياء</option>
-				<option value="22">22. الحج</option>
-				<option value="23">23. المؤمنون</option>
-				<option value="24">24. النّور</option>
-				<option value="25">25. الفرقان</option>
-				<option value="26">26. الشعراء</option>
-				<option value="27">27. النمل</option>
-				<option value="28">28. القصص</option>
-				<option value="29">29. العنكبوت</option>
-				<option value="30">30. الروم</option>
-				<option value="31">31. لقمان</option>
-				<option value="32">32. السجدة</option>
-				<option value="33">33. الأحزاب</option>
-				<option value="34">34. سبإ</option>
-				<option value="35">35. فاطر</option>
-				<option value="36">36. يس</option>
-				<option value="37">37. الصّافّات</option>
-				<option value="38">38. ص</option>
-				<option value="39">39. الزمر</option>
-				<option value="40">40. غافر</option>
-				<option value="41">41. فصّلت</option>
-				<option value="42">42. الشورى</option>
-				<option value="43">43. الزخرف</option>
-				<option value="44">44. الدخان</option>
-				<option value="45">45. الجاثية</option>
-				<option value="46">46. الأحقاف</option>
-				<option value="47">47. محمد</option>
-				<option value="48">48. الفتح</option>
-				<option value="49">49. الحجرات</option>
-				<option value="50">50. ق</option>
-				<option value="51">51. الذاريات</option>
-				<option value="52">52. الطور</option>
-				<option value="53">53. النجم</option>
-				<option value="54">54. القمر</option>
-				<option value="55">55. الرحمن</option>
-				<option value="56">56. الواقعة</option>
-				<option value="57">57. الحديد</option>
-				<option value="58">58. المجادلة</option>
-				<option value="59">59. الحشر</option>
-				<option value="60">60. الممتحنة</option>
-				<option value="61">61. الصف</option>
-				<option value="62">62. الجمعة</option>
-				<option value="63">63. المنافقون</option>
-				<option value="64">64. التغابن</option>
-				<option value="65">65. الطلاق</option>
-				<option value="66">66. التحريم</option>
-				<option value="67">67. الملك</option>
-				<option value="68">68. القلم</option>
-				<option value="69">69. الحاقة</option>
-				<option value="70">70. المعارج</option>
-				<option value="71">71. نوح</option>
-				<option value="72">72. الجن</option>
-				<option value="73">73. المزمل</option>
-				<option value="74">74. المدثر</option>
-				<option value="75">75. القيامة</option>
-				<option value="76">76. الإنسان</option>
-				<option value="77">77. المرسلات</option>
-				<option value="78">78. النبأ</option>
-				<option value="79">79. النازعات</option>
-				<option value="80">80. عبس</option>
-				<option value="81">81. التكوير</option>
-				<option value="82">82. الانفطار</option>
-				<option value="83">83. المطففين</option>
-				<option value="84">84. الانشقاق</option>
-				<option value="85">85. البروج</option>
-				<option value="86">86. الطارق</option>
-				<option value="87">87. الأعلى</option>
-				<option value="88">88. الغاشية</option>
-				<option value="89">89. الفجر</option>
-				<option value="90">90. البلد</option>
-				<option value="91">91. الشمس</option>
-				<option value="92">92. الليل</option>
-				<option value="93">93. الضحى</option>
-				<option value="94">94. الإنشراح</option>
-				<option value="95">95. التين</option>
-				<option value="96">96. العلق</option>
-				<option value="97">97. القدر</option>
-				<option value="98">98. البينة</option>
-				<option value="99">99. الزلزلة</option>
-				<option value="100">100. العاديات</option>
-				<option value="101">101. القارعة</option>
-				<option value="102">102. التكاثر</option>
-				<option value="103">103. العصر</option>
-				<option value="104">104. الهمزة</option>
-				<option value="105">105. الفيل</option>
-				<option value="106">106. قريش</option>
-				<option value="107">107. الماعون</option>
-				<option value="108">108. الكوثر</option>
-				<option value="109">109. الكافرون</option>
-				<option value="110">110. النصر</option>
-				<option value="111">111. المسد</option>
-				<option value="112">112. الإخلاص</option>
-				<option value="113">113. الفلق</option>
-				<option value="114">114. الناس</option>
-			</select>
-
-			<div
-				class="btn"
-				class:btn-info={editMode}
-				class:btn-outline-info={!editMode}
-				on:click={() => (editMode = !editMode)}
-			>
-				<i class="fa fa-pen" />
-			</div>
-			<hr />
-		</div>
-
-		{#if segments}
+		{#if $segments && !loadingSurah}
 			<div class="summary">
-				{#each segments as segment}
-					<Segment {editMode} {segment} {selected} select={() => selectSegment(segment)} />
+				{#each $segments as segment}
+					<Segment {editMode} {segment} select={() => selectSegment(segment)} />
 				{/each}
 			</div>
 		{:else if loadingSurah}
-			<h1>Loading Surah...</h1>
+			<Spinner>Loading Surah...</Spinner>
 		{/if}
 	</div>
+	<div class="right-col">
+		{#if $selectedSegment}
+			{#if verses}
+				<ul class="verses">
+					{#each verses as verse}
+						<li class="verse">
+							{verse.arabic} <span class="ref">{verse.item.ref}</span>
+							<hr />
+							<!-- {findEng(verse.item.ref)} -->
+						</li>
+					{/each}
+				</ul>
+			{/if}
+
+			{#if loadingSegment}
+				<Spinner>Loading Verses...</Spinner>
+			{/if}
+		{:else}
+			<div class="cta-right">
+				No Selected Passage yet. Click one of the sentences on the left to show it's corresponding
+				verses.
+			</div>
+		{/if}
+	</div>
+	{#if $selectedSegment && $user && $user.admin}
+		<div class="extra-right-col">
+			{#if $rightNavTab > 0}
+				{#if $rightNavTab === 1}
+					<Playlist bg={'aliceblue'} />
+				{/if}
+				{#if $rightNavTab === 2}
+					<Playlist bg={'aliceblue'} />
+				{/if}
+				{#if $rightNavTab === 3}
+					<Playlist bg={'aliceblue'} />
+				{/if}
+			{:else}
+				<div class="menu">
+					<ul class="clean-list">
+						<li on:click={() => rightNavTab.set(1)}>Playlists</li>
+						<li on:click={() => rightNavTab.set(2)}>Tags</li>
+						<li on:click={() => rightNavTab.set(3)}>Gifs</li>
+					</ul>
+				</div>
+			{/if}
+		</div>
+	{/if}
 </div>
 
 <style>
+	.verse {
+		padding: 20px;
+		font-size: 24px;
+		line-height: 44px;
+		text-align: right;
+		background: white;
+		margin: 8px 4px;
+		border: 1px solid #eee;
+		border-radius: 10px;
+	}
+
+	.nav li {
+		padding: 10px;
+	}
+
+	.nav .active {
+		background-color: #000;
+		color: #fff;
+	}
 	.wrapper {
 		display: flex;
 	}
@@ -193,23 +234,53 @@
 		flex: 1 1 66%;
 		max-width: 66%;
 		padding: 3em;
-		/* height: 74vh; */
-		/* overflow-y: scroll; */
+		height: 90vh;
+		overflow-y: scroll;
 	}
 
-	.select-holder {
-		display: table;
-		margin: 0 auto;
-		max-width: 740px;
-		font-size: 34px;
+	.right-col {
+		flex: 1 1 33%;
+		max-width: 33%;
+		padding: 0.5em;
+		background-color: rgb(241, 255, 241);
 	}
 
-	.select-holder hr {
-		margin-top: 20px;
-		margin-bottom: 20px;
-		border: 0;
-		border-top: 1px solid #eeeeee;
-		box-sizing: content-box;
-		height: 0;
+	.extra-right-col {
+		/* padding: 0.5em; */
+	}
+
+	.tri-view .left-col {
+		flex: 1 1 40%;
+		max-width: 40%;
+	}
+
+	.tri-view .right-col {
+		flex: 1 1 40%;
+		max-width: 40%;
+	}
+
+	.tri-view .extra-right-col {
+		flex: 1 1 20%;
+		max-width: 20%;
+	}
+
+	.verses {
+		height: 85vh;
+		overflow-y: scroll;
+	}
+
+	.extra-right-col .menu li {
+		padding: 1em;
+		margin: 1em;
+		text-align: center;
+		border: 1px solid #eee;
+		border-radius: 6px;
+	}
+
+	.cta-right {
+		padding: 12px;
+		font-size: 24px;
+
+		color: #7a9a7a;
 	}
 </style>

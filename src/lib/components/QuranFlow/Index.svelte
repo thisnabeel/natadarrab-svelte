@@ -9,7 +9,8 @@
 	import { grid, playlists, selectedSegment, rightNavTab, segments } from '$lib/stores/quranflow';
 	import { page } from '$app/stores';
 	import { user } from '$lib/stores/user';
-
+	import Verse from './Verse/Verse.svelte';
+	import Notes from './Dig/Notes.svelte';
 	let trans = null;
 
 	// Function to fetch and parse JSON from a local file
@@ -113,25 +114,6 @@
 	}
 
 	function goBack() {}
-
-	function getVerseText(chapterNumber, verseNumber) {
-		if (!trans || !trans.quran) return '';
-		const arr = Array.from(trans.quran);
-		console.log({ arr });
-		for (let i = 0; i < arr.length; i++) {
-			const verse = trans.quran[i];
-			if (verse.chapter === chapterNumber && verse.verse === verseNumber) {
-				return verse.text;
-			}
-		}
-		return '';
-	}
-
-	function findEng(ref) {
-		const [c, v] = ref.split(':');
-
-		getVerseText(Number(c), Number(v));
-	}
 </script>
 
 <Nav {fetchSurah} />
@@ -152,11 +134,12 @@
 			{#if verses}
 				<ul class="verses">
 					{#each verses as verse}
-						<li class="verse">
-							{verse.arabic} <span class="ref">{verse.item.ref}</span>
-							<hr />
-							<!-- {findEng(verse.item.ref)} -->
-						</li>
+						<Verse
+							{verse}
+							trans={trans.quran.filter(
+								(obj) => obj.chapter === Number(verse.item.ref.split(':')[0])
+							)}
+						/>
 					{/each}
 				</ul>
 			{/if}
@@ -183,12 +166,16 @@
 				{#if $rightNavTab === 3}
 					<Playlist bg={'aliceblue'} />
 				{/if}
+				{#if $rightNavTab === 4}
+					<Notes bg={'aliceblue'} />
+				{/if}
 			{:else}
 				<div class="menu">
 					<ul class="clean-list">
 						<li on:click={() => rightNavTab.set(1)}>Playlists</li>
 						<li on:click={() => rightNavTab.set(2)}>Tags</li>
 						<li on:click={() => rightNavTab.set(3)}>Gifs</li>
+						<li on:click={() => rightNavTab.set(4)}>Notes</li>
 					</ul>
 				</div>
 			{/if}
@@ -197,17 +184,6 @@
 </div>
 
 <style>
-	.verse {
-		padding: 20px;
-		font-size: 24px;
-		line-height: 44px;
-		text-align: right;
-		background: white;
-		margin: 8px 4px;
-		border: 1px solid #eee;
-		border-radius: 10px;
-	}
-
 	.nav li {
 		padding: 10px;
 	}

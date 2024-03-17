@@ -1,4 +1,5 @@
 <script>
+	import { page } from '$app/stores';
 	import API from '$lib/api/api';
 	import { selectedSegment } from '$lib/stores/quranflow';
 	import Gif from './Gif.svelte';
@@ -42,6 +43,8 @@
 		console.log({ springs });
 		unsaved = false;
 	}
+	$: lang = $page.params.language;
+	$: langd = lang ? segment.translations[lang] : segment.summary;
 </script>
 
 <div class="segment">
@@ -103,14 +106,14 @@
 		</div>
 	{:else}
 		<span
-			class="verses"
+			class={`verses ${lang}`}
 			on:click={select}
 			class:selected={$selectedSegment && $selectedSegment.id === segment.id}
 		>
-			{#if segment.summary.indexOf('-') === 0}
-				{@html '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'}{segment.summary.substring(1)}
+			{#if langd.indexOf('-') === 0}
+				{@html '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'}{langd.substring(1)}
 			{:else}
-				{segment.summary}
+				{langd}
 			{/if}
 		</span>
 	{/if}
@@ -155,5 +158,12 @@
 
 	.gif img {
 		max-width: 100%;
+	}
+
+	.urdu {
+		direction: rtl;
+		font-family: 'urdu' !important;
+		display: block;
+		font-size: 24px;
 	}
 </style>

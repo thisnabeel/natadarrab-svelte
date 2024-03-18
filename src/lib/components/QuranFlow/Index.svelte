@@ -116,6 +116,15 @@
 	function goBack() {}
 </script>
 
+<svelte:head>
+	<link rel="preconnect" href="https://fonts.googleapis.com" />
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+	<link
+		href="https://fonts.googleapis.com/css2?family=Noto+Nastaliq+Urdu:wght@400..700&display=swap"
+		rel="stylesheet"
+	/>
+</svelte:head>
+
 <Nav {fetchSurah} />
 <div class={'wrapper ' + $grid}>
 	<div class="left-col">
@@ -238,6 +247,22 @@
 	.tri-view .extra-right-col {
 		flex: 1 1 20%;
 		max-width: 20%;
+	}
+
+	/*  */
+	.large-right .left-col {
+		flex: 1 1 20%;
+		max-width: 30%;
+	}
+
+	.large-right .right-col {
+		flex: 1 1 40%;
+		max-width: 40%;
+	}
+
+	.large-right .extra-right-col {
+		flex: 1 1 40%;
+		max-width: 40%;
 	}
 
 	.verses {

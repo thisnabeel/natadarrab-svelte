@@ -1,11 +1,16 @@
 <script>
-	import { rightNavTab } from '$lib/stores/quranflow';
+	import { grid, rightNavTab, selectedNote } from '$lib/stores/quranflow';
 
 	export let bg;
 	export let title;
 
 	function goBack() {
-		rightNavTab.set(0);
+		if ($selectedNote) {
+			selectedNote.set(null);
+		} else {
+			rightNavTab.set(0);
+			grid.set('tri-view');
+		}
 	}
 </script>
 

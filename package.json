@@ -37,6 +37,9 @@
 		"@fontsource/jetbrains-mono": "^5.0.18",
 		"@fontsource/manrope": "^5.0.18",
 		"@svelte-web-fonts/google": "^1.0.4",
+		"@tiptap/core": "^2.2.4",
+		"@tiptap/pm": "^2.2.4",
+		"@tiptap/starter-kit": "^2.2.4",
 		"@types/reveal.js": "^5.0.1",
 		"axios": "^1.4.0",
 		"cl-editor": "^2.3.0",
@@ -46,6 +49,7 @@
 		"svelte-inview": "^4.0.1",
 		"svelte-modals": "^1.2.1",
 		"svelte-outclick": "^3.5.0",
+		"svelte-quill": "^1.2.0",
 		"sweetalert2": "^9.7.2"
 	}
 }

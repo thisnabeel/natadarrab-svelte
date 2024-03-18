@@ -26,7 +26,11 @@
 	});
 
 	function visitSurah(s) {
-		goto('/quranflow/' + s);
+		let path = '/';
+		let ladder = ['quranflow', s];
+		if ($page.params.language) ladder.push($page.params.language);
+		path += ladder.join('/');
+		goto(path);
 		fetchSurah(s);
 	}
 

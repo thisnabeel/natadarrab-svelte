@@ -45,6 +45,8 @@
 	}
 	$: lang = $page.params.language;
 	$: langd = lang ? segment.translations[lang] : segment.summary;
+
+	$: selected = $selectedSegment && $selectedSegment.id === segment.id;
 </script>
 
 <div class="segment">
@@ -105,11 +107,10 @@
 			</div>
 		</div>
 	{:else}
-		<span
-			class={`verses ${lang}`}
-			on:click={select}
-			class:selected={$selectedSegment && $selectedSegment.id === segment.id}
-		>
+		<span class={`verses ${lang}`} on:click={select} class:selected>
+			{#if selected}
+				<div class="ref">{segment.verses}</div>
+			{/if}
 			{#if langd.indexOf('-') === 0}
 				{@html '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'}{langd.substring(1)}
 			{:else}
@@ -120,6 +121,14 @@
 </div>
 
 <style>
+	.ref {
+		padding: 10px;
+		background-color: rgb(170, 238, 215);
+		display: block;
+		width: max-content;
+		margin-bottom: 10px;
+		border-radius: 10px;
+	}
 	.verses.selected {
 		background-color: #b5ffea;
 		display: block;
@@ -162,8 +171,14 @@
 
 	.urdu {
 		direction: rtl;
-		font-family: 'urdu' !important;
 		display: block;
-		font-size: 24px;
+		font-size: 18px;
+		font-family: 'Noto Nastaliq Urdu', serif;
+		font-optical-sizing: auto;
+		font-weight: lighter;
+		font-style: normal;
+		line-height: 40px;
+		border-bottom: 1px solid #eee;
+		padding: 10px 0;
 	}
 </style>

@@ -19,50 +19,58 @@
 <article>
 	{#if rootWords && (rootWords.non_verbs || rootWords.verbs)}
 		<div class="rootWords">
+			<small>NonVerbs:</small>
 			<ul>
 				{#each rootWords.non_verbs || [] as non_verb}
-					<li>{non_verb.nv_word}</li>
+					<li>{non_verb.nv_word} <br /><small>{non_verb.nv_translation}</small></li>
 				{/each}
 			</ul>
+			<small>Verbs:</small>
 			<ul>
 				{#each rootWords.verbs || [] as verb}
-					<li>{verb.v_word}</li>
+					<li>{verb.v_word} <br /><small>{verb.v_translation}</small></li>
 				{/each}
 			</ul>
 		</div>
 	{/if}
 
-	<h1 class="root" on:click={() => findMoreRoot()}>{root}</h1>
-	<h1 class="def">
-		<div class="word">{base}</div>
-		<br />{translation}
-	</h1>
-	<div
-		class="close"
-		on:click={() =>
-			gopher.set({
-				kind: null,
-				item: null
-			})}
-	>
-		<i class="fa fa-times" />
+	<div class="word-container">
+		{#if root}
+			<h1 class="root" on:click={() => findMoreRoot()}>{root}</h1>
+		{/if}
+		<h1 class="def">
+			<div class="word">{base}</div>
+			<br />{translation}
+		</h1>
+		<div
+			class="close"
+			on:click={() =>
+				gopher.set({
+					kind: null,
+					item: null
+				})}
+		>
+			<i class="fa fa-times" />
+		</div>
 	</div>
 </article>
 
 <style>
 	.rootWords li {
-		display: inline;
-		font-size: 32px;
+		display: inline-block;
+		font-size: 26px;
 		padding: 10px;
 		background-color: #eee;
 		border: 1px solid #ccc;
 		margin: 10px;
 		border-radius: 8px;
+		text-align: center;
 	}
 
 	.rootWords ul {
 		overflow-x: scroll;
 		margin: 20px;
+		margin-top: -22px;
 		height: -moz-max-content;
 		height: max-content;
 		padding: 20px 0;
@@ -77,11 +85,14 @@
 	}
 	article {
 		background-color: #fff1de;
-		padding: 10px;
 		width: 100%;
 		display: block;
 		position: relative;
 		padding-bottom: 32px;
+	}
+
+	article > div {
+		padding: 10px;
 	}
 
 	.root {
@@ -94,5 +105,9 @@
 	.def {
 		font-size: 32px;
 		text-align: center;
+	}
+	.word-container {
+		position: relative;
+		border-top: 1px solid #ccc;
 	}
 </style>

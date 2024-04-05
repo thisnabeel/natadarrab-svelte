@@ -4,8 +4,8 @@
 	import Nav from './Nav.svelte';
 	import Segment from './Segment.svelte';
 	import API from '$lib/api/api.js';
-	import Spinner from '../Spinner/Spinner.svelte';
-	import Playlist from './Dig/Playlist.svelte';
+	import Spinner from '../../Spinner/Spinner.svelte';
+	import Playlist from '../Dig/Playlist.svelte';
 	import {
 		grid,
 		playlists,
@@ -16,8 +16,10 @@
 	} from '$lib/stores/quranflow';
 	import { page } from '$app/stores';
 	import { user } from '$lib/stores/user';
-	import Verse from './Verse/Verse.svelte';
-	import Notes from './Dig/Notes.svelte';
+	import { gopher } from './store';
+
+	import Notes from '../Dig/Notes.svelte';
+	import Word from './Gopher/Word.svelte';
 	let trans = null;
 
 	// Function to fetch and parse JSON from a local file
@@ -96,45 +98,154 @@
 		});
 		const found = list.find((s) => s.verses.includes(verse));
 		console.log({ found });
+		if (!found) return;
 		console.log($segments);
 		selectedSegment.set($segments.find((s) => s.id === found.id));
 		selectSegment($selectedSegment);
 	}
 
 	function selectSegment(segment) {
-		selectedSegment.set(null);
 		verses = false;
-		if (selectedSegment.id === segment.id) {
+		if ($selectedSegment && $selectedSegment.id === segment.id) {
+			selectedSegment.set(null);
 			return;
 		} else {
 			selectedSegment.set(segment);
 			loadingSegment = true;
-			getSegment(segment);
 		}
 	}
-
-	async function getSegment(segment) {
-		verses = await API.get('/quran/verses/' + segment.verses + '.json');
-		console.log({ verses });
-		loadingSegment = false;
-	}
-
-	import { device } from '$lib/utils/device.js';
-	import Desktop from '$lib/components/QuranFlow/Desktop/Index.svelte';
-	import Mobile from '$lib/components/QuranFlow/Mobile/Index.svelte';
 </script>
 
-<svelte:head>
-	<link rel="preconnect" href="https://fonts.googleapis.com" />
-	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-	<link
-		href="https://fonts.googleapis.com/css2?family=Noto+Nastaliq+Urdu:wght@400..700&display=swap"
-		rel="stylesheet"
-	/>
-</svelte:head>
+<div class="up">
+	<Nav {fetchSurah} />
+</div>
+<div class="wrapper">
+	{#if $segments && !loadingSurah}
+		<div class="summary">
+			{#each $segments as segment}
+				<Segment {segment} {trans} select={() => selectSegment(segment)} />
+			{/each}
+		</div>
+	{:else if loadingSurah}
+		<Spinner>Loading Surah...</Spinner>
+	{/if}
+</div>
 
-{#if $device === 'mobile'}
-	<Mobile />
-{:else}
-	<Desktop />
+{#if $gopher.kind && $gopher.item}
+	<div class="gopher">
+		{#if $gopher.kind === 'word'}
+			<Word word={$gopher.item} />
+		{/if}
+	</div>
 {/if}
+
+<style>
+	.gopher {
+		position: fixed;
+		bottom: 0;
+		width: 100%;
+	}
+	.up {
+		position: fixed;
+		top: 0;
+		width: 100%;
+	}
+	.summary {
+		margin-top: 80px;
+		padding: 32px;
+	}
+	.wrapper {
+		max-width: 100%;
+		overflow-x: hidden;
+	}
+	.nav li {
+		padding: 10px;
+	}
+
+	.nav .active {
+		background-color: #000;
+		color: #fff;
+	}
+	.wrapper {
+		/* display: flex; */
+	}
+
+	.mini-header {
+		max-width: 350px;
+		display: block;
+		margin: 0 auto;
+	}
+
+	img {
+		vertical-align: middle;
+	}
+
+	.left-col {
+		flex: 1 1 100%;
+		max-width: 100%;
+		padding: 3em;
+		height: 90vh;
+		overflow-y: scroll;
+	}
+
+	.right-col {
+		flex: 1 1 33%;
+		max-width: 33%;
+		padding: 0.5em;
+		background-color: rgb(241, 255, 241);
+	}
+
+	.extra-right-col {
+		/* padding: 0.5em; */
+	}
+
+	.tri-view .left-col {
+		flex: 1 1 40%;
+		max-width: 40%;
+	}
+
+	.tri-view .right-col {
+		flex: 1 1 40%;
+		max-width: 40%;
+	}
+
+	.tri-view .extra-right-col {
+		flex: 1 1 20%;
+		max-width: 20%;
+	}
+
+	/*  */
+	.large-right .left-col {
+		flex: 1 1 20%;
+		max-width: 30%;
+	}
+
+	.large-right .right-col {
+		flex: 1 1 40%;
+		max-width: 40%;
+	}
+
+	.large-right .extra-right-col {
+		flex: 1 1 40%;
+		max-width: 40%;
+	}
+
+	.verses {
+		overflow-x: hidden;
+	}
+
+	.extra-right-col .menu li {
+		padding: 1em;
+		margin: 1em;
+		text-align: center;
+		border: 1px solid #eee;
+		border-radius: 6px;
+	}
+
+	.cta-right {
+		padding: 12px;
+		font-size: 24px;
+
+		color: #7a9a7a;
+	}
+</style>

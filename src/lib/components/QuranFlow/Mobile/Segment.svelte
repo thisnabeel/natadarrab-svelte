@@ -1,19 +1,29 @@
 <script>
 	import { page } from '$app/stores';
 	import API from '$lib/api/api';
+	import VerseSliced from '$lib/components/Quran/Verses/Verse/VerseSliced.svelte';
+	import Spinner from '$lib/components/Spinner/Spinner.svelte';
 	import { selectedSegment, editMode } from '$lib/stores/quranflow';
-	import Gif from './Gif.svelte';
+	import Gif from '../Gif.svelte';
+	import Verse from '../Verse/Verse.svelte';
 
 	export let segment;
-	export let select;
+
+	export let trans;
+	export let selected = false;
+	let verses;
 
 	import { inview } from 'svelte-inview';
+
+	let shownVerseIndex = 0;
 
 	let isInView;
 	const options = {};
 
 	let unsaved = false;
 	let springs = null;
+
+	let loadingSegment = false;
 
 	$: {
 		segment;
@@ -24,6 +34,20 @@
 		if (isInView && !springs) {
 			getSprings();
 		}
+	}
+
+	$: getSegment(selected);
+
+	function select() {
+		selected = !selected;
+	}
+
+	async function getSegment(selected) {
+		if (!selected) return;
+		loadingSegment = true;
+		segment.versesList = await API.get('/quran/verses/' + segment.verses + '.json');
+		console.log({ segment });
+		loadingSegment = false;
 	}
 
 	async function getSprings() {
@@ -44,8 +68,6 @@
 	}
 	$: lang = $page.params.language;
 	$: langd = lang ? segment.translations[lang] : segment.summary;
-
-	$: selected = $selectedSegment && $selectedSegment.id === segment.id;
 </script>
 
 <div class="segment">
@@ -107,9 +129,6 @@
 		</div>
 	{:else}
 		<span class={`verses ${lang}`} on:click={select} class:selected>
-			{#if selected}
-				<div class="ref">{segment.verses}</div>
-			{/if}
 			{#if langd.indexOf('-') === 0}
 				{@html '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'}{langd.substring(1)}
 			{:else}
@@ -118,21 +137,48 @@
 		</span>
 	{/if}
 </div>
+{#if selected}
+	{#if segment.versesList}
+		<ul class="verses">
+			<div class="ref">- {segment.verses}</div>
+
+			<input
+				type="range"
+				bind:value={shownVerseIndex}
+				min="0"
+				max={segment.versesList.length - 1}
+				style={'padding: 10; width: 90%; margin: 20px; direction: rtl'}
+			/>
+			{#each segment.versesList as verse, index}
+				{#if index === shownVerseIndex}
+					<Verse
+						{verse}
+						trans={trans.quran.filter(
+							(obj) => obj.chapter === Number(verse.item.ref.split(':')[0])
+						)}
+					/>
+				{/if}
+			{/each}
+		</ul>
+	{/if}
+
+	{#if loadingSegment}
+		<Spinner>Loading Verses...</Spinner>
+	{/if}
+{/if}
 
 <style>
 	.ref {
 		padding: 10px;
-		background-color: rgb(170, 238, 215);
+		color: rgb(40, 117, 91);
 		display: block;
 		width: max-content;
 		margin-bottom: 10px;
 		border-radius: 10px;
 	}
 	.verses.selected {
-		background-color: #b5ffea;
+		background-color: #defff6;
 		display: block;
-		border: 6px dashed #93e0ca;
-		padding: 13px;
 	}
 
 	.panel {

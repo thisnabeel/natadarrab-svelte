@@ -1,6 +1,11 @@
 <script>
+	import API from '$lib/api/api';
+	import VerseSliced from '$lib/components/Quran/Verses/Verse/VerseSliced.svelte';
+	import { gopher } from '../Mobile/store';
+
 	export let verse;
 	export let trans;
+	export let sliced = true;
 
 	$: console.log({ trans });
 	$: findEng = (ref) => {
@@ -22,12 +27,39 @@
 		return '';
 	}
 
+	function selectSlice(item) {
+		// console.log({ slice });
+		console.log({ item });
+		const triggerId = item.slice.getAttribute('data-trigger-id');
+		let triggerType = item.triggerType;
+		console.log({ triggerType });
+
+		getWord(triggerId, triggerType);
+	}
+
+	async function getWord(triggerId, triggerType) {
+		const res = await API.get(`/${triggerType}/${triggerId}.json`);
+		console.log({ res });
+		gopher.set({
+			kind: 'word',
+			item: res
+		});
+		console.log($gopher);
+		return res;
+	}
+
 	$: trans_ref = Number(verse.item.ref.split(':')[1] - 1);
 	$: translation = trans[trans_ref] ? trans[trans_ref].text : null;
 </script>
 
 <li class="verse">
-	{verse.arabic} <span class="ref">{verse.item.ref}</span>
+	{#if sliced}
+		<div class="iraab" style="padding: 1em;">
+			<VerseSliced {selectSlice} lineHeight={'2.5em'} html={verse.iraab} />
+		</div>
+	{:else}
+		{verse.arabic} <span class="ref">{verse.item.ref}</span>
+	{/if}
 	{#if translation}
 		<div class="translation">
 			{translation}

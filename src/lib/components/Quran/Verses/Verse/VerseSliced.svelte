@@ -64,6 +64,27 @@
 		}
 	];
 
+	const fil_tagger = [
+		{
+			category: 'tense',
+			key: 'al-Fi‘l Man Hith al-Zaman (Sorof (Fi‘l))',
+			options: [
+				{
+					query: ['فعل ماض'],
+					tag: 'past'
+				},
+				{
+					query: ['فعل مضارع'],
+					tag: 'present'
+				},
+				{
+					query: ['فعل أمر'],
+					tag: 'command'
+				}
+			]
+		}
+	];
+
 	function sanitizeVerse() {
 		const spans = verseBox.querySelectorAll('.verse span');
 		// console.log('starting', spans);
@@ -117,9 +138,20 @@
 			}
 		}
 
+		let triggerType = '';
+		try {
+			const meta = getAttributesAsArray(selectedSlice).find((m) => m.name === 'class').value;
+			if (meta.includes('ism')) {
+				triggerType = 'non_verbs';
+			} else {
+				triggerType = 'verbs';
+			}
+		} catch (error) {}
+
 		selectSlice({
 			slice: selectedSlice,
-			index: selectedSliceIndex
+			index: selectedSliceIndex,
+			triggerType: triggerType
 		});
 
 		function getTip(word) {

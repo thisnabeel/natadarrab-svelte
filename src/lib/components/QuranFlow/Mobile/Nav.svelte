@@ -6,7 +6,7 @@
 	export let fetchSurah;
 	import { page } from '$app/stores';
 	import { onMount } from 'svelte';
-	import Search from '../Dashboard/Search/Search.svelte';
+	import Search from '../../Dashboard/Search/Search.svelte';
 	import { segments, editMode } from '$lib/stores/quranflow';
 	import { user } from '$lib/stores/user';
 
@@ -76,7 +76,6 @@
 
 <div class="top-nav">
 	<div class="head">
-		<span>Qur'anFlow</span>
 		<!-- <img class="mini-header" src="/quranflow.png"> -->
 		<div class="select-holder">
 			<select
@@ -224,13 +223,6 @@
 				</div>
 			{/if}
 			<hr />
-			<div class="search">
-				<!-- <input type="text" class="form-control" bind:value={searchQuery} />
-				{#if searchQuery.length > 0}
-					<div class="btn btn-outline-info" on:change={search}><i class="fa fa-search" /></div>
-				{/if} -->
-				<Search {deliver} {searchInput} padding={10} />
-			</div>
 		</div>
 		<!-- <div class="arrow-space"></div>
             <div class="left-arrow arrow"><div class=""><svg xmlns="http://www.w3.org/2000/svg" width="20px" height="20px" fill="#626872" viewBox="0 0 256 256"><path d="M165.66,202.34a8,8,0,0,1-11.32,11.32l-80-80a8,8,0,0,1,0-11.32l80-80a8,8,0,0,1,11.32,11.32L91.31,128Z"></path></svg></div></div>
@@ -240,6 +232,13 @@
 
 	<div class="hori-divider" />
 </div>
+<div class="search">
+	<!-- <input type="text" class="form-control" bind:value={searchQuery} />
+				{#if searchQuery.length > 0}
+					<div class="btn btn-outline-info" on:change={search}><i class="fa fa-search" /></div>
+				{/if} -->
+	<Search {deliver} {searchInput} padding={10} />
+</div>
 
 <style>
 	.select-holder {
@@ -247,9 +246,9 @@
 		margin: 0 auto;
 		max-width: 740px;
 		font-size: 34px;
-		padding-left: 20px;
+		/* padding-left: 20px; */
 		border-left: 2px solid #eee;
-		margin-left: 20px;
+		/* margin-left: 20px; */
 	}
 
 	.select-holder hr {
@@ -260,11 +259,16 @@
 		box-sizing: content-box;
 		height: 0;
 	}
+	.search :global(input) {
+		width: 100%;
+		border: 1px solid #eee;
+		padding: 10px;
+	}
 	.mini-header {
 		max-width: 180px;
 	}
 	.top-nav {
-		padding: 16px 16px 16px 40px;
+		padding: 0;
 		display: flex;
 		-webkit-box-align: center;
 		align-items: center;
@@ -275,6 +279,7 @@
 		border-top-color: rgb(231, 232, 234);
 		border-right-color: rgb(231, 232, 234);
 		border-left-color: rgb(231, 232, 234);
+		width: 100%;
 	}
 
 	.top-nav .head {
@@ -347,7 +352,7 @@
 		font-size: 34px;
 		padding-left: 20px;
 		border-left: 2px solid #eee;
-		margin-left: 20px;
+		/* margin-left: 20px; */
 		z-index: 999999;
 	}
 </style>

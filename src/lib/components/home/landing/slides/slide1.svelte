@@ -11,7 +11,7 @@
 	</div>
 
 	<div class="wow-btn">
-		<a class="btn btn-default" href="#more-info">Learn More</a>
+		<a class="btn btn-default" href="#preview">Learn More</a>
 	</div>
 </section>
 

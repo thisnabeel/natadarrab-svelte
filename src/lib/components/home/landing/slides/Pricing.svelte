@@ -24,7 +24,7 @@
 			</h3>
 
 			<div class="pricing-column-content">
-				<h4><span class="dollar-sign">USD</span> $250</h4>
+				<h4><span class="dollar-sign">USD</span> $350</h4>
 				<span class="interval">
 					<b>per Month</b>
 				</span>

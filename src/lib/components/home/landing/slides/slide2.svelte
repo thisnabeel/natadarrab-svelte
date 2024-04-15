@@ -1,4 +1,6 @@
-<section class="wrapper">
+<section class="wrapper" style="position:relative;">
+	<span style="position:absolute; top:-40px;" id="preview" />
+
 	<div class="container">
 		<div class="prev-view" style="display: block; margin: 0 auto; ">
 			<h2 class="text-center">Preview:</h2>

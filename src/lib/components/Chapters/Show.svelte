@@ -6,6 +6,7 @@
 	import Swal from 'sweetalert2';
 	import { user } from '$lib/stores/user';
 	import AccessGate from '$lib/components/AccessGate/Index.svelte';
+	import { goto } from '$app/navigation';
 
 	let skill = null;
 	export let id;
@@ -27,6 +28,17 @@
 		<div class="post">
 			{@html chapter.post}
 		</div>
+
+		{#if chapter.games}
+			<div class="quizzes">
+				<h1>Practice:</h1>
+				<ul>
+					{#each chapter.games as game}
+						<li on:click={() => goto(`/games/${game.id}`)}>{game.title}</li>
+					{/each}
+				</ul>
+			</div>
+		{/if}
 	</AccessGate>
 {:else}
 	<Spinner />
@@ -39,5 +51,25 @@
 
 	.post :global(iframe) {
 		width: 100%;
+	}
+
+	.post :global(> p > img) {
+		text-align: center;
+		margin: 0 auto;
+		display: block;
+	}
+
+	.quizzes h1 {
+		font-size: 34px;
+	}
+
+	.quizzes {
+		margin: 10px;
+	}
+	.quizzes li {
+		font-size: 24px;
+		padding: 14px;
+		background: #f0f8ff;
+		margin: 10px;
 	}
 </style>

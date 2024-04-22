@@ -8,6 +8,10 @@
 	let accessGranted = false;
 
 	onMount(() => {
+		if ($user.admin) {
+			accessGranted = true;
+			return true;
+		}
 		Swal.fire({
 			title: 'Enter your Access Key:',
 			input: 'text',

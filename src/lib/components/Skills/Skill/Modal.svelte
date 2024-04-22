@@ -9,6 +9,8 @@
 	import MeetingCards from './MeetingCards/Index.svelte';
 	import { goto } from '$app/navigation';
 
+	import Skill from './Show.svelte';
+
 	let openedChapter;
 	onMount(async () => {
 		const response = await api.get(`/skills/${skill.id}.json`);
@@ -22,56 +24,7 @@
 	});
 </script>
 
-<div class="contents">
-	<h1>
-		{skill.title}
-	</h1>
-	<hr />
-
-	<article class="description">
-		{@html skill.description}
-	</article>
-	{#if skill.games}
-		<ul class="clean-list chapters">
-			{#each skill.games.map((game) => game.chapter) || [] as chapter}
-				{#if chapter}
-					<li class="chapter" on:click={() => (openedChapter = chapter.id)}>{chapter.title}</li>
-					{#if openedChapter === chapter.id}
-						{#if $user.admin}
-							<div class="btn btn-outline-warning" on:click={() => goto(`/chapters/${chapter.id}`)}>
-								<i class="fa fa-link" />
-							</div>
-						{/if}
-						<article>
-							{@html chapter.post}
-						</article>
-					{/if}
-				{/if}
-			{/each}
-		</ul>
-	{/if}
-
-	{#if skill.games}
-		{#each skill.games as game}
-			<div
-				class="btn btn-primary"
-				on:click={() => {
-					closeModal();
-					openModal(Modal, {
-						game: game,
-						preventOutClick: true
-					});
-				}}
-			>
-				Take Quiz: {game.title}
-			</div>
-		{/each}
-	{/if}
-
-	{#if $user && $user.admin}
-		<MeetingCards {skill} />
-	{/if}
-</div>
+<Skill {skill} />
 
 <style>
 	.delete-skill {

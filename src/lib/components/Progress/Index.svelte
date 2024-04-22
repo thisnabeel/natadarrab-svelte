@@ -1,33 +1,40 @@
 <script>
-    import Nav from "./Nav/Index.svelte";
-    import Api from "$lib/api/api.js";
-    import {onMount} from "svelte";
-    import Set from "./Set/Set.svelte";
-
-    let skillSets = [];
-    onMount(async () => {
-        // const response = await Api.get("/skills_sets/1.json");
-        // skillSets = [...skillSets, response];
-
-        skillSets = await Api.get("/skills_sets/as_user/1.json");
-        console.log(skillSets)
-    })
+	import Nav from './Nav/Index.svelte';
+	import Api from '$lib/api/api.js';
+	import { onMount } from 'svelte';
+	import Set from './Set/Set.svelte';
+	import { selectedSet, selectedGame, selectedChapter } from './store';
+	import Game from '../Games/Game/Game.svelte';
+	import Chapter from './Chapter.svelte';
+	// $: selectedSet = skillSets.find((s) => s.title === $selectedSet.id);
 </script>
 
 <div class="content">
-    <Nav></Nav>
+	<Nav />
 
-    <div class="wrapper">
-        {#each skillSets as set}
-            <Set {set} />
-        {/each}
-    </div>
+	{#if $selectedGame}
+		<Game game={$selectedGame} />
+	{:else if $selectedChapter}
+		<Chapter chapter={$selectedChapter} />
+	{:else}
+		<div class="wrapper">
+			{#if $selectedSet}
+				<Set set={$selectedSet} />
+			{/if}
+		</div>
+	{/if}
 </div>
 
-<style> 
-    .content {
-        background: #FAFAFA;    
-        height: 100vh;    
-        overflow-y: scroll;
-    }
+<style>
+	.content {
+		background: #fafafa;
+		height: 100vh;
+		overflow-y: scroll;
+	}
+	.wrapper {
+		height: 90vh;
+		overflow-y: scroll;
+
+		background: #ffffeb;
+	}
 </style>

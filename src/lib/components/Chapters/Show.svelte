@@ -10,13 +10,15 @@
 
 	let skill = null;
 	export let id;
-	let chapter;
+	export let chapter;
+	export let overrideGate = false;
 
 	onMount(() => {
 		fetchChapter();
 	});
 
 	async function fetchChapter() {
+		// if (chapter) return;
 		chapter = await API.get(`/chapters/${id}.json`);
 	}
 </script>
@@ -24,7 +26,7 @@
 {#if chapter}
 	<Nav title={chapter.title} />
 
-	<AccessGate>
+	<AccessGate override={overrideGate}>
 		<div class="post">
 			{@html chapter.post}
 		</div>
@@ -50,7 +52,13 @@
 	}
 
 	.post :global(iframe) {
-		width: 100%;
+		width: 100% !important;
+	}
+
+	.post {
+		max-width: 680px;
+		margin: 0 auto;
+		display: block;
 	}
 
 	.post :global(> p > img) {

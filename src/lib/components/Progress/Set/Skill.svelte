@@ -29,35 +29,8 @@
 </script>
 
 <!-- svelte-ignore a11y-click-events-have-key-events -->
-<div class="deckHead">
-	<span class="title" on:click={fetchSkill}>{skill.title}</span>
-
-	{#if expanded}
-		<div class="expanded">
-			{#if chapters}
-				<div>Learn:</div>
-				<ul class="chapters">
-					{#each chapters.filter((c) => c && c.title) as chapter}
-						<li on:click={selectedChapter.set(chapter)}>
-							{chapter.title}
-							<div class="btn btn-outline-info"><i class="fa fa-link" /></div>
-						</li>
-					{/each}
-				</ul>
-			{/if}
-			{#if skill.games}
-				<div>Practice:</div>
-				<ul class="chapters">
-					{#each skill.games as game}
-						<li on:click={() => selectedGame.set(game)}>
-							{game.title}
-							<div class="btn btn-outline-info"><i class="fa fa-link" /></div>
-						</li>
-					{/each}
-				</ul>
-			{/if}
-		</div>
-	{/if}
+<div class="deckHead" on:click={fetchSkill}>
+	<span class="title">{skill.title}</span>
 
 	<div class="todo" on:click={toggleTodo}>
 		<i class="fa" class:fa-check-square-o={learned} class:learned class:fa-square-o={!learned} />
@@ -76,6 +49,32 @@
 		<span class="btn btn-outline-danger remove-deck">Delete</span>
 	{/if}
 </div>
+{#if expanded}
+	<div class="expanded">
+		{#if chapters}
+			<div>Learn:</div>
+			<ul class="chapters">
+				{#each chapters.filter((c) => c && c.title) as chapter}
+					<li on:click={selectedChapter.set(chapter)}>
+						{chapter.title}
+						<div class="btn btn-outline-info"><i class="fa fa-link" /></div>
+					</li>
+				{/each}
+			</ul>
+		{/if}
+		{#if skill.games}
+			<div>Practice:</div>
+			<ul class="chapters">
+				{#each skill.games as game}
+					<li on:click={() => selectedGame.set(game)}>
+						{game.title}
+						<div class="btn btn-outline-info"><i class="fa fa-link" /></div>
+					</li>
+				{/each}
+			</ul>
+		{/if}
+	</div>
+{/if}
 
 <style>
 	.courseTitle {

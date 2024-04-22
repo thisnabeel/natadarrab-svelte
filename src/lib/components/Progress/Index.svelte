@@ -5,7 +5,8 @@
 	import Set from './Set/Set.svelte';
 	import { selectedSet, selectedGame, selectedChapter } from './store';
 	import Game from '../Games/Game/Game.svelte';
-	import Chapter from './Chapter.svelte';
+	// import Chapter from './Chapter.svelte';
+	import Chapter from '$lib/components/Chapters/Show.svelte';
 	// $: selectedSet = skillSets.find((s) => s.title === $selectedSet.id);
 </script>
 
@@ -15,7 +16,7 @@
 	{#if $selectedGame}
 		<Game game={$selectedGame} />
 	{:else if $selectedChapter}
-		<Chapter chapter={$selectedChapter} />
+		<Chapter chapter={$selectedChapter} overrideGate={true} />
 	{:else}
 		<div class="wrapper">
 			{#if $selectedSet}

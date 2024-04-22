@@ -21,7 +21,7 @@
 	<div class="head">
 		<span>Progress: </span>
 		{#if skillSets}
-			<select disabled name="" id="" class="form-control" bind:value={$selectedSet}>
+			<select name="" id="" class="form-control" bind:value={$selectedSet}>
 				{#each skillSets as set}
 					<option value={set}>{set.title}</option>
 				{/each}

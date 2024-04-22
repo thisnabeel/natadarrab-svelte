@@ -6,9 +6,10 @@
 	import Swal from 'sweetalert2';
 	import { user } from '$lib/stores/user';
 	let accessGranted = false;
+	export let override = false;
 
 	onMount(() => {
-		if ($user.admin) {
+		if (($user && $user.admin) || override) {
 			accessGranted = true;
 			return true;
 		}

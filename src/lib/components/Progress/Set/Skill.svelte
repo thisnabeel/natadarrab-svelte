@@ -118,7 +118,7 @@
 
 	.deckHead {
 		padding: 20px;
-		font-family: GreycliffCF-Light;
+		font-family: Avenir Next, sans-serif;
 		font-size: 22px;
 		color: #291f13;
 		margin: 10px;

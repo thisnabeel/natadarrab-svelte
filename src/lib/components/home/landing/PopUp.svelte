@@ -1,79 +1,78 @@
 <script>
-    import Api from "$lib/api/api";
-    import { goto } from '$app/navigation';
-    import { user } from "$lib/stores/user"
+	import Api from '$lib/api/api';
+	import { goto } from '$app/navigation';
+	import { user } from '$lib/stores/user';
 
-    let username;
-    let password;
-    export let hidePopUp;
+	let username;
+	let password;
+	export let hidePopUp;
 
-    $: console.log(username);
+	$: console.log(username);
 
-    const authenticate = async () => {
-        const response = await Api.post("/users/sign_in.json", {
-            login: username,
-            password: password
-        });
-        console.log(response)
-        if (response["id"]) {
-            user.set(response);
-            hidePopUp();
-            goto(`/dashboard`);
-        }
-    }
-    
+	const authenticate = async () => {
+		const response = await Api.post('/users/sign_in.json', {
+			login: username,
+			password: password
+		});
+		console.log(response);
+		if (response['id']) {
+			user.set(response);
+			hidePopUp();
+			goto(`/dashboard`);
+		}
+	};
 </script>
 
-    <div class="form">
-        <img src="/sign-in.png" alt="" class="sign-up-img creds-header-img">
-        
-        <label>Username or Email:</label>
-        <input type="text" bind:value={username}>
+<div class="form">
+	<img src="/sign-in.png" alt="" class="sign-up-img creds-header-img" />
 
-        <label>Password:</label>
-        <input type="password" bind:value={password}>
+	<label>Username or Email:</label>
+	<input type="text" bind:value={username} />
 
-        <button on:click={authenticate}>Log In</button>
-    </div>
+	<label>Password:</label>
+	<input type="password" bind:value={password} />
 
-  <style>
-    .form {
-        max-width: 300px;
+	<button on:click={authenticate}>Log In</button>
+</div>
 
-        background: #fff;
-        padding: 30px;
-        border-radius: 6px;
-        border: 9px solid #f6f8ff;
-        text-align: left;
-    }
+<style>
+	.form {
+		max-width: 300px;
 
-    img.creds-header-img {
-        margin: 10px auto;
-        display: block;
-        width: 100%;
-    }
+		background: #fff;
+		padding: 30px;
+		border-radius: 6px;
+		border: 9px solid #f6f8ff;
+		text-align: left;
+	}
 
-    input {
-        width: 100%;
-        font-family: GreyCliffCF-Regular;
-        color: rgb(49, 49, 49);
-        border: solid 1px #ccc;
-    }
+	img.creds-header-img {
+		margin: 10px auto;
+		display: block;
+		width: 100%;
+	}
 
-    button {
-        margin-top: 10px;
-        background-color: #FFFE8B;
-        display: block;
-        width: 100%;
-        height: calc(1.5em + 0.75rem + 2px);
-        padding: 0.375rem 0.75rem;
-        font-size: 1rem;
-        font-weight: 400;
-        line-height: 1.5;
-        color: #495057;
-        background-clip: padding-box;
-        border: 1px solid #ced4da;
-        border-radius: 0.25rem;
-        transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
-    }
-  </style>
+	input {
+		width: 100%;
+		font-family: GreyCliffCF-Regular;
+		color: rgb(49, 49, 49);
+		border: solid 1px #ccc;
+	}
+
+	button {
+		margin-top: 10px;
+		background-color: #fffe8b;
+		display: block;
+		width: 100%;
+		height: calc(1.5em + 0.75rem + 2px);
+		padding: 0.375rem 0.75rem;
+		font-size: 1rem;
+		font-weight: 400;
+		line-height: 1.5;
+		color: #495057;
+		background-clip: padding-box;
+		border: 1px solid #ced4da;
+		border-radius: 0.25rem;
+		transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+	}
+</style>

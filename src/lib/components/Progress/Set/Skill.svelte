@@ -15,6 +15,7 @@
 
 	async function fetchSkill() {
 		// console.log(skill);
+		if (expanded) return (expanded = false);
 		expanded = true;
 		const response = await API.get(`/skills/${skill.id}.json`);
 		skill.games = response.games;
@@ -29,57 +30,74 @@
 </script>
 
 <!-- svelte-ignore a11y-click-events-have-key-events -->
-<div class="deckHead" on:click={fetchSkill}>
-	<span class="title">{skill.title}</span>
+<div class="wrapper">
+	<div class="deckHead" on:click={fetchSkill}>
+		<span class="title">{skill.title}</span>
+
+		{#if $user && $user.admin}
+			<div class="pull-right clean-a btn-warning btn test-now edit-deck">
+				<a href="/decks/3/edit">Edit</a>
+			</div>
+			<div
+				class="pull-right clean-a btn-success btn test-now edit-deck"
+				style="position: absolute; right: -100px;"
+			>
+				<i class="fa fa-toggle-on" aria-hidden="true" />
+			</div>
+			<span class="btn btn-outline-danger remove-deck">Delete</span>
+		{/if}
+
+		<div class="expand">
+			<i class="fa" class:fa-expand={true} />
+		</div>
+	</div>
 
 	<div class="todo" on:click={toggleTodo}>
 		<i class="fa" class:fa-check-square-o={learned} class:learned class:fa-square-o={!learned} />
 	</div>
 
-	{#if $user && $user.admin}
-		<div class="pull-right clean-a btn-warning btn test-now edit-deck">
-			<a href="/decks/3/edit">Edit</a>
+	{#if expanded}
+		<div>{@html skill.description}</div>
+		<div class="expanded">
+			{#if chapters}
+				<div>Learn:</div>
+				<ul class="chapters">
+					{#each chapters.filter((c) => c && c.title) as chapter}
+						<li on:click={selectedChapter.set(chapter)}>
+							{chapter.title}
+							<div class="btn btn-outline-info"><i class="fa fa-link" /></div>
+						</li>
+					{/each}
+				</ul>
+			{/if}
+			{#if skill.games}
+				<div>Practice:</div>
+				<ul class="chapters">
+					{#each skill.games as game}
+						<li on:click={() => selectedGame.set(game)}>
+							{game.title}
+							<div class="btn btn-outline-info"><i class="fa fa-link" /></div>
+						</li>
+					{/each}
+				</ul>
+			{/if}
 		</div>
-		<div
-			class="pull-right clean-a btn-success btn test-now edit-deck"
-			style="position: absolute; right: -100px;"
-		>
-			<i class="fa fa-toggle-on" aria-hidden="true" />
-		</div>
-		<span class="btn btn-outline-danger remove-deck">Delete</span>
 	{/if}
 </div>
-{#if expanded}
-	<div class="expanded">
-		{#if chapters}
-			<div>Learn:</div>
-			<ul class="chapters">
-				{#each chapters.filter((c) => c && c.title) as chapter}
-					<li on:click={selectedChapter.set(chapter)}>
-						{chapter.title}
-						<div class="btn btn-outline-info"><i class="fa fa-link" /></div>
-					</li>
-				{/each}
-			</ul>
-		{/if}
-		{#if skill.games}
-			<div>Practice:</div>
-			<ul class="chapters">
-				{#each skill.games as game}
-					<li on:click={() => selectedGame.set(game)}>
-						{game.title}
-						<div class="btn btn-outline-info"><i class="fa fa-link" /></div>
-					</li>
-				{/each}
-			</ul>
-		{/if}
-	</div>
-{/if}
 
 <style>
+	.expand {
+		position: absolute;
+		right: 20px;
+		top: 10px;
+		color: rgba(104, 110, 71, 0.186);
+	}
+	.wrapper {
+		position: relative;
+	}
 	.courseTitle {
 		text-align: center;
-		font-family: Maragsa;
+		/* font-family: Maragsa; */
 		text-shadow: 0 5px 6px #fff;
 		font-size: 79px;
 		border-radius: 14px;
@@ -89,8 +107,8 @@
 
 	.todo {
 		position: absolute;
-		left: -40px;
-		top: -6px;
+		left: -24px;
+		top: -8px;
 		color: #e4ebc2;
 		font-size: 34px;
 	}
@@ -99,7 +117,6 @@
 	}
 
 	.deckHead {
-		position: relative;
 		padding: 20px;
 		font-family: GreycliffCF-Light;
 		font-size: 22px;

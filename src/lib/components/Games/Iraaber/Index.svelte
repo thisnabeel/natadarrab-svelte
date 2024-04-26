@@ -462,7 +462,7 @@
 		.verse {
 			font-family: 'me_quran2' !important;
 			line-height: 2.4em;
-			font-size: 95px;
+			font-size: 45px;
 			direction: rtl;
 			text-align: right;
 		}
@@ -471,28 +471,28 @@
 			max-width: 90%;
 			margin: 0 auto;
 			display: block;
-			font-size: 46px;
+			font-size: 26px;
 		}
 
 		.oneByOne :global(button),
 		.oneByOne button {
-			font-size: 46px;
+			font-size: 26px;
 		}
 
 		.ref-header {
-			font-size: 64px;
+			font-size: 44px;
 		}
 
 		.progress {
-			height: 6rem;
+			height: 2rem;
 		}
 
 		.percentage {
-			font-size: 74px;
+			font-size: 44px;
 		}
 
 		.next-random {
-			font-size: 74px;
+			font-size: 24px;
 		}
 	}
 </style>

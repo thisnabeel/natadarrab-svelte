@@ -6,6 +6,7 @@
 	export let done;
 	export let refreshed;
 	export let showingGraded;
+	export let showNextButton;
 
 	function check(option) {
 		if (question.answer === option) {
@@ -29,27 +30,35 @@
 			<!-- svelte-ignore a11y-click-events-have-key-events -->
 			<li
 				on:click={(e) => {
-					if (question.correct > -1) return;
+					// if (question.correct > -1) return;
 					check(option);
 				}}
 			>
-				<button
-					class="btn"
-					class:btn-success={question.correct === 1 && question.chosenOption === option}
-					class:btn-danger={question.correct === 0 && question.chosenOption === option}
-					>{option}</button
-				>
+				{#if showNextButton || showingGraded}
+					<button
+						class="btn"
+						class:correct={question.correct === 1 && question.chosenOption === option}
+						class:incorrect={question.correct === 0 && question.chosenOption === option}
+						>{option}</button
+					>
+				{:else}
+					<button class="btn" class:chosenBtn={question.chosenOption === option}>{option}</button>
+				{/if}
 			</li>
 		{/each}
 	</ul>
 </div>
 
 <style>
-	.options li .btn.btn-success {
+	.options li .btn.chosenBtn {
+		background-color: rgb(37, 0, 123);
+		color: #ffffff;
+	}
+	.options li .btn.correct {
 		background-color: greenyellow;
 		color: #000;
 	}
-	.options li .btn.btn-danger {
+	.options li .btn.incorrect {
 		background-color: red;
 		color: #fff;
 	}

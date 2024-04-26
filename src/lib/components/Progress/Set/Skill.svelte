@@ -13,6 +13,15 @@
 		learned = !learned;
 	}
 
+	async function addChapter() {
+		const chapter = await API.post('/chapters.json', {
+			title: 'untitled',
+			skill_id: skill.id
+		});
+
+		chapters = [...chapters, chapter];
+	}
+
 	async function fetchSkill() {
 		// console.log(skill);
 		if (expanded) return (expanded = false);
@@ -60,7 +69,12 @@
 		<div>{@html skill.description}</div>
 		<div class="expanded">
 			{#if chapters}
-				<div>Learn:</div>
+				<div>
+					Learn:
+					{#if $user && $user.admin}
+						<i class="fa fa-plus" on:click={() => addChapter()} />
+					{/if}
+				</div>
 				<ul class="chapters">
 					{#each chapters.filter((c) => c && c.title) as chapter}
 						<li on:click={selectedChapter.set(chapter)}>

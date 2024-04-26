@@ -19,6 +19,7 @@
 	let refreshed = 0;
 
 	let showNextButton = false;
+	let showSubmitButton = false;
 	let fakeLoad = false;
 
 	let questionIndex = 0;
@@ -207,7 +208,7 @@
 		</div>
 	{:else}
 		{#if verse && verse.folder}
-			<div class="text-center">
+			<div class="text-center ref-header">
 				{verse.ref}
 				{' '}
 				<span class="btn btn-info" on:click={() => nextVerse(true)}
@@ -250,6 +251,7 @@
 									<Question
 										{question}
 										{refreshed}
+										{showNextButton}
 										{showingGraded}
 										done={(payload, correct, chosenOption) => {
 											question.done = true;
@@ -263,7 +265,8 @@
 											) {
 												if (!blocks[questionIndex + 1]) return;
 												setTimeout(function () {
-													showNextButton = true;
+													showSubmitButton = true;
+													// showNextButton = true;
 													// questionIndex += 1;
 													// while (
 													// 	blocks[questionIndex] &&
@@ -279,11 +282,25 @@
 								<hr />
 							{/key}
 						{/each}
+						<br />
+						{#if showSubmitButton}
+							<button
+								class="btn btn-primary"
+								on:click={() => {
+									showNextButton = true;
+									showSubmitButton = false;
+								}}
+							>
+								Submit
+								<br />
+							</button>
+						{/if}
 						{#if showNextButton}
-							<div
+							<button
 								class="btn btn-primary"
 								on:click={() => {
 									showNextButton = false;
+									showSubmitButton = false;
 									fakeLoad = true;
 									questionIndex += 1;
 									while (blocks[questionIndex] && blocks[questionIndex].questions.length === 0) {
@@ -296,7 +313,7 @@
 							>
 								Next Question
 								<br />
-							</div>
+							</button>
 						{/if}
 					{/if}
 				</div>
@@ -308,6 +325,7 @@
 								<Question
 									{question}
 									{refreshed}
+									{showingGraded}
 									done={(payload) => {
 										question.done = true;
 										console.log({ question });
@@ -332,7 +350,11 @@
 				</div>
 				<p class="percentage text-center">{Math.round(progressBarPercentage)}%</p>
 				<hr />
-				<div class="btn btn-primary btn-lg" style="display:block;" on:click={() => nextVerse(true)}>
+				<div
+					class="btn btn-primary btn-lg next-random"
+					style="display:block;"
+					on:click={() => nextVerse(true)}
+				>
 					Next Random Verse
 				</div>
 			{/if}
@@ -429,4 +451,48 @@
 		padding-right: 0 !important;
 		margin-right: -14px !important;
 	} */
+
+	@media only screen and (max-width: 600px) {
+		.wrapper {
+			padding: 2em;
+			max-width: 90%;
+			margin: 0 auto;
+		}
+
+		.verse {
+			font-family: 'me_quran2' !important;
+			line-height: 2.4em;
+			font-size: 95px;
+			direction: rtl;
+			text-align: right;
+		}
+
+		.oneByOne {
+			max-width: 90%;
+			margin: 0 auto;
+			display: block;
+			font-size: 46px;
+		}
+
+		.oneByOne :global(button),
+		.oneByOne button {
+			font-size: 46px;
+		}
+
+		.ref-header {
+			font-size: 64px;
+		}
+
+		.progress {
+			height: 6rem;
+		}
+
+		.percentage {
+			font-size: 74px;
+		}
+
+		.next-random {
+			font-size: 74px;
+		}
+	}
 </style>

@@ -91,10 +91,12 @@
 		{@html game.video}
 	{/if}
 {/if}
-<div class="description">{@html game.description}</div>
+{#if game.description.length > 50}
+	<div class="description">{@html game.description}</div>
+{/if}
 <div class="wrapper">
 	<ol class="clean-list">
-		{#each game.folder.questions || [] as q}
+		{#each game.folder.questions.slice(0, 3) || [] as q}
 			<Question question={q} {showStatus} {percentage} sendStatusUp={handleStatus} />
 		{/each}
 	</ol>

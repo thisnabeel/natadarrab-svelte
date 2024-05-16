@@ -4,7 +4,7 @@
 	import Modal from '$lib/components/Modal/Index.svelte';
 	import { onMount } from 'svelte';
 	import { closeModal } from 'svelte-modals';
-
+	import Options from './Options.svelte';
 	export let verse;
 
 	let selectedSlice;
@@ -46,6 +46,13 @@
 			preventOutClick: false
 		});
 	}
+
+	function saveManifest(payload) {
+		console.log({ payload });
+		console.log({ selectedSlice });
+		selectedSlice.dataset.manifest = JSON.stringify(payload);
+		selectedSlice.dataset.wordType = payload.word_type;
+	}
 </script>
 
 <div class="verse">
@@ -76,6 +83,7 @@
 		</div>
 
 		{#if selectedSlice}
+			<Options {saveManifest} />
 			<div class="slice_details">
 				<table class="table">
 					<thead>
@@ -131,5 +139,13 @@
 
 	.ref.unready {
 		background-color: #ffc8c8;
+	}
+
+	:global([data-word-type='Ism']) {
+		background-color: #aeff86;
+	}
+
+	:global([data-word-type='Fil']) {
+		background-color: #f9dcff;
 	}
 </style>

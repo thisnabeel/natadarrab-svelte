@@ -8,10 +8,15 @@
 	// import Chapter from './Chapter.svelte';
 	import Chapter from '$lib/components/Chapters/Show.svelte';
 	// $: selectedSet = skillSets.find((s) => s.title === $selectedSet.id);
+	import SearchStudents from '../Students/Search.svelte';
+	import { user } from '$lib/stores/user';
 </script>
 
 <div class="content">
 	<Nav />
+	{#if $user && $user.admin}
+		<SearchStudents />
+	{/if}
 
 	{#if $selectedGame}
 		<Game game={$selectedGame} />

@@ -40,8 +40,12 @@
 
 <!-- svelte-ignore a11y-click-events-have-key-events -->
 <div class="wrapper">
-	<div class="deckHead" on:click={fetchSkill}>
-		<span class="title">{skill.title}</span>
+	<div class="deckHead" class:learned on:click={fetchSkill}>
+		<span class="title"
+			>{skill.title}
+			<hr style="color:#ccc;margin: 10px;" />
+			<small style="font-size; 12px;color: #404040">{@html skill.description}</small>
+		</span>
 
 		{#if $user && $user.admin}
 			<div class="pull-right clean-a btn-warning btn test-now edit-deck">
@@ -66,7 +70,6 @@
 	</div>
 
 	{#if expanded}
-		<div>{@html skill.description}</div>
 		<div class="expanded">
 			{#if chapters}
 				<div>
@@ -136,7 +139,8 @@
 		font-size: 22px;
 		color: #291f13;
 		margin: 10px;
-		background: #e4ebc2;
+		/* background: #e4ebc2; */
+		background-color: #f0dbc3;
 		border-radius: 7px;
 	}
 
@@ -154,5 +158,9 @@
 		padding: 10px;
 		border-top: 1px solid #ccc;
 		margin-top: 10px;
+	}
+
+	.deckHead.learned {
+		background-color: #a4ffbb;
 	}
 </style>

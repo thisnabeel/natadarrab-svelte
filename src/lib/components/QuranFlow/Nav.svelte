@@ -7,7 +7,7 @@
 	import { page } from '$app/stores';
 	import { onMount } from 'svelte';
 	import Search from '../Dashboard/Search/Search.svelte';
-	import { segments, editMode } from '$lib/stores/quranflow';
+	import { segments, editMode, flow, selectedSurah } from '$lib/stores/quranflow';
 	import { user } from '$lib/stores/user';
 
 	let searchInput = '';
@@ -20,8 +20,10 @@
 			const ref_surah = ref_verses.split(':')[0];
 			surah = ref_surah;
 			fetchSurah(surah);
+			selectedSurah.set(surah);
 		} else {
 			fetchSurah('1');
+			selectedSurah.set(surah);
 		}
 	});
 
@@ -32,6 +34,7 @@
 		path += ladder.join('/');
 		goto(path);
 		fetchSurah(s);
+		selectedSurah.set(s);
 	}
 
 	function expandRange(rangeString) {
@@ -76,7 +79,9 @@
 
 <div class="top-nav">
 	<div class="head">
-		<span>Qur'anFlow</span>
+		<span on:click={() => flow.set(!$flow)}
+			>Qur'an<span class="gray" class:flow={$flow}>Flow</span></span
+		>
 		<!-- <img class="mini-header" src="/quranflow.png"> -->
 		<div class="select-holder">
 			<select
@@ -349,5 +354,13 @@
 		border-left: 2px solid #eee;
 		margin-left: 20px;
 		z-index: 999999;
+	}
+
+	.gray {
+		color: #ccc;
+	}
+
+	.gray.flow {
+		color: #000;
 	}
 </style>

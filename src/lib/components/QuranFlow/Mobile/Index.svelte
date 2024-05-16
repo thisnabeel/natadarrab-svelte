@@ -5,6 +5,7 @@
 	import Segment from './Segment.svelte';
 	import API from '$lib/api/api.js';
 	import Spinner from '../../Spinner/Spinner.svelte';
+
 	import Playlist from '../Dig/Playlist.svelte';
 	import {
 		grid,
@@ -12,7 +13,8 @@
 		selectedSegment,
 		rightNavTab,
 		segments,
-		editMode
+		editMode,
+		flow
 	} from '$lib/stores/quranflow';
 	import { page } from '$app/stores';
 	import { user } from '$lib/stores/user';
@@ -20,6 +22,7 @@
 
 	import Notes from '../Dig/Notes.svelte';
 	import Word from './Gopher/Word.svelte';
+	import NonFlow from './NonFlow.svelte';
 	let trans = null;
 
 	// Function to fetch and parse JSON from a local file
@@ -120,14 +123,18 @@
 	<Nav {fetchSurah} />
 </div>
 <div class="wrapper">
-	{#if $segments && !loadingSurah}
-		<div class="summary">
-			{#each $segments as segment}
-				<Segment {segment} {trans} select={() => selectSegment(segment)} />
-			{/each}
-		</div>
-	{:else if loadingSurah}
-		<Spinner>Loading Surah...</Spinner>
+	{#if $flow}
+		{#if $segments && !loadingSurah}
+			<div class="summary">
+				{#each $segments as segment}
+					<Segment {segment} {trans} select={() => selectSegment(segment)} />
+				{/each}
+			</div>
+		{:else if loadingSurah}
+			<Spinner>Loading Surah...</Spinner>
+		{/if}
+	{:else}
+		<NonFlow />
 	{/if}
 </div>
 
@@ -149,14 +156,18 @@
 		position: fixed;
 		top: 0;
 		width: 100%;
+
+		background: #fff;
+		z-index: 9999;
 	}
 	.summary {
-		margin-top: 80px;
+		margin-top: 10px;
 		padding: 32px;
 	}
 	.wrapper {
 		max-width: 100%;
 		overflow-x: hidden;
+		margin-top: 70px;
 	}
 	.nav li {
 		padding: 10px;

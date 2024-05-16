@@ -11,3 +11,5 @@ export const segments = writable([], (s) => {
 	console.log('got segments');
 	return () => console.log('no segments');
 });
+export const flow = writable(true);
+export const selectedSurah = writable(1);

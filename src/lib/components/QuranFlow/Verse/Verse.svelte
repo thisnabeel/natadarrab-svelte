@@ -49,13 +49,14 @@
 	}
 
 	$: trans_ref = Number(verse.item.ref.split(':')[1] - 1);
-	$: translation = trans[trans_ref] ? trans[trans_ref].text : null;
+	$: translation = trans ? (trans[trans_ref] ? trans[trans_ref].text : null) : null;
 </script>
 
 <li class="verse">
 	{#if sliced}
 		<div class="iraab" style="padding: 1em;">
 			<VerseSliced {selectSlice} lineHeight={'2.5em'} html={verse.iraab} />
+			<span class="ref">{verse.item.ref}</span>
 		</div>
 	{:else}
 		{verse.arabic} <span class="ref">{verse.item.ref}</span>

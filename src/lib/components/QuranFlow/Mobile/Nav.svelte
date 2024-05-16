@@ -7,7 +7,7 @@
 	import { page } from '$app/stores';
 	import { onMount } from 'svelte';
 	import Search from '../../Dashboard/Search/Search.svelte';
-	import { segments, editMode } from '$lib/stores/quranflow';
+	import { segments, editMode, flow, selectedSurah } from '$lib/stores/quranflow';
 	import { user } from '$lib/stores/user';
 
 	let searchInput = '';
@@ -20,8 +20,10 @@
 			const ref_surah = ref_verses.split(':')[0];
 			surah = ref_surah;
 			fetchSurah(surah);
+			selectedSurah.set(surah);
 		} else {
 			fetchSurah('1');
+			selectedSurah.set('1');
 		}
 	});
 
@@ -32,6 +34,7 @@
 		path += ladder.join('/');
 		goto(path);
 		fetchSurah(s);
+		selectedSurah.set(s);
 	}
 
 	function expandRange(rangeString) {
@@ -77,6 +80,9 @@
 <div class="top-nav">
 	<div class="head">
 		<!-- <img class="mini-header" src="/quranflow.png"> -->
+		<span style="padding:12px;" on:click={() => flow.set(!$flow)}
+			>Qur'an<span class="gray" class:flow={$flow}>Flow</span></span
+		>
 		<div class="select-holder">
 			<select
 				class="surah-select"
@@ -269,6 +275,8 @@
 	}
 	.top-nav {
 		padding: 0;
+		z-index: 999;
+		background-color: #fff;
 		display: flex;
 		-webkit-box-align: center;
 		align-items: center;
@@ -283,6 +291,7 @@
 	}
 
 	.top-nav .head {
+		background-color: #fff;
 		height: 48px;
 		display: flex;
 		-webkit-box-align: center;
@@ -354,5 +363,13 @@
 		border-left: 2px solid #eee;
 		/* margin-left: 20px; */
 		z-index: 999999;
+	}
+
+	.gray {
+		color: #ccc;
+	}
+
+	.flow.gray {
+		color: #000;
 	}
 </style>

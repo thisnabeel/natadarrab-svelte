@@ -6,20 +6,22 @@
 	import API from '$lib/api/api.js';
 	import Spinner from '../../Spinner/Spinner.svelte';
 	import Playlist from '../Dig/Playlist.svelte';
+	import NonFlow from './NonFlow.svelte';
 	import {
 		grid,
 		playlists,
 		selectedSegment,
 		rightNavTab,
 		segments,
-		editMode
+		editMode,
+		flow
 	} from '$lib/stores/quranflow';
 	import { page } from '$app/stores';
 	import { user } from '$lib/stores/user';
 	import Verse from '../Verse/Verse.svelte';
 	import Notes from '../Dig/Notes.svelte';
 	let trans = null;
-
+	let selectedSurah = 1;
 	// Function to fetch and parse JSON from a local file
 	const fetchJsonData = async () => {
 		try {
@@ -82,12 +84,15 @@
 		let verse = surah;
 		const s = surah.split(':')[0];
 		surah = s;
+		selectedSurah = s;
 
-		segments.set(await Api.get(`/quranflow/surah/${surah}.json`));
-		console.log('segments', $segments);
-		loadingSurah = false;
+		if ($flow) {
+			segments.set(await Api.get(`/quranflow/surah/${surah}.json`));
+			console.log('segments', $segments);
+			loadingSurah = false;
 
-		findSegmentByVerse(verse.split('-')[0]);
+			findSegmentByVerse(verse.split('-')[0]);
+		}
 	}
 
 	function findSegmentByVerse(verse) {
@@ -136,71 +141,76 @@
 </svelte:head>
 
 <Nav {fetchSurah} />
-<div class={'wrapper ' + $grid}>
-	<div class="left-col">
-		{#if $segments && !loadingSurah}
-			<div class="summary">
-				{#each $segments as segment}
-					<Segment {segment} select={() => selectSegment(segment)} />
-				{/each}
-			</div>
-		{:else if loadingSurah}
-			<Spinner>Loading Surah...</Spinner>
-		{/if}
-	</div>
-	<div class="right-col">
-		{#if $selectedSegment}
-			{#if verses}
-				<ul class="verses">
-					{#each verses as verse}
-						<Verse
-							{verse}
-							trans={trans.quran.filter(
-								(obj) => obj.chapter === Number(verse.item.ref.split(':')[0])
-							)}
-						/>
-					{/each}
-				</ul>
-			{/if}
 
-			{#if loadingSegment}
-				<Spinner>Loading Verses...</Spinner>
+{#if $flow}
+	<div class={'wrapper ' + $grid}>
+		<div class="left-col">
+			{#if $segments && !loadingSurah}
+				<div class="summary">
+					{#each $segments as segment}
+						<Segment {segment} select={() => selectSegment(segment)} />
+					{/each}
+				</div>
+			{:else if loadingSurah}
+				<Spinner>Loading Surah...</Spinner>
 			{/if}
-		{:else}
-			<div class="cta-right">
-				No Selected Passage yet. Click one of the sentences on the left to show it's corresponding
-				verses.
-			</div>
-		{/if}
-	</div>
-	{#if $selectedSegment && $user && $user.admin}
-		<div class="extra-right-col">
-			{#if $rightNavTab > 0}
-				{#if $rightNavTab === 1}
-					<Playlist bg={'aliceblue'} />
+		</div>
+		<div class="right-col">
+			{#if $selectedSegment}
+				{#if verses}
+					<ul class="verses">
+						{#each verses as verse}
+							<Verse
+								{verse}
+								trans={trans.quran.filter(
+									(obj) => obj.chapter === Number(verse.item.ref.split(':')[0])
+								)}
+							/>
+						{/each}
+					</ul>
 				{/if}
-				{#if $rightNavTab === 2}
-					<Playlist bg={'aliceblue'} />
-				{/if}
-				{#if $rightNavTab === 3}
-					<Playlist bg={'aliceblue'} />
-				{/if}
-				{#if $rightNavTab === 4}
-					<Notes bg={'aliceblue'} />
+
+				{#if loadingSegment}
+					<Spinner>Loading Verses...</Spinner>
 				{/if}
 			{:else}
-				<div class="menu">
-					<ul class="clean-list">
-						<li on:click={() => rightNavTab.set(1)}>Playlists</li>
-						<li on:click={() => rightNavTab.set(2)}>Tags</li>
-						<li on:click={() => rightNavTab.set(3)}>Gifs</li>
-						<li on:click={() => rightNavTab.set(4)}>Notes</li>
-					</ul>
+				<div class="cta-right">
+					No Selected Passage yet. Click one of the sentences on the left to show it's corresponding
+					verses.
 				</div>
 			{/if}
 		</div>
-	{/if}
-</div>
+		{#if $selectedSegment && $user && $user.admin}
+			<div class="extra-right-col">
+				{#if $rightNavTab > 0}
+					{#if $rightNavTab === 1}
+						<Playlist bg={'aliceblue'} />
+					{/if}
+					{#if $rightNavTab === 2}
+						<Playlist bg={'aliceblue'} />
+					{/if}
+					{#if $rightNavTab === 3}
+						<Playlist bg={'aliceblue'} />
+					{/if}
+					{#if $rightNavTab === 4}
+						<Notes bg={'aliceblue'} />
+					{/if}
+				{:else}
+					<div class="menu">
+						<ul class="clean-list">
+							<li on:click={() => rightNavTab.set(1)}>Playlists</li>
+							<li on:click={() => rightNavTab.set(2)}>Tags</li>
+							<li on:click={() => rightNavTab.set(3)}>Gifs</li>
+							<li on:click={() => rightNavTab.set(4)}>Notes</li>
+						</ul>
+					</div>
+				{/if}
+			</div>
+		{/if}
+	</div>
+{:else}
+	<NonFlow />
+{/if}
 
 <style>
 	.nav li {

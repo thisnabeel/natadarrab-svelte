@@ -129,7 +129,7 @@
 
 				<!-- <a on:click={() => admin.set(!$admin)}><span class="fa button fa-toggle-on"></span></a> -->
 
-				{#each ($user && $user.admin ? adminButtons : buttons) || [] as button}
+				{#each ($user && ($user.admin || $user.teacher ? adminButtons : buttons)) || [] as button}
 					{#if button.divider}
 						<hr />
 					{:else}

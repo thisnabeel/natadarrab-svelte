@@ -5,6 +5,7 @@
 	import SelectedGame from './Game/Edit.svelte';
 	import ListItem from './ListItem.svelte';
 	import debounceSave from '$lib/functions/debounce';
+	import { user } from '$lib/stores/user';
 
 	let games = [];
 	let selectedGame = null;
@@ -294,10 +295,12 @@
 <div class="content">
 	<Nav />
 
-	<div class="createGame inline-form">
-		<input type="text" class="form-control" placeholder="Create Game" bind:value={newGameTitle} />
-		<div class="btn btn-info" on:click={createGame}><i class="fa fa-plus" /></div>
-	</div>
+	{#if $user && $user.admin}
+		<div class="createGame inline-form">
+			<input type="text" class="form-control" placeholder="Create Game" bind:value={newGameTitle} />
+			<div class="btn btn-info" on:click={createGame}><i class="fa fa-plus" /></div>
+		</div>
+	{/if}
 
 	<div class="wrapper">
 		{#if !visitingGame}

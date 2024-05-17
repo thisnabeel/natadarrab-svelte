@@ -1,6 +1,6 @@
 <script>
 	import API from '$lib/api/api';
-	import { selectedSet, selectedGame, selectedChapter } from '../store';
+	import { selectedSet, selectedGame, selectedChapter, selectedTab } from '../store';
 	import { onMount } from 'svelte';
 
 	let skillSets = [];
@@ -47,8 +47,12 @@
 		</div>
 	{:else}
 		<div class="nav">
-			<div class="tab activeTab">Lessons</div>
-			<div class="tab">Mastery</div>
+			<div class="tab" class:activeTab={$selectedTab === 0} on:click={() => selectedTab.set(0)}>
+				Lessons
+			</div>
+			<div class="tab" class:activeTab={$selectedTab === 1} on:click={() => selectedTab.set(1)}>
+				Mastery
+			</div>
 
 			<br />
 		</div>

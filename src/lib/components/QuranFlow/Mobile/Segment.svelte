@@ -9,7 +9,6 @@
 
 	export let segment;
 
-	export let trans;
 	export let selected = false;
 	let verses;
 
@@ -151,12 +150,7 @@
 			/>
 			{#each segment.versesList as verse, index}
 				{#if index === shownVerseIndex}
-					<Verse
-						{verse}
-						trans={trans.quran.filter(
-							(obj) => obj.chapter === Number(verse.item.ref.split(':')[0])
-						)}
-					/>
+					<Verse {verse} />
 				{/if}
 			{/each}
 		</ul>

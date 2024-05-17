@@ -23,22 +23,6 @@
 	import Notes from '../Dig/Notes.svelte';
 	import Word from './Gopher/Word.svelte';
 	import NonFlow from './NonFlow.svelte';
-	let trans = null;
-
-	// Function to fetch and parse JSON from a local file
-	const fetchJsonData = async () => {
-		try {
-			const response = await fetch('/translations/english/eng-abdelhaleem.json');
-
-			if (!response.ok) {
-				throw new Error('Failed to fetch JSON data');
-			}
-			trans = await response.json();
-			console.log(trans);
-		} catch (error) {
-			console.error(error);
-		}
-	};
 
 	// Call the function to fetch JSON data when the component is mounted
 
@@ -50,7 +34,6 @@
 	let content_playlists;
 
 	onMount(() => {
-		fetchJsonData();
 		fetchPlaylists();
 	});
 
@@ -127,7 +110,7 @@
 		{#if $segments && !loadingSurah}
 			<div class="summary">
 				{#each $segments as segment}
-					<Segment {segment} {trans} select={() => selectSegment(segment)} />
+					<Segment {segment} select={() => selectSegment(segment)} />
 				{/each}
 			</div>
 		{:else if loadingSurah}

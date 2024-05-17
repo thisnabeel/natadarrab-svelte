@@ -21,6 +21,8 @@
 	let trans = null;
 
 	// Function to fetch and parse JSON from a local file
+	import { translation } from '$lib/components/QuranFlow/store.js';
+
 	const fetchJsonData = async () => {
 		try {
 			const response = await fetch('/translations/english/eng-abdelhaleem.json');
@@ -28,8 +30,9 @@
 			if (!response.ok) {
 				throw new Error('Failed to fetch JSON data');
 			}
-			trans = await response.json();
-			console.log(trans);
+			translation.set(await response.json());
+			console.log('translation');
+			console.log($translation);
 		} catch (error) {
 			console.error(error);
 		}

@@ -1,13 +1,16 @@
 <script>
 	import API from '$lib/api/api';
 	import VerseSliced from '$lib/components/Quran/Verses/Verse/VerseSliced.svelte';
+
 	import { gopher } from '../Mobile/store';
+	import { translation } from '$lib/components/QuranFlow/store';
 
 	export let verse;
 	export let trans;
 	export let sliced = true;
 
-	$: console.log({ trans });
+	let showTranslation = false;
+
 	$: findEng = (ref) => {
 		const [c, v] = ref.split(':');
 
@@ -49,7 +52,16 @@
 	}
 
 	$: trans_ref = Number(verse.item.ref.split(':')[1] - 1);
-	$: translation = trans ? (trans[trans_ref] ? trans[trans_ref].text : null) : null;
+	// $: translation = trans ? (trans[trans_ref] ? trans[trans_ref].text : null) : null;
+	$: trans = $translation.quran.find(
+		(obj) =>
+			obj.chapter === Number(verse.item.ref.split(':')[0]) &&
+			obj.verse === Number(verse.item.ref.split(':')[1])
+	);
+	function toggleTranslation() {
+		console.log('clicked', trans);
+		showTranslation = !showTranslation;
+	}
 </script>
 
 <li class="verse">
@@ -57,13 +69,14 @@
 		<div class="iraab" style="padding: 1em;">
 			<VerseSliced {selectSlice} lineHeight={'2.5em'} html={verse.iraab} />
 			<span class="ref">{verse.item.ref}</span>
+			<i on:click={toggleTranslation} class="fa fa-language" />
 		</div>
 	{:else}
 		{verse.arabic} <span class="ref">{verse.item.ref}</span>
 	{/if}
-	{#if translation}
+	{#if showTranslation}
 		<div class="translation">
-			{translation}
+			{trans.text}
 		</div>
 	{/if}
 </li>

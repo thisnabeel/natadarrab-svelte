@@ -6,6 +6,8 @@
 	import { selectedSurah } from '$lib/stores/quranflow';
 	let verses;
 
+	let trans;
+
 	$: $selectedSurah && fetchVerses();
 
 	async function fetchVerses() {

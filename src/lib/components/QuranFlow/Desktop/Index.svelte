@@ -20,22 +20,9 @@
 	import { user } from '$lib/stores/user';
 	import Verse from '../Verse/Verse.svelte';
 	import Notes from '../Dig/Notes.svelte';
-	let trans = null;
+
 	let selectedSurah = 1;
 	// Function to fetch and parse JSON from a local file
-	const fetchJsonData = async () => {
-		try {
-			const response = await fetch('/translations/english/eng-abdelhaleem.json');
-
-			if (!response.ok) {
-				throw new Error('Failed to fetch JSON data');
-			}
-			trans = await response.json();
-			console.log(trans);
-		} catch (error) {
-			console.error(error);
-		}
-	};
 
 	// Call the function to fetch JSON data when the component is mounted
 
@@ -47,7 +34,6 @@
 	let content_playlists;
 
 	onMount(() => {
-		fetchJsonData();
 		fetchPlaylists();
 	});
 
@@ -160,12 +146,7 @@
 				{#if verses}
 					<ul class="verses">
 						{#each verses as verse}
-							<Verse
-								{verse}
-								trans={trans.quran.filter(
-									(obj) => obj.chapter === Number(verse.item.ref.split(':')[0])
-								)}
-							/>
+							<Verse {verse} />
 						{/each}
 					</ul>
 				{/if}

@@ -13,7 +13,7 @@
 		rightNavTab,
 		segments,
 		editMode
-	} from '$lib/stores/quranflow';
+	} from '$lib/components/QuranFlow/store';
 	import { page } from '$app/stores';
 	import { user } from '$lib/stores/user';
 	import Verse from './Verse/Verse.svelte';

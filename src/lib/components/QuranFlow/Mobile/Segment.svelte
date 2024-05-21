@@ -3,7 +3,7 @@
 	import API from '$lib/api/api';
 	import VerseSliced from '$lib/components/Quran/Verses/Verse/VerseSliced.svelte';
 	import Spinner from '$lib/components/Spinner/Spinner.svelte';
-	import { selectedSegment, editMode } from '$lib/stores/quranflow';
+	import { selectedSegment, editMode } from '$lib/components/QuranFlow/store';
 	import Gif from '../Gif.svelte';
 	import Verse from '../Verse/Verse.svelte';
 

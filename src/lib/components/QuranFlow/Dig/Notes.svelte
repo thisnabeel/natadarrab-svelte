@@ -1,7 +1,7 @@
 <script>
 	import { onMount } from 'svelte';
 	import Wrapper from './Wrapper.svelte';
-	import { grid, selectedNote, selectedSegment } from '$lib/stores/quranflow';
+	import { grid, selectedNote, selectedSegment } from '$lib/components/QuranFlow/store';
 	import Note from './Note/Note.svelte';
 	import Writer from './Note/Writer.svelte';
 	import API from '$lib/api/api';

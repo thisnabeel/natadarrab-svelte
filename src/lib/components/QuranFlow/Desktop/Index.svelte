@@ -7,6 +7,9 @@
 	import Spinner from '../../Spinner/Spinner.svelte';
 	import Playlist from '../Dig/Playlist.svelte';
 	import NonFlow from './NonFlow.svelte';
+	import Word from '../Mobile/Gopher/Word.svelte';
+	import { gopher } from '../store';
+
 	import {
 		grid,
 		playlists,
@@ -15,7 +18,7 @@
 		segments,
 		editMode,
 		flow
-	} from '$lib/stores/quranflow';
+	} from '$lib/components/QuranFlow/store';
 	import { page } from '$app/stores';
 	import { user } from '$lib/stores/user';
 	import Verse from '../Verse/Verse.svelte';
@@ -127,6 +130,14 @@
 </svelte:head>
 
 <Nav {fetchSurah} />
+
+{#if $gopher.kind && $gopher.item}
+	<div class="gopher">
+		{#if $gopher.kind === 'word'}
+			<Word word={$gopher.item} />
+		{/if}
+	</div>
+{/if}
 
 {#if $flow}
 	<div class={'wrapper ' + $grid}>
@@ -284,5 +295,12 @@
 		font-size: 24px;
 
 		color: #7a9a7a;
+	}
+
+	.gopher {
+		position: fixed;
+		bottom: 0;
+		width: 95vw;
+		z-index: 9999;
 	}
 </style>

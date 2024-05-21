@@ -7,7 +7,7 @@
 	import { page } from '$app/stores';
 	import { onMount } from 'svelte';
 	import Search from '../../Dashboard/Search/Search.svelte';
-	import { segments, editMode, flow, selectedSurah } from '$lib/stores/quranflow';
+	import { segments, editMode, flow, selectedSurah } from '$lib/components/QuranFlow/store';
 	import { user } from '$lib/stores/user';
 
 	let searchInput = '';

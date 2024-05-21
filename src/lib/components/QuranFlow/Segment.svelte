@@ -1,7 +1,7 @@
 <script>
 	import { page } from '$app/stores';
 	import API from '$lib/api/api';
-	import { selectedSegment, editMode } from '$lib/stores/quranflow';
+	import { selectedSegment, editMode } from '$lib/components/QuranFlow/store';
 	import Gif from './Gif.svelte';
 
 	export let segment;

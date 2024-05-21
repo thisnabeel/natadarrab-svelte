@@ -1,6 +1,6 @@
 <script>
 	import API from '$lib/api/api';
-	import { gopher } from '../store';
+	import { gopher } from '$lib/components/QuranFlow/store';
 	export let word;
 	console.log({ word });
 	$: base = word.v_word || word.nv_word;
@@ -8,33 +8,55 @@
 	$: translation = word.nv_translation || word.v_translation;
 	let rootWords = [];
 
+	let deeperWord = null;
+
 	async function findMoreRoot() {
 		rootWords = await API.post(`/qf/find_root_words.json`, {
 			root: root
 		});
 		console.log({ rootWords });
 	}
+
+	async function findWord(category, id) {
+		deeperWord = await API.get('/' + category + '/' + id + '.json');
+	}
 </script>
 
 <article>
 	{#if rootWords && (rootWords.non_verbs || rootWords.verbs)}
-		<div class="rootWords">
-			<small>NonVerbs:</small>
-			<ul>
-				{#each rootWords.non_verbs || [] as non_verb}
-					<li>{non_verb.nv_word} <br /><small>{non_verb.nv_translation}</small></li>
-				{/each}
-			</ul>
-			<small>Verbs:</small>
-			<ul>
-				{#each rootWords.verbs || [] as verb}
-					<li>{verb.v_word} <br /><small>{verb.v_translation}</small></li>
-				{/each}
-			</ul>
+		<div class="rootWords top-row">
+			<div class="flex">
+				<div class="left-col">
+					<small>NonVerbs:</small>
+					<ul>
+						{#each rootWords.non_verbs || [] as non_verb}
+							<li on:click={() => findWord('non_verbs', non_verb.id)}>
+								{non_verb.nv_word} <br /><small>{non_verb.nv_translation}</small>
+							</li>
+						{/each}
+					</ul>
+
+					<small>Verbs:</small>
+					<ul>
+						{#each rootWords.verbs || [] as verb}
+							<li on:click={() => findWord('verbs', verb.id)}>
+								{verb.v_word} <br /><small>{verb.v_translation}</small>
+							</li>
+						{/each}
+					</ul>
+				</div>
+				<div class="right-col">
+					{#if deeperWord}
+						<div class="deeper">
+							<h1>{deeperWord.nv_word || deeperWord.v_word}</h1>
+						</div>
+					{/if}
+				</div>
+			</div>
 		</div>
 	{/if}
 
-	<div class="word-container">
+	<div class="word-container bottom-row">
 		{#if root}
 			<h1 class="root" on:click={() => findMoreRoot()}>{root}</h1>
 		{/if}
@@ -85,15 +107,28 @@
 	}
 	article {
 		background-color: #fff1de;
-		width: 100%;
+		/* width: 100%;
 		display: block;
 		position: relative;
-		padding-bottom: 32px;
+		padding-bottom: 32px; */
+		display: flex;
+		flex-direction: column;
+		height: 100%;
+		z-index: 999999999;
 	}
 
-	article > div {
-		padding: 10px;
+	.top-row {
+		flex: 0 1 80%;
+		overflow: scroll;
+		/* background-color: lightblue; */
 	}
+	.bottom-row {
+		flex: 0 1 20%;
+		/* background-color: lightcoral; */
+	}
+	/* article > div {
+		padding: 10px;
+	} */
 
 	.root {
 		font-size: 24px;

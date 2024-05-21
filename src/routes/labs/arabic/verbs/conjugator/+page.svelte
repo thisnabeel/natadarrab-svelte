@@ -13,7 +13,7 @@
 
 	function handleDelivery(payload) {
 		console.log(payload);
-		chosenVerb = payload;
+		chosenVerb = payload.word;
 		searchInput = '';
 		words = [];
 	}
@@ -44,7 +44,7 @@
 	$: console.log(chosenLetters);
 </script>
 
-<h1>Verb Lab:</h1>
+<h1 class="page-title">Sarf Lab:</h1>
 
 <Search deliver={handleDelivery} show={true} searchInput={''} {words} />
 <hr />
@@ -242,6 +242,7 @@
 
 	.chosen {
 		padding: 12px;
+		font-size: 38px;
 	}
 
 	.inputted {
@@ -293,5 +294,9 @@
 	.suffix,
 	.prefix {
 		color: #ff4545;
+	}
+
+	.page-title {
+		font-size: 34px;
 	}
 </style>

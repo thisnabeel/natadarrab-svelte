@@ -181,7 +181,8 @@
 			on:click={async () => {
 				await deliver({
 					action: 'word',
-					query: searchInput
+					query: searchInput,
+					word: word
 				});
 				rows = [];
 				words = [];

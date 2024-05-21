@@ -15,10 +15,10 @@
 		segments,
 		editMode,
 		flow
-	} from '$lib/stores/quranflow';
+	} from '$lib/components/QuranFlow/store';
 	import { page } from '$app/stores';
 	import { user } from '$lib/stores/user';
-	import { gopher } from './store';
+	import { gopher } from '$lib/components/QuranFlow/store';
 
 	import Notes from '../Dig/Notes.svelte';
 	import Word from './Gopher/Word.svelte';

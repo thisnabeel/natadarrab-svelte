@@ -1,7 +1,7 @@
 <script>
 	import { onMount } from 'svelte';
 	import Writer from './Writer.svelte';
-	import { selectedNote } from '$lib/stores/quranflow';
+	import { selectedNote } from '$lib/components/QuranFlow/store';
 	import API from '$lib/api/api';
 	import Spinner from '$lib/components/Spinner/Spinner.svelte';
 

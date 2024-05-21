@@ -2,12 +2,14 @@
 	import API from '$lib/api/api';
 	import VerseSliced from '$lib/components/Quran/Verses/Verse/VerseSliced.svelte';
 
-	import { gopher } from '../Mobile/store';
-	import { translation } from '$lib/components/QuranFlow/store';
+	import { gopher, grid, translation } from '$lib/components/QuranFlow/store';
 
 	export let verse;
 	export let trans;
 	export let sliced = true;
+	export let inline = false;
+
+	export let expandable = false;
 
 	let showTranslation = false;
 
@@ -64,24 +66,51 @@
 	}
 </script>
 
-<li class="verse">
-	{#if sliced}
-		<div class="iraab" style="padding: 1em;">
-			<VerseSliced {selectSlice} lineHeight={'2.5em'} html={verse.iraab} />
-			<span class="ref">{verse.item.ref}</span>
-			<i on:click={toggleTranslation} class="fa fa-language" />
-		</div>
-	{:else}
-		{verse.arabic} <span class="ref">{verse.item.ref}</span>
-	{/if}
-	{#if showTranslation}
-		<div class="translation">
-			{trans.text}
-		</div>
-	{/if}
-</li>
+{#if inline}
+	<span class="iraab inline" class:showTranslation>
+		<VerseSliced {selectSlice} lineHeight={'2.5em'} html={verse.iraab} />
+		<span class="ref" on:click={toggleTranslation}
+			>{verse.item.ref.split(':')[1]}
+			<i class="fa fa-language toggle-translate" />
+		</span>
+		{#if showTranslation}
+			<div class="translation">
+				{trans.text}
+			</div>
+		{/if}
+		{#if showTranslation && expandable}
+			<i
+				class="fa fa-arrow-right expand"
+				on:click={() => {
+					grid.set('default');
+				}}
+			/>
+		{/if}
+	</span>
+{:else}
+	<li class="verse">
+		{#if sliced}
+			<div class="iraab" style="padding: 1em;">
+				<VerseSliced {selectSlice} lineHeight={'2.5em'} html={verse.iraab} />
+				<span class="ref">{verse.item.ref} </span>
+				<i on:click={toggleTranslation} class="fa fa-language" />
+			</div>
+		{:else}
+			{verse.arabic} <span class="ref">{verse.item.ref}</span>
+		{/if}
+		{#if showTranslation}
+			<div class="translation">
+				{trans.text}
+			</div>
+		{/if}
+	</li>
+{/if}
 
 <style>
+	.inline :global(> div) {
+		display: inline;
+		unicode-bidi: bidi-override;
+	}
 	.verse {
 		padding: 20px;
 		font-size: 24px;
@@ -98,10 +127,55 @@
 		line-height: 24px;
 		text-align: left;
 		padding: 10px;
-		border-top: 1px solid #ccc;
+		border-bottom: 1px solid #ccc;
 		margin-top: 20px;
 		padding-top: 20px;
 		font-family: Arial, sans-serif;
 		color: #35281e;
+	}
+
+	.inline .translation {
+		display: block;
+		text-align: left;
+		font-size: 24px;
+		line-height: 34px;
+	}
+
+	.inline .ref {
+		font-size: 24px;
+		color: #86aece;
+		background: #f8f6f6;
+		padding: 10px;
+		position: relative;
+		text-align: center;
+		display: inline-block;
+		margin: 0 8px;
+	}
+
+	.inline .toggle-translate {
+		position: absolute;
+		bottom: -10px;
+		left: 0;
+		right: 0;
+
+		font-size: 15px;
+		left: 50%;
+		transform: translateX(-50%);
+	}
+
+	.inline.showTranslation {
+		/* display: block; */
+	}
+
+	.iraab {
+		position: relative;
+	}
+
+	.iraab .expand {
+		position: absolute;
+		right: -60px;
+		bottom: 50%;
+		background-color: rgb(238, 216, 235);
+		padding: 10px;
 	}
 </style>

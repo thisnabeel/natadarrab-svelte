@@ -1,5 +1,5 @@
 <script>
-	import { grid, rightNavTab, selectedNote } from '$lib/stores/quranflow';
+	import { grid, rightNavTab, selectedNote } from '$lib/components/QuranFlow/store';
 
 	export let bg;
 	export let title;

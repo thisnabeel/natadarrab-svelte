@@ -3,7 +3,7 @@
 	import { onMount } from 'svelte';
 	import Verse from '../Verse/Verse.svelte';
 
-	import { selectedSurah } from '$lib/stores/quranflow';
+	import { selectedSurah } from '$lib/components/QuranFlow/store';
 	let verses;
 
 	$: $selectedSurah && fetchVerses();

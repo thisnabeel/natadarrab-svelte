@@ -5,7 +5,7 @@
 		playlists,
 		selectedSegmentContentPlaylists,
 		selectedSegment
-	} from '$lib/stores/quranflow';
+	} from '$lib/components/QuranFlow/store';
 	import Wrapper from './Wrapper.svelte';
 
 	export let bg = 'fff';

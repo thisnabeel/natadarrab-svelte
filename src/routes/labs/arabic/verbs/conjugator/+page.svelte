@@ -3,8 +3,8 @@
 	let chosenVerb;
 	let words = [];
 	let stickers = {
-		prefixes: ['ي', 'ت', 'ن'],
-		suffixes: ['َت', 'تِ', 'تُ', 'تْ', 'َن', 'نَا', 'تُمَا', 'تُنَّ', 'تُمْ', 'وْنَ', 'ِينَ'],
+		prefixes: ['ي', 'ت', 'ن', 'ا'],
+		suffixes: ['تَ', 'تِ', 'تُ', 'َتْ', 'َن', 'نَا', 'تُمَا', 'تُنَّ', 'تُمْ', 'وْنَ', 'ِينَ'],
 		harakaat: ['َ', 'ِ', 'ُ', 'ْ'],
 		stretches: ['ا', 'ي', 'و']
 	};
@@ -46,13 +46,14 @@
 
 <h1 class="page-title">Sarf Lab:</h1>
 
-<Search deliver={handleDelivery} show={true} searchInput={''} {words} />
+<Search deliver={handleDelivery} show={true} searchInput={''} autostart={'n s r'} {words} />
 <hr />
 
 {#if chosenVerb}
 	<div class="built">
 		<div class="chosen">
 			<h1>
+				<p>Form {chosenVerb.v_form}</p>
 				{#each chosenVerb.v_word.split('/') as word, index}
 					<!-- svelte-ignore a11y-click-events-have-key-events -->
 					<span on:click={() => (chosenLetters = [...word.replace(' ', '').split('')])}
@@ -84,14 +85,26 @@
 			{#each stickers.suffixes as suffix}
 				<li
 					class="sticker"
-					on:click={() =>
-						(chosenLetters = [
-							...chosenLetters,
-							{
-								content: suffix,
-								category: 'suffix'
-							}
-						])}
+					on:click={() => {
+						if (chosenLetters.find((c) => c.content === suffix && c.category === 'suffix')) {
+							chosenLetters = chosenLetters.filter(
+								(c) => c.content !== suffix && c.category !== 'suffix'
+							);
+							return;
+						} else {
+							chosenLetters = chosenLetters.filter((c) => c.category !== 'suffix');
+							chosenLetters = [
+								...chosenLetters,
+								{
+									content: suffix,
+									category: 'suffix'
+								}
+							];
+						}
+					}}
+					class:chosenSuffix={chosenLetters.find(
+						(c) => c.content === suffix && c.category === 'suffix'
+					)}
 				>
 					{suffix}
 				</li>
@@ -114,6 +127,7 @@
 					on:mouseleave={() => hidePopup()}
 				>
 					<span
+						class="root-letter"
 						on:click={(e) => {
 							chosenLetters = [
 								...chosenLetters,
@@ -162,14 +176,25 @@
 							{#each stickers.harakaat as haraka}
 								<button
 									class="btn btn-outline-info"
-									on:click={() =>
-										(chosenLetters = [
-											{
-												content: prefix + haraka,
-												category: 'prefix'
-											},
-											...chosenLetters
-										])}>{haraka}</button
+									on:click={() => {
+										if (
+											chosenLetters.find((c) => c.content === prefix && c.category === 'prefix')
+										) {
+											chosenLetters = chosenLetters.filter(
+												(c) => c.content !== prefix && c.category !== 'prefix'
+											);
+											return;
+										} else {
+											chosenLetters = chosenLetters.filter((c) => c.category !== 'prefix');
+											chosenLetters = [
+												{
+													content: prefix + haraka,
+													category: 'prefix'
+												},
+												...chosenLetters
+											];
+										}
+									}}>{haraka}</button
 								>
 							{/each}
 						</div>
@@ -298,5 +323,26 @@
 
 	.page-title {
 		font-size: 34px;
+	}
+
+	.chosenSuffix,
+	.chosenPrefix {
+		background: #ff4545;
+		color: #fff;
+	}
+
+	.root-letter {
+		font-size: 34px;
+		display: inline-block;
+		padding: 10px;
+		background: #eee;
+		border-radius: 100%;
+		width: 74px;
+		height: 74px;
+		text-align: center;
+		margin: 6px;
+		top: -16px;
+		left: 16px;
+		position: relative;
 	}
 </style>

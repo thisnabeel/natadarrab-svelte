@@ -11,7 +11,26 @@
 	let suggesting = false;
 
 	export let words = [];
+	export let autostart;
 	let rows = [];
+
+	onMount(async () => {
+		if (autostart.length > 1) {
+			searchInput = autostart;
+			await findArabicWordsByRoot();
+
+			if (words) {
+				await deliver({
+					action: 'word',
+					query: searchInput,
+					word: words[0]
+				});
+				rows = [];
+				words = [];
+				suggesting = false;
+			}
+		}
+	});
 
 	async function findArabicWordsByRoot() {
 		// console.log(convertRomanToArabic(searchInput));

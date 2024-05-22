@@ -4,9 +4,10 @@
 	let words = [];
 	let stickers = {
 		prefixes: ['ي', 'ت', 'ن', 'ا'],
-		suffixes: ['تَ', 'تِ', 'تُ', 'َتْ', 'َن', 'نَا', 'تُمَا', 'تُنَّ', 'تُمْ', 'وْنَ', 'ِينَ'],
+		suffixes: ['تَ', 'تِ', 'تُ', 'تْ', 'نَ', 'نَا', 'تُمَا', 'تُنَّ', 'تُمْ', 'وْنَ', 'ينَ'],
 		harakaat: ['َ', 'ِ', 'ُ', 'ْ'],
-		stretches: ['ا', 'ي', 'و']
+		stretches: ['ا', 'ي', 'و'],
+		smoothie: ['ا', 'ي', 'و']
 	};
 	let searchInput = '';
 	let chosenLetters = [];
@@ -71,12 +72,13 @@
 				{/each}
 			</h1>
 			<!-- svelte-ignore a11y-click-events-have-key-events -->
-			{#if chosenLetters}
+			{#if chosenLetters && chosenLetters.length > 0}
 				<div class="fa fa-times clear" on:click={() => (chosenLetters = [])} />
 			{/if}
 		</div>
 	</div>
 	<hr />
+	<br />
 	<div class="flex">
 		<hr />
 		<!-- svelte-ignore a11y-click-events-have-key-events -->
@@ -145,20 +147,63 @@
 							{#each stickers.harakaat as haraka}
 								<button
 									class="btn btn-outline-info"
-									on:click={() =>
-										(chosenLetters = [
-											...chosenLetters,
-											{
-												content: root + haraka,
-												category: 'root'
-											}
-										])}>{haraka}</button
+									on:click={() => {
+										if (
+											chosenLetters.find((c) => c.content.includes(root) && c.category === 'root')
+										) {
+											const index = chosenLetters.findIndex(
+												(c) => c.content.includes(root) && c.category === 'root'
+											);
+											chosenLetters[index].content = root + haraka;
+											chosenLetters = chosenLetters;
+										} else {
+											chosenLetters = [
+												...chosenLetters,
+												{
+													content: root + haraka,
+													category: 'root'
+												}
+											];
+										}
+									}}>{haraka}</button
 								>
 							{/each}
 						</div>
 					{/if}
 				</li>
 			{/each}
+			{#if ['ي', 'و', 'ا'].some((char) => chosenVerb.v_root.split(' ').includes(char))}
+				<br /><br />
+				<hr />
+				<br /><br />
+				<h1>Blending Helpers</h1>
+				<ul class="stickers suffixes">
+					{#each stickers.smoothie as blender}
+						<li
+							class="sticker"
+							on:click={() => {
+								if (chosenLetters.find((c) => c.content === blender && c.category === 'blender')) {
+									chosenLetters = chosenLetters.filter(
+										(c) => c.content !== blender && c.category !== 'blender'
+									);
+									return;
+								} else {
+									chosenLetters = chosenLetters.filter((c) => c.category !== 'blender');
+									chosenLetters = [
+										...chosenLetters,
+										{
+											content: blender,
+											category: 'blender'
+										}
+									];
+								}
+							}}
+						>
+							{blender}
+						</li>
+					{/each}
+				</ul>
+			{/if}
 		</ul>
 
 		<ul class="stickers prefixes">
@@ -216,25 +261,6 @@
 	</div>
 
 	<hr />
-
-	<div class="flex">
-		<hr />
-		<!-- svelte-ignore a11y-click-events-have-key-events -->
-		<ul class="stickers suffixes">
-			<h1>Harakaat:</h1>
-			{#each stickers.harakaat as suffix}
-				<li class="sticker" on:click={() => (chosenLetters = [...chosenLetters, suffix])}>
-					{suffix}
-				</li>
-			{/each}
-			<br />
-			{#each stickers.stretches as suffix}
-				<li class="sticker" on:click={() => (chosenLetters = [...chosenLetters, suffix])}>
-					{suffix}
-				</li>
-			{/each}
-		</ul>
-	</div>
 {/if}
 
 <style>
@@ -288,10 +314,19 @@
 	}
 
 	.inputted .clear {
-		position: absolute;
+		/* position: absolute;
 		right: -40px;
 		color: #eee;
-		top: 20px;
+		top: 20px; */
+
+		position: absolute;
+		right: -80px;
+		bottom: 0;
+		color: #ffdcdc;
+		font-size: 34px;
+		border: 1px solid #eee;
+		padding: 20px;
+		border-radius: 10px;
 	}
 
 	.chosen > h1 {
@@ -310,16 +345,21 @@
 
 	.popup {
 		position: absolute;
-		bottom: -75px;
-		width: max-content;
-		right: 0;
-		left: 0;
+		bottom: -166px;
+		width: -moz-max-conten;
+		width: 180px;
+		/* right: 0; */
+		left: -70%;
 		padding: 10px;
 	}
 
 	.popup button {
 		margin: 2px;
 		font-size: 32px;
+		width: 52px;
+		padding: 10px;
+		/* background-color: #fff; */
+		z-index: 9999;
 	}
 
 	.sticker {
@@ -354,5 +394,13 @@
 		top: -16px;
 		left: 16px;
 		position: relative;
+	}
+
+	.root-letter:hover {
+		background-color: yellow;
+	}
+
+	.chosenSuffix:hover {
+		background-color: orange;
 	}
 </style>

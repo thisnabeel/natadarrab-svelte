@@ -169,6 +169,16 @@
 					class="sticker"
 					on:mouseenter={() => showPopupPrefix(prefix)}
 					on:mouseleave={() => hidePopup()}
+					class:chosenPrefix={chosenLetters.find(
+						(c) => c.content.includes(prefix) && c.category === 'prefix'
+					)}
+					on:click={() => {
+						if (chosenLetters.find((c) => c.content.includes(prefix) && c.category === 'prefix')) {
+							// console.log(chosenLetters);
+							// chosenLetters = chosenLetters.filter((c) => c.category !== 'prefix');
+							// return;
+						}
+					}}
 				>
 					{prefix}
 					{#if popup.visible && popup.prefix === prefix}

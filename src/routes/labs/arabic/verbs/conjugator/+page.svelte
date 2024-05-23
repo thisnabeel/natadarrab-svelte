@@ -12,6 +12,68 @@
 	let searchInput = '';
 	let chosenLetters = [];
 
+	let combos = [
+		// past
+		{ pronoun: 'You', tense: 'past', gender: 'm', suffix: ['تَ'], prefix: [] },
+		{ pronoun: 'You', tense: 'past', gender: 'f', suffix: ['تِ'], prefix: [] },
+		{ pronoun: 'You both', tense: 'past', gender: 'm/f', suffix: ['تُمَا'], prefix: [] },
+		{ pronoun: 'You All', tense: 'past', gender: 'm', suffix: ['تُمْ'], prefix: [] },
+		{ pronoun: 'You All', tense: 'past', gender: 'f', suffix: ['تُنَّ'], prefix: [] },
+		{ pronoun: 'I', tense: 'past', gender: 'm/f', suffix: ['تُ'], prefix: [] },
+		{ pronoun: 'We', tense: 'past', gender: 'm/f', suffix: ['نَا'], prefix: [] },
+		{ pronoun: 'She', tense: 'past', gender: 'm/f', suffix: ['تْ'], prefix: [] },
+		{ pronoun: 'They', tense: 'past', gender: 'm', suffix: ['وْنَ'], prefix: [] },
+		{ pronoun: 'They', tense: 'past', gender: 'f', suffix: ['نَ'], prefix: [] },
+
+		// present
+		{ pronoun: 'You', tense: 'present', gender: 'm', suffix: [], prefix: ['ت'] },
+		{ pronoun: 'You', tense: 'present', gender: 'f', suffix: ['ينَ'], prefix: ['ت'] },
+		// { pronoun: 'You both', tense: 'present', gender: 'm/f', suffix: [], prefix: [] },
+		{ pronoun: 'You All', tense: 'present', gender: 'm', suffix: ['وْنَ'], prefix: ['ت'] },
+		{ pronoun: 'You All', tense: 'present', gender: 'f', suffix: ['نَ'], prefix: ['ت'] },
+		{ pronoun: 'I', tense: 'present', gender: 'm/f', suffix: [], prefix: ['ا'] },
+		{ pronoun: 'We', tense: 'present', gender: 'm/f', suffix: [], prefix: ['ن'] },
+		{ pronoun: 'He', tense: 'present', gender: 'm/f', suffix: [], prefix: ['ي'] },
+		// { pronoun: 'She', tense: 'present', gender: 'm/f', suffix: [], prefix: [] },
+		{ pronoun: 'They', tense: 'present', gender: 'm', suffix: ['وْنَ'], prefix: ['ي'] },
+		{ pronoun: 'They', tense: 'present', gender: 'f', suffix: ['نَ'], prefix: ['ي'] }
+	];
+
+	function removeHaraka(letter) {
+		return letter.replace(/[\u064B-\u065F]/g, '');
+	}
+
+	function findBestCombo(chosenLetters) {
+		let chosenSuffixes = chosenLetters
+			.filter((letter) => letter.category === 'suffix')
+			.map((letter) => letter.content);
+		let chosenPrefixes = chosenLetters
+			.filter((letter) => letter.category === 'prefix')
+			.map((letter) => removeHaraka(letter.content));
+
+		for (let combo of combos) {
+			let comboSuffixes = combo.suffix;
+			let comboPrefixes = combo.prefix.map(removeHaraka);
+
+			let suffixMatch =
+				comboSuffixes.every((suffix) => chosenSuffixes.includes(suffix)) &&
+				chosenSuffixes.every((suffix) => comboSuffixes.includes(suffix));
+			let prefixMatch =
+				comboPrefixes.every((prefix) => chosenPrefixes.includes(prefix)) &&
+				chosenPrefixes.every((prefix) => comboPrefixes.includes(prefix));
+
+			if (suffixMatch && prefixMatch) {
+				return combo;
+			}
+		}
+
+		return null; // If no matching combo is found
+	}
+
+	let bestCombo = null;
+
+	$: bestCombo = findBestCombo(chosenLetters);
+
 	function handleDelivery(payload) {
 		console.log(payload);
 		chosenVerb = payload.word;
@@ -65,17 +127,24 @@
 			</h1>
 		</div>
 
-		<div class="inputted">
-			<h1>
-				{#each chosenLetters as letter}
-					<span class={letter.category}>{letter.content}</span>
-				{/each}
-			</h1>
-			<!-- svelte-ignore a11y-click-events-have-key-events -->
-			{#if chosenLetters && chosenLetters.length > 0}
+		{#if chosenLetters && chosenLetters.length > 0}
+			<div class="inputted">
+				<h1>
+					{#each chosenLetters as letter}
+						<span class={letter.category}>{letter.content}</span>
+					{/each}
+				</h1>
+				<!-- svelte-ignore a11y-click-events-have-key-events -->
 				<div class="fa fa-times clear" on:click={() => (chosenLetters = [])} />
+			</div>
+
+			{#if bestCombo && bestCombo.pronoun}
+				<div class="rendered">
+					{bestCombo.pronoun}
+					{bestCombo.gender}.
+				</div>
 			{/if}
-		</div>
+		{/if}
 	</div>
 	<hr />
 	<br />
@@ -116,10 +185,7 @@
 		<ul class="stickers roots rtl">
 			<h1 style="direction: ltr">
 				<!-- svelte-ignore a11y-click-events-have-key-events -->
-				<span
-					style="color: blue;"
-					on:click={() => (chosenLetters = [...chosenVerb.v_root.split(' ')])}>Root</span
-				> Letters:
+				<span style="color: blue;"> Letters: </span>
 			</h1>
 			{#each chosenVerb.v_root.split(' ') as root}
 				<!-- svelte-ignore a11y-click-events-have-key-events -->
@@ -368,7 +434,7 @@
 
 	.suffix,
 	.prefix {
-		color: #ff4545;
+		color: #a24c09;
 	}
 
 	.page-title {
@@ -377,7 +443,7 @@
 
 	.chosenSuffix,
 	.chosenPrefix {
-		background: #ff4545;
+		background: #a24c09;
 		color: #fff;
 	}
 
@@ -402,5 +468,16 @@
 
 	.chosenSuffix:hover {
 		background-color: orange;
+	}
+
+	.rendered {
+		background: #eee;
+		display: inline-block;
+		padding: 10px;
+		margin: 20px;
+		border-radius: 10px;
+		font-size: 34px;
+		font-weight: bolder;
+		color: #a34c09;
 	}
 </style>

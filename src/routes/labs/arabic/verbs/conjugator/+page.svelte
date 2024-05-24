@@ -12,31 +12,142 @@
 	let searchInput = '';
 	let chosenLetters = [];
 
+	let amness = [
+		{ list: ['You', 'You All', 'They All', 'They', 'You Both', 'We'], amness: 'are' },
+		{ list: ['I'], amness: 'am' },
+		{ list: ['She', 'He'], amness: 'is' }
+	];
+
 	let combos = [
 		// past
-		{ pronoun: 'You', tense: 'past', gender: 'm', suffix: ['تَ'], prefix: [] },
-		{ pronoun: 'You', tense: 'past', gender: 'f', suffix: ['تِ'], prefix: [] },
-		{ pronoun: 'You both', tense: 'past', gender: 'm/f', suffix: ['تُمَا'], prefix: [] },
-		{ pronoun: 'You All', tense: 'past', gender: 'm', suffix: ['تُمْ'], prefix: [] },
-		{ pronoun: 'You All', tense: 'past', gender: 'f', suffix: ['تُنَّ'], prefix: [] },
-		{ pronoun: 'I', tense: 'past', gender: 'm/f', suffix: ['تُ'], prefix: [] },
-		{ pronoun: 'We', tense: 'past', gender: 'm/f', suffix: ['نَا'], prefix: [] },
-		{ pronoun: 'She', tense: 'past', gender: 'm/f', suffix: ['تْ'], prefix: [] },
-		{ pronoun: 'They', tense: 'past', gender: 'm', suffix: ['وْنَ'], prefix: [] },
-		{ pronoun: 'They', tense: 'past', gender: 'f', suffix: ['نَ'], prefix: [] },
+		{ pronoun: 'You', slug: 'past', tense: 'past', gender: 'm', suffix: ['تَ'], prefix: [] },
+		{ pronoun: 'You', slug: 'past', tense: 'past', gender: 'f', suffix: ['تِ'], prefix: [] },
+		{
+			pronoun: 'You both',
+			slug: 'past',
+			tense: 'past',
+			gender: 'm/f',
+			suffix: ['تُمَا'],
+			prefix: []
+		},
+		{
+			pronoun: 'You All',
+			slug: 'past',
+			tense: 'past',
+			gender: 'm',
+			suffix: ['تُمْ'],
+			prefix: []
+		},
+		{
+			pronoun: 'You All',
+			slug: 'past',
+			tense: 'past',
+			gender: 'f',
+			suffix: ['تُنَّ'],
+			prefix: []
+		},
+		{ pronoun: 'I', slug: 'past', tense: 'past', gender: 'm/f', suffix: ['تُ'], prefix: [] },
+		{
+			pronoun: 'We',
+			slug: 'past',
+			tense: 'past',
+			gender: 'm/f',
+			suffix: ['نَا'],
+			prefix: []
+		},
+		{
+			pronoun: 'She',
+			slug: 'past',
+			tense: 'past',
+			gender: 'f',
+			suffix: ['تْ'],
+			prefix: []
+		},
+		{
+			pronoun: 'They',
+			slug: 'past',
+			tense: 'past',
+			gender: 'm',
+			suffix: ['وْنَ'],
+			prefix: []
+		},
+		{ pronoun: 'They', slug: 'past', tense: 'past', gender: 'f', suffix: ['نَ'], prefix: [] },
 
 		// present
-		{ pronoun: 'You', tense: 'present', gender: 'm', suffix: [], prefix: ['ت'] },
-		{ pronoun: 'You', tense: 'present', gender: 'f', suffix: ['ينَ'], prefix: ['ت'] },
-		// { pronoun: 'You both', tense: 'present', gender: 'm/f', suffix: [], prefix: [] },
-		{ pronoun: 'You All', tense: 'present', gender: 'm', suffix: ['وْنَ'], prefix: ['ت'] },
-		{ pronoun: 'You All', tense: 'present', gender: 'f', suffix: ['نَ'], prefix: ['ت'] },
-		{ pronoun: 'I', tense: 'present', gender: 'm/f', suffix: [], prefix: ['ا'] },
-		{ pronoun: 'We', tense: 'present', gender: 'm/f', suffix: [], prefix: ['ن'] },
-		{ pronoun: 'He', tense: 'present', gender: 'm/f', suffix: [], prefix: ['ي'] },
-		// { pronoun: 'She', tense: 'present', gender: 'm/f', suffix: [], prefix: [] },
-		{ pronoun: 'They', tense: 'present', gender: 'm', suffix: ['وْنَ'], prefix: ['ي'] },
-		{ pronoun: 'They', tense: 'present', gender: 'f', suffix: ['نَ'], prefix: ['ي'] }
+		{
+			pronoun: 'You',
+			slug: 'infinitive',
+			tense: 'present',
+			gender: 'm',
+			suffix: [],
+			prefix: ['ت']
+		},
+		{
+			pronoun: 'You',
+			slug: 'infinitive',
+			tense: 'present',
+			gender: 'f',
+			suffix: ['ينَ'],
+			prefix: ['ت']
+		},
+		// { pronoun: 'You both', slug: "infinitive", tense: 'present', gender: 'm/f', suffix: [], prefix: [] },
+		{
+			pronoun: 'You All',
+			slug: 'infinitive',
+			tense: 'present',
+			gender: 'm',
+			suffix: ['وْنَ'],
+			prefix: ['ت']
+		},
+		{
+			pronoun: 'You All',
+			slug: 'infinitive',
+			tense: 'present',
+			gender: 'f',
+			suffix: ['نَ'],
+			prefix: ['ت']
+		},
+		{
+			pronoun: 'I',
+			slug: 'infinitive',
+			tense: 'present',
+			gender: 'm/f',
+			suffix: [],
+			prefix: ['ا']
+		},
+		{
+			pronoun: 'We',
+			slug: 'infinitive',
+			tense: 'present',
+			gender: 'm/f',
+			suffix: [],
+			prefix: ['ن']
+		},
+		{
+			pronoun: 'He',
+			slug: 'infinitive',
+			tense: 'present',
+			gender: 'm/f',
+			suffix: [],
+			prefix: ['ي']
+		},
+		// { pronoun: 'She', slug: "infinitive", tense: 'present', gender: 'm/f', suffix: [], prefix: [] },
+		{
+			pronoun: 'They',
+			slug: 'infinitive',
+			tense: 'present',
+			gender: 'm',
+			suffix: ['وْنَ'],
+			prefix: ['ي']
+		},
+		{
+			pronoun: 'They',
+			slug: 'infinitive',
+			tense: 'present',
+			gender: 'f',
+			suffix: ['نَ'],
+			prefix: ['ي']
+		}
 	];
 
 	function removeHaraka(letter) {
@@ -109,7 +220,14 @@
 
 <h1 class="page-title">Sarf Lab:</h1>
 
-<Search deliver={handleDelivery} show={true} searchInput={''} autostart={'n s r'} {words} />
+<Search
+	deliver={handleDelivery}
+	show={true}
+	searchInput={''}
+	autostart={'n s r'}
+	autoid={58}
+	{words}
+/>
 <hr />
 
 {#if chosenVerb}
@@ -140,8 +258,16 @@
 
 			{#if bestCombo && bestCombo.pronoun}
 				<div class="rendered">
-					{bestCombo.pronoun}
-					{bestCombo.gender}.
+					<span class="pronoun">
+						{bestCombo.pronoun}
+						<span class="gender">{bestCombo.gender}</span>
+					</span>
+
+					{#if bestCombo.slug === 'infinitive'}
+						{amness.find((a) => a.list.includes(bestCombo.pronoun)).amness}
+					{/if}
+
+					{chosenVerb[bestCombo.slug + '_english_base']}
 				</div>
 			{/if}
 		{/if}
@@ -479,5 +605,20 @@
 		font-size: 34px;
 		font-weight: bolder;
 		color: #a34c09;
+	}
+
+	.rendered .pronoun {
+		position: relative;
+	}
+
+	.rendered .gender {
+		position: absolute;
+		bottom: -26px;
+		left: 15%;
+		font-size: 18px;
+		padding: 2px 10px;
+		background: #ffffa9;
+		border-radius: 3px;
+		border: 0.4px solid #ccc;
 	}
 </style>

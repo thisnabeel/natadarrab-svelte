@@ -12,6 +12,7 @@
 
 	export let words = [];
 	export let autostart;
+	export let autoid;
 	let rows = [];
 
 	onMount(async () => {
@@ -23,7 +24,7 @@
 				await deliver({
 					action: 'word',
 					query: searchInput,
-					word: words[0]
+					word: words.find((w) => w.id === autoid)
 				});
 				rows = [];
 				words = [];
@@ -271,6 +272,13 @@
 		padding: 1em;
 		font-size: 34px;
 		background: #fbffd7;
+	}
+
+	.word:hover {
+		background: #f0f3d7;
+		border: 0.1em dashed #dee2c1;
+		padding: 0.9em;
+		cursor: pointer;
 	}
 
 	.spotlight {

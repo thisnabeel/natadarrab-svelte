@@ -38,6 +38,12 @@
 		{
 			divider: true
 		},
+
+		{
+			tooltip: 'Labs',
+			icon: `fa-flask`,
+			url: '/labs'
+		},
 		{
 			tooltip: 'Recite',
 			icon: `fa-volume-up`,

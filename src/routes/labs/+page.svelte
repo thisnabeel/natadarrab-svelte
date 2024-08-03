@@ -6,6 +6,11 @@
 			title: 'Sarf Lab',
 			description: 'Practice Conjugating different Verbs',
 			url: '/labs/arabic/verbs/conjugator'
+		},
+		{
+			title: 'Baabs Lab',
+			description: 'Practice Identifying different Baabs',
+			url: '/labs/arabic/sarf/forms'
 		}
 	];
 </script>

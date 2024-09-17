@@ -5,7 +5,6 @@
 </script>
 
 <HeadBar />
-
 <Slide1 />
 <Slide2 />
 

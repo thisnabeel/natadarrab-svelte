@@ -1,5 +1,5 @@
 <script>
-	import HeadBar from './headbar.svelte';
+	import HeadBar from './Headbar.svelte';
 	import SlideOne from './old-slides/slide1.svelte';
 	import SlideTwo from './old-slides/slide2.svelte';
 	import SlideThree from './old-slides/slide3.svelte';

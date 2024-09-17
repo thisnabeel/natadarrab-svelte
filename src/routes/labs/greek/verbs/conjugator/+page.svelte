@@ -1,13 +1,14 @@
 <script>
-	import Search from '$lib/components/Main/Search/Search.svelte';
-	let chosenVerb;
+	let chosenVerb = {
+		v_form: 'I',
+		v_root: 'λέω'
+	};
 	let words = [];
 	let stickers = {
-		prefixes: ['ي', 'ت', 'ن', 'ا'],
-		suffixes: ['تَ', 'تِ', 'تُ', 'تْ', 'نَ', 'نَا', 'تُمَا', 'تُنَّ', 'تُمْ', 'وْنَ', 'ينَ'],
-		harakaat: ['َ', 'ِ', 'ُ', 'ْ'],
-		stretches: ['ا', 'ي', 'و'],
-		smoothie: ['ا', 'ي', 'و']
+		prefixes: ['θα', 'να'],
+		suffixes: ['ω', 'εις', 'ει', 'ουμε', 'ετε', 'ουν'],
+		stretches: ['ι', 'υ', 'α'],
+		smoothie: ['ι', 'υ', 'α']
 	};
 	let searchInput = '';
 	let chosenLetters = [];
@@ -19,139 +20,64 @@
 	];
 
 	let combos = [
-		// past
-		{ pronoun: 'You', slug: 'past', tense: 'past', gender: 'm', suffix: ['تَ'], prefix: [] },
-		{ pronoun: 'You', slug: 'past', tense: 'past', gender: 'f', suffix: ['تِ'], prefix: [] },
+		// past tense (Aorist)
+		{ pronoun: 'You', slug: 'past', tense: 'past', gender: 'm/f', suffix: ['ες'], prefix: [] },
 		{
 			pronoun: 'You both',
 			slug: 'past',
 			tense: 'past',
 			gender: 'm/f',
-			suffix: ['تُمَا'],
+			suffix: ['ετε'],
 			prefix: []
 		},
-		{
-			pronoun: 'You All',
-			slug: 'past',
-			tense: 'past',
-			gender: 'm',
-			suffix: ['تُمْ'],
-			prefix: []
-		},
-		{
-			pronoun: 'You All',
-			slug: 'past',
-			tense: 'past',
-			gender: 'f',
-			suffix: ['تُنَّ'],
-			prefix: []
-		},
-		{ pronoun: 'I', slug: 'past', tense: 'past', gender: 'm/f', suffix: ['تُ'], prefix: [] },
-		{
-			pronoun: 'We',
-			slug: 'past',
-			tense: 'past',
-			gender: 'm/f',
-			suffix: ['نَا'],
-			prefix: []
-		},
-		{
-			pronoun: 'She',
-			slug: 'past',
-			tense: 'past',
-			gender: 'f',
-			suffix: ['تْ'],
-			prefix: []
-		},
-		{
-			pronoun: 'They',
-			slug: 'past',
-			tense: 'past',
-			gender: 'm',
-			suffix: ['وْنَ'],
-			prefix: []
-		},
-		{ pronoun: 'They', slug: 'past', tense: 'past', gender: 'f', suffix: ['نَ'], prefix: [] },
+		{ pronoun: 'You All', slug: 'past', tense: 'past', gender: 'm/f', suffix: ['ετε'], prefix: [] },
+		{ pronoun: 'I', slug: 'past', tense: 'past', gender: 'm/f', suffix: ['α'], prefix: [] },
+		{ pronoun: 'We', slug: 'past', tense: 'past', gender: 'm/f', suffix: ['αμε'], prefix: [] },
+		{ pronoun: 'He', slug: 'past', tense: 'past', gender: 'm', suffix: ['ε'], prefix: [] },
+		{ pronoun: 'She', slug: 'past', tense: 'past', gender: 'f', suffix: ['ε'], prefix: [] },
+		{ pronoun: 'They', slug: 'past', tense: 'past', gender: 'm/f', suffix: ['αν'], prefix: [] },
 
-		// present
+		// present tense
+		{ pronoun: 'You', slug: 'present', tense: 'present', gender: 'm', suffix: ['εις'], prefix: [] },
 		{
-			pronoun: 'You',
-			slug: 'infinitive',
-			tense: 'present',
-			gender: 'm',
-			suffix: [],
-			prefix: ['ت']
-		},
-		{
-			pronoun: 'You',
-			slug: 'infinitive',
-			tense: 'present',
-			gender: 'f',
-			suffix: ['ينَ'],
-			prefix: ['ت']
-		},
-		// { pronoun: 'You both', slug: "infinitive", tense: 'present', gender: 'm/f', suffix: [], prefix: [] },
-		{
-			pronoun: 'You All',
-			slug: 'infinitive',
-			tense: 'present',
-			gender: 'm',
-			suffix: ['وْنَ'],
-			prefix: ['ت']
-		},
-		{
-			pronoun: 'You All',
-			slug: 'infinitive',
-			tense: 'present',
-			gender: 'f',
-			suffix: ['نَ'],
-			prefix: ['ت']
-		},
-		{
-			pronoun: 'I',
-			slug: 'infinitive',
+			pronoun: 'You both',
+			slug: 'present',
 			tense: 'present',
 			gender: 'm/f',
-			suffix: [],
-			prefix: ['ا']
+			suffix: ['ετε'],
+			prefix: []
 		},
+		{
+			pronoun: 'You All',
+			slug: 'present',
+			tense: 'present',
+			gender: 'm',
+			suffix: ['ετε'],
+			prefix: []
+		},
+		{ pronoun: 'I', slug: 'present', tense: 'present', gender: 'm/f', suffix: ['ω'], prefix: [] },
 		{
 			pronoun: 'We',
-			slug: 'infinitive',
+			slug: 'present',
 			tense: 'present',
 			gender: 'm/f',
-			suffix: [],
-			prefix: ['ن']
+			suffix: ['ουμε'],
+			prefix: []
 		},
+		{ pronoun: 'He', slug: 'present', tense: 'present', gender: 'm', suffix: ['ει'], prefix: [] },
+		{ pronoun: 'She', slug: 'present', tense: 'present', gender: 'f', suffix: ['ει'], prefix: [] },
 		{
-			pronoun: 'He',
-			slug: 'infinitive',
+			pronoun: 'They',
+			slug: 'present',
 			tense: 'present',
 			gender: 'm/f',
-			suffix: [],
-			prefix: ['ي']
-		},
-		// { pronoun: 'She', slug: "infinitive", tense: 'present', gender: 'm/f', suffix: [], prefix: [] },
-		{
-			pronoun: 'They',
-			slug: 'infinitive',
-			tense: 'present',
-			gender: 'm',
-			suffix: ['وْنَ'],
-			prefix: ['ي']
-		},
-		{
-			pronoun: 'They',
-			slug: 'infinitive',
-			tense: 'present',
-			gender: 'f',
-			suffix: ['نَ'],
-			prefix: ['ي']
+			suffix: ['ουν'],
+			prefix: []
 		}
 	];
 
 	function removeHaraka(letter) {
-		return letter.replace(/[\u064B-\u065F]/g, '');
+		return letter.replace(/[\u0300-\u036F]/g, ''); // Greek diacritics range
 	}
 
 	function findBestCombo(chosenLetters) {
@@ -220,28 +146,11 @@
 
 <h1 class="page-title">Sarf Lab:</h1>
 
-<Search
-	deliver={handleDelivery}
-	show={true}
-	searchInput={''}
-	autostart={'n s r'}
-	autoid={58}
-	{words}
-/>
-<hr />
-
 {#if chosenVerb}
 	<div class="built">
 		<div class="chosen">
 			<h1>
 				<p>Form {chosenVerb.v_form}</p>
-				{#each chosenVerb.v_word.split('/') as word, index}
-					<!-- svelte-ignore a11y-click-events-have-key-events -->
-					<span on:click={() => (chosenLetters = [...word.replace(' ', '').split('')])}
-						>{word.replace(' ', '')}</span
-					>
-					{#if index === 0}{' / '}{/if}
-				{/each}
 			</h1>
 		</div>
 
@@ -313,7 +222,7 @@
 				<!-- svelte-ignore a11y-click-events-have-key-events -->
 				<span style="color: blue;"> Letters: </span>
 			</h1>
-			{#each chosenVerb.v_root.split(' ') as root}
+			{#each chosenVerb.v_root.split('') as root}
 				<!-- svelte-ignore a11y-click-events-have-key-events -->
 				<li
 					class="sticker"
@@ -334,34 +243,6 @@
 					>
 						{root}
 					</span>
-					{#if popup.visible && popup.root === root}
-						<div class="popup">
-							{#each stickers.harakaat as haraka}
-								<button
-									class="btn btn-outline-info"
-									on:click={() => {
-										if (
-											chosenLetters.find((c) => c.content.includes(root) && c.category === 'root')
-										) {
-											const index = chosenLetters.findIndex(
-												(c) => c.content.includes(root) && c.category === 'root'
-											);
-											chosenLetters[index].content = root + haraka;
-											chosenLetters = chosenLetters;
-										} else {
-											chosenLetters = [
-												...chosenLetters,
-												{
-													content: root + haraka,
-													category: 'root'
-												}
-											];
-										}
-									}}>{haraka}</button
-								>
-							{/each}
-						</div>
-					{/if}
 				</li>
 			{/each}
 			{#if ['ي', 'و', 'ا'].some((char) => chosenVerb.v_root.split(' ').includes(char))}

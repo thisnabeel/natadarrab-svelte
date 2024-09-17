@@ -7,7 +7,7 @@
 	</div>
 
 	<div class="intro-title">
-		<h1>The <i>All-Inclusive</i> <strong>Unbiased</strong> Qur'an <u>Gym</u></h1>
+		<h1>The <i>All-Inclusive</i> <strong>Unbiased</strong> Qur'an Course</h1>
 	</div>
 
 	<div class="wow-btn">

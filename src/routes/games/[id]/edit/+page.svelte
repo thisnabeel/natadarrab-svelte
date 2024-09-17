@@ -2,7 +2,7 @@
 	import { afterNavigate, goto } from '$app/navigation';
 	import { page } from '$app/stores';
 	import API from '$lib/api/api';
-	import GameEditor from '$lib/components/Dashboard/Views/Games/Game/Edit.svelte';
+	import GameEditor from '$lib/components/Main/Views/Games/Game/Edit.svelte';
 
 	let game;
 	afterNavigate(() => {

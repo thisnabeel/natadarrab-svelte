@@ -2,9 +2,9 @@
 	import API from '$lib/api/api';
 	import { onMount } from 'svelte';
 	import Search from './Search.svelte';
+	import { showSpotlight } from '$lib/stores/spotlight';
 
 	export let deliver = function () {};
-	let showSpotlight = false;
 
 	let searchInput = '';
 	let searchElement = null;
@@ -13,7 +13,7 @@
 	const handleKeyDown = (event) => {
 		// Check if the user pressed Cmd+/ on macOS or Ctrl+/ on Windows/Linux
 		if ((event.metaKey || event.ctrlKey) && event.key === '/') {
-			showSpotlight = !showSpotlight; // Toggle the showSpotlight variable
+			$showSpotlight.set(!showSpotlight); // Toggle the showSpotlight variable
 		}
 	};
 
@@ -133,10 +133,18 @@
 		helper([], 0);
 		return r;
 	}
+
+	function handleBackgroundClick(event) {
+		const spotlightWrapper = document.getElementById('spotlight_wrapper');
+		if (!spotlightWrapper.contains(event.target)) {
+			showSpotlight.set(false);
+			// Add any other actions you want to perform when clicking outside
+		}
+	}
 </script>
 
-{#if showSpotlight}
-	<div class="bgFiller">
+{#if $showSpotlight}
+	<div class="bgFiller" on:click={handleBackgroundClick}>
 		<div id="spotlight_wrapper">
 			<Search />
 		</div>
@@ -240,8 +248,12 @@
 	.word {
 		max-width: 628px;
 		margin: 0 auto;
-		padding: 1em;
+		/* padding: 1em; */
+		padding: 0.9em;
 		font-size: 34px;
 		background: #fbffd7;
+		border-bottom: 2px dashed;
+		background: #f0f3d7;
+		border: 0.1em dashed #dee2c1;
 	}
 </style>

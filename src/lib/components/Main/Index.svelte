@@ -5,6 +5,7 @@
 	import SpotlightSearch from './Search/Spotlight.svelte';
 	import { user } from '$lib/stores/user';
 	let expanded = false;
+	import Dashboard from '$lib/components/Home/Dashboards/Index.svelte';
 </script>
 
 <div class="dashboard">
@@ -19,9 +20,7 @@
 		</div>
 	{/if}
 	<div class="main">
-		<!-- {#if selectedTab}
-			<svelte:component this={selectedTab} />
-		{/if} -->
+		<!-- <Dashboard /> -->
 		<slot />
 	</div>
 </div>

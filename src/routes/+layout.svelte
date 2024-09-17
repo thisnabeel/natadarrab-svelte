@@ -1,4 +1,4 @@
-<script context="module">
+<!-- <script context="module">
 	//the session object destructured below comes from the hooks.js file above
 	export async function load({ session }) {
 		return {
@@ -8,7 +8,7 @@
 			}
 		};
 	}
-</script>
+</script> -->
 
 <script>
 	import '../app.pcss';
@@ -16,7 +16,7 @@
 	import { fade } from 'svelte/transition';
 	import { Modals, closeModal } from 'svelte-modals'; //
 
-	import Dashboard from '$lib/components/Dashboard/Index.svelte';
+	import Main from '$lib/components/Main/Index.svelte';
 	import { user } from '$lib/stores/user';
 
 	import { width, mobile } from '$lib/utils/device';
@@ -33,9 +33,9 @@
 	{#if !$user}
 		<slot />
 	{:else}
-		<Dashboard>
+		<Main>
 			<slot />
-		</Dashboard>
+		</Main>
 	{/if}
 </div>
 <Modals>

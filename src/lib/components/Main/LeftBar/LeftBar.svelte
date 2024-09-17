@@ -3,111 +3,128 @@
 	import { user } from '$lib/stores/user';
 	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
+	import { showSpotlight } from '$lib/stores/spotlight';
 
 	export let expand;
 	export let expanded;
 
-	let buttons = [
-		{
-			tooltip: 'Profile',
-			icon: 'fa-user',
-			url: '/profile'
-		},
-		{
-			tooltip: 'Availability',
-			svg: `<svg xmlns="http://www.w3.org/2000/svg" width="24px" height="24px" viewBox="0 0 256 256"><path d="M216,48V88H40V48a8,8,0,0,1,8-8H208A8,8,0,0,1,216,48Z" opacity="0.2"></path><path d="M208,32H184V24a8,8,0,0,0-16,0v8H88V24a8,8,0,0,0-16,0v8H48A16,16,0,0,0,32,48V208a16,16,0,0,0,16,16H208a16,16,0,0,0,16-16V48A16,16,0,0,0,208,32ZM72,48v8a8,8,0,0,0,16,0V48h80v8a8,8,0,0,0,16,0V48h24V80H48V48ZM208,208H48V96H208V208Zm-38.34-85.66a8,8,0,0,1,0,11.32l-48,48a8,8,0,0,1-11.32,0l-24-24a8,8,0,0,1,11.32-11.32L116,164.69l42.34-42.35A8,8,0,0,1,169.66,122.34Z"></path></svg>`,
-			url: '/availability'
-		},
-		{
-			divider: true
-		},
-		{
-			tooltip: 'Timeline',
-			svg: `<svg xmlns="http://www.w3.org/2000/svg" width="24px" height="24px"  viewBox="0 0 256 256"><path d="M72,112v32a8,8,0,0,1-8,8H32a8,8,0,0,1-8-8V112a8,8,0,0,1,8-8H64A8,8,0,0,1,72,112ZM216,40H168a8,8,0,0,0-8,8V96a8,8,0,0,0,8,8h48a8,8,0,0,0,8-8V48A8,8,0,0,0,216,40Zm0,112H168a8,8,0,0,0-8,8v48a8,8,0,0,0,8,8h48a8,8,0,0,0,8-8V160A8,8,0,0,0,216,152Z" opacity="0.2"></path><path d="M168,112h48a16,16,0,0,0,16-16V48a16,16,0,0,0-16-16H168a16,16,0,0,0-16,16V64h-8a32,32,0,0,0-32,32v24H80v-8A16,16,0,0,0,64,96H32a16,16,0,0,0-16,16v32a16,16,0,0,0,16,16H64a16,16,0,0,0,16-16v-8h32v24a32,32,0,0,0,32,32h8v16a16,16,0,0,0,16,16h48a16,16,0,0,0,16-16V160a16,16,0,0,0-16-16H168a16,16,0,0,0-16,16v16h-8a16,16,0,0,1-16-16V96a16,16,0,0,1,16-16h8V96A16,16,0,0,0,168,112ZM64,144H32V112H64v32Zm104,16h48v48H168Zm0-112h48V96H168Z"></path></svg>`,
-			url: '/progress'
-		},
-		{
-			tooltip: 'Schedule',
-			svg: `<svg xmlns="http://www.w3.org/2000/svg" width="24px" height="24px" viewBox="0 0 256 256"><path d="M160,72V216L96,184V40Z" opacity="0.2"></path><path d="M228.92,49.69a8,8,0,0,0-6.86-1.45L160.93,63.52,99.58,32.84a8,8,0,0,0-5.52-.6l-64,16A8,8,0,0,0,24,56V200a8,8,0,0,0,9.94,7.76l61.13-15.28,61.35,30.68A8.15,8.15,0,0,0,160,224a8,8,0,0,0,1.94-.24l64-16A8,8,0,0,0,232,200V56A8,8,0,0,0,228.92,49.69ZM104,52.94l48,24V203.06l-48-24ZM40,62.25l48-12v127.5l-48,12Zm176,131.5-48,12V78.25l48-12Z"></path></svg>`,
-			url: '/schedule'
-		},
-		// {
-		//     tooltip: "Calendar",
-		//     icon: "fa-calendar"
-		// },
-		{
-			divider: true
-		},
+	let profile = {
+		tooltip: 'Profile',
+		icon: 'fa-user',
+		url: '/dashboard'
+	};
 
-		{
-			tooltip: 'Labs',
-			icon: `fa-flask`,
-			url: '/labs'
-		},
-		{
-			tooltip: 'Recite',
-			icon: `fa-volume-up`,
-			url: '/unzyla'
-		},
-		{
-			tooltip: 'Seerah',
-			img: 'seerah.png',
-			url: '/seerah'
-		},
-		{
-			tooltip: 'QuranFlow',
-			icon: 'fa-book',
-			url: '/quranflow'
-		},
-		{
-			tooltip: 'BibleFlow',
-			img: 'bible.png',
-			url: '/bibleflow'
-		}
+	let availability = {
+		tooltip: 'Availability',
+		svg: `<svg xmlns="http://www.w3.org/2000/svg" width="24px" height="24px" viewBox="0 0 256 256"><path d="M216,48V88H40V48a8,8,0,0,1,8-8H208A8,8,0,0,1,216,48Z" opacity="0.2"></path><path d="M208,32H184V24a8,8,0,0,0-16,0v8H88V24a8,8,0,0,0-16,0v8H48A16,16,0,0,0,32,48V208a16,16,0,0,0,16,16H208a16,16,0,0,0,16-16V48A16,16,0,0,0,208,32ZM72,48v8a8,8,0,0,0,16,0V48h80v8a8,8,0,0,0,16,0V48h24V80H48V48ZM208,208H48V96H208V208Zm-38.34-85.66a8,8,0,0,1,0,11.32l-48,48a8,8,0,0,1-11.32,0l-24-24a8,8,0,0,1,11.32-11.32L116,164.69l42.34-42.35A8,8,0,0,1,169.66,122.34Z"></path></svg>`,
+		url: '/availability'
+	};
+	let divider = {
+		divider: true
+	};
+	let timeline = {
+		tooltip: 'Timeline',
+		svg: `<svg xmlns="http://www.w3.org/2000/svg" width="24px" height="24px"  viewBox="0 0 256 256"><path d="M72,112v32a8,8,0,0,1-8,8H32a8,8,0,0,1-8-8V112a8,8,0,0,1,8-8H64A8,8,0,0,1,72,112ZM216,40H168a8,8,0,0,0-8,8V96a8,8,0,0,0,8,8h48a8,8,0,0,0,8-8V48A8,8,0,0,0,216,40Zm0,112H168a8,8,0,0,0-8,8v48a8,8,0,0,0,8,8h48a8,8,0,0,0,8-8V160A8,8,0,0,0,216,152Z" opacity="0.2"></path><path d="M168,112h48a16,16,0,0,0,16-16V48a16,16,0,0,0-16-16H168a16,16,0,0,0-16,16V64h-8a32,32,0,0,0-32,32v24H80v-8A16,16,0,0,0,64,96H32a16,16,0,0,0-16,16v32a16,16,0,0,0,16,16H64a16,16,0,0,0,16-16v-8h32v24a32,32,0,0,0,32,32h8v16a16,16,0,0,0,16,16h48a16,16,0,0,0,16-16V160a16,16,0,0,0-16-16H168a16,16,0,0,0-16,16v16h-8a16,16,0,0,1-16-16V96a16,16,0,0,1,16-16h8V96A16,16,0,0,0,168,112ZM64,144H32V112H64v32Zm104,16h48v48H168Zm0-112h48V96H168Z"></path></svg>`,
+		url: '/progress'
+	};
+	let schedule = {
+		tooltip: 'Schedule',
+		svg: `<svg xmlns="http://www.w3.org/2000/svg" width="24px" height="24px" viewBox="0 0 256 256"><path d="M160,72V216L96,184V40Z" opacity="0.2"></path><path d="M228.92,49.69a8,8,0,0,0-6.86-1.45L160.93,63.52,99.58,32.84a8,8,0,0,0-5.52-.6l-64,16A8,8,0,0,0,24,56V200a8,8,0,0,0,9.94,7.76l61.13-15.28,61.35,30.68A8.15,8.15,0,0,0,160,224a8,8,0,0,0,1.94-.24l64-16A8,8,0,0,0,232,200V56A8,8,0,0,0,228.92,49.69ZM104,52.94l48,24V203.06l-48-24ZM40,62.25l48-12v127.5l-48,12Zm176,131.5-48,12V78.25l48-12Z"></path></svg>`,
+		url: '/schedule'
+	};
+
+	let labs = {
+		tooltip: 'Labs',
+		icon: `fa-flask`,
+		url: '/labs'
+	};
+
+	let recite = {
+		tooltip: 'Recite',
+		icon: `fa-volume-up`,
+		url: '/unzyla'
+	};
+
+	let seerah = {
+		tooltip: 'Seerah',
+		img: 'seerah.png',
+		url: '/seerah'
+	};
+
+	let quranflow = {
+		tooltip: 'QuranFlow',
+		icon: 'fa-book',
+		url: '/quranflow'
+	};
+
+	let springs = {
+		tooltip: 'Springs',
+		img: 'springs.png',
+		url: '/springs'
+	};
+
+	let bibleflow = {
+		tooltip: 'BibleFlow',
+		img: 'bible.png',
+		url: '/bibleflow'
+	};
+
+	let students = {
+		tooltip: 'Students',
+		icon: 'fa-users',
+		url: '/students'
+	};
+
+	let teacher = {
+		tooltip: 'Teacher',
+		img: 'teacher.png',
+		url: '/teachers'
+	};
+	let planner = {
+		tooltip: 'Planner',
+		icon: 'fa-university',
+		url: '/planner'
+	};
+
+	let games = {
+		tooltip: 'Games',
+		icon: 'fa-puzzle-piece',
+		url: '/games'
+	};
+
+	let buttons = [
+		profile,
+		availability,
+		divider,
+		timeline,
+		schedule,
+		divider,
+		labs,
+		recite,
+		seerah,
+		quranflow,
+		springs,
+		bibleflow
 	];
 
 	let adminButtons = [
-		{
-			tooltip: 'Profile',
-			icon: 'fa-user',
-			url: '/profile'
-		},
-		{
-			tooltip: 'Students',
-			icon: 'fa-users',
-			url: '/students'
-		},
-		{
-			tooltip: 'Teacher',
-			img: 'teacher.png',
-			url: '/teachers'
-		},
-		{
-			tooltip: 'Planner',
-			icon: 'fa-university',
-			url: '/planner'
-		},
-
-		{
-			tooltip: 'Timeline',
-			svg: `<svg xmlns="http://www.w3.org/2000/svg" width="24px" height="24px"  viewBox="0 0 256 256"><path d="M72,112v32a8,8,0,0,1-8,8H32a8,8,0,0,1-8-8V112a8,8,0,0,1,8-8H64A8,8,0,0,1,72,112ZM216,40H168a8,8,0,0,0-8,8V96a8,8,0,0,0,8,8h48a8,8,0,0,0,8-8V48A8,8,0,0,0,216,40Zm0,112H168a8,8,0,0,0-8,8v48a8,8,0,0,0,8,8h48a8,8,0,0,0,8-8V160A8,8,0,0,0,216,152Z" opacity="0.2"></path><path d="M168,112h48a16,16,0,0,0,16-16V48a16,16,0,0,0-16-16H168a16,16,0,0,0-16,16V64h-8a32,32,0,0,0-32,32v24H80v-8A16,16,0,0,0,64,96H32a16,16,0,0,0-16,16v32a16,16,0,0,0,16,16H64a16,16,0,0,0,16-16v-8h32v24a32,32,0,0,0,32,32h8v16a16,16,0,0,0,16,16h48a16,16,0,0,0,16-16V160a16,16,0,0,0-16-16H168a16,16,0,0,0-16,16v16h-8a16,16,0,0,1-16-16V96a16,16,0,0,1,16-16h8V96A16,16,0,0,0,168,112ZM64,144H32V112H64v32Zm104,16h48v48H168Zm0-112h48V96H168Z"></path></svg>`,
-			url: '/progress'
-		},
-		{
-			tooltip: 'Games',
-			icon: 'fa-puzzle-piece',
-			url: '/games'
-		},
-		{
-			tooltip: 'QuranFlow',
-			icon: 'fa-book',
-			url: '/quranflow'
-		},
-		{
-			tooltip: 'BibleFlow',
-			img: 'bible.png',
-			url: '/bibleflow'
-		}
+		profile,
+		students,
+		teacher,
+		planner,
+		availability,
+		divider,
+		timeline,
+		schedule,
+		divider,
+		labs,
+		games,
+		recite,
+		springs,
+		seerah,
+		quranflow,
+		divider,
+		bibleflow
 	];
 
 	$: console.log('user', $user);
@@ -165,10 +182,27 @@
 			</div>
 		</nav>
 		<div class="mid" />
+		<i class="fa fa-search search-btn" on:click={() => showSpotlight.set(!$showSpotlight)} />
 	</div>
 </div>
 
 <style>
+	.search-btn {
+		position: absolute;
+		bottom: 0;
+		left: 0;
+		font-size: 30px;
+		color: #c3c3ff;
+		display: block;
+		width: 100%;
+		text-align: center;
+		padding: 10px;
+		cursor: pointer;
+	}
+
+	.search-btn:hover {
+		background-color: aliceblue;
+	}
 	.title {
 		position: absolute;
 		left: 50px;

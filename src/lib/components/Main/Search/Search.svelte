@@ -16,7 +16,7 @@
 	let rows = [];
 
 	onMount(async () => {
-		if (autostart.length > 1) {
+		if (autostart && autostart.length > 1) {
 			searchInput = autostart;
 			await findArabicWordsByRoot();
 
@@ -145,6 +145,36 @@
 	function isVerse(str) {
 		return /^[0-9:-]+$/.test(str);
 	}
+
+	$: tryRootSearch(searchInput);
+
+	function debounceSearch(func, delay) {
+		let debounceTimer;
+		return function (...args) {
+			clearTimeout(debounceTimer);
+			debounceTimer = setTimeout(() => {
+				func;
+			}, delay);
+		};
+	}
+
+	function tryRootSearch(input) {
+		// Strip whitespace from the input
+		const strippedInput = input.replace(/\s/g, '');
+
+		// Check if the input is exactly 3 characters long and consists of only English or Arabic letters
+		if (
+			(strippedInput.length === 3 || 4) &&
+			/^(?:[a-zA-Z]{3}|[\u0600-\u06FF]{3})$/.test(strippedInput)
+		) {
+			console.log('Input is 3 English or Arabic letters', strippedInput);
+			debounceSearch(findArabicWordsByRoot(), 500);
+		} else {
+			// Optionally, you can handle the case when the input doesn't meet the criteria
+			words = [];
+			console.log('Input must be exactly 3 English or Arabic letters', strippedInput);
+		}
+	}
 </script>
 
 <input
@@ -162,11 +192,6 @@
 />
 {#if searchInput.length > 0 && suggesting}
 	<!-- svelte-ignore a11y-click-events-have-key-events -->
-	{#if isRoot(searchInput)}
-		<div class="query" on:click={findArabicWordsByRoot}>
-			Find Arabic Words by Root: {searchInput}
-		</div>
-	{/if}
 
 	{#if isVerse(searchInput)}
 		<!-- svelte-ignore a11y-click-events-have-key-events -->
@@ -193,25 +218,28 @@
 		</div>
 	{/if}
 {/if}
+
 {#if rows}
-	{#each words as word}
-		<!-- svelte-ignore a11y-click-events-have-key-events -->
-		<div
-			class="word"
-			on:click={async () => {
-				await deliver({
-					action: 'word',
-					query: searchInput,
-					word: word
-				});
-				rows = [];
-				words = [];
-				suggesting = false;
-			}}
-		>
-			{word.v_word} <br />{word.v_translation}
-		</div>
-	{/each}
+	<div class="results">
+		{#each words as word}
+			<!-- svelte-ignore a11y-click-events-have-key-events -->
+			<div
+				class="word"
+				on:click={async () => {
+					await deliver({
+						action: 'word',
+						query: searchInput,
+						word: word
+					});
+					rows = [];
+					words = [];
+					suggesting = false;
+				}}
+			>
+				{word.v_word} <br />{word.v_translation}
+			</div>
+		{/each}
+	</div>
 {/if}
 
 {#if error.length > 0}
@@ -269,19 +297,32 @@
 	.word {
 		max-width: 628px;
 		margin: 0 auto;
-		padding: 1em;
+		/* padding: 1em; */
+		padding: 0.9em;
 		font-size: 34px;
 		background: #fbffd7;
+		border-bottom: 2px dashed;
+		background: #f0f3d7;
+		border: 0.1em dashed #dee2c1;
 	}
 
 	.word:hover {
-		background: #f0f3d7;
+		background: #e0e3c7;
 		border: 0.1em dashed #dee2c1;
 		padding: 0.9em;
 		cursor: pointer;
 	}
 
 	.spotlight {
-		padding: 0 10px;
+		border-radius: 6px;
+		margin: 0 auto;
+		display: block;
+		padding: 10px;
+		width: 50%;
+	}
+
+	.results {
+		max-height: 55vh;
+		overflow-y: scroll;
 	}
 </style>

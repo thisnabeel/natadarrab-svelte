@@ -1,5 +1,5 @@
 <script>
-	import Landing from '$lib/components/Home/Landing/index.svelte';
+	import Landing from '$lib/components/Home/Landing/Index.svelte';
 	import { user } from '$lib/stores/user';
 	import { onMount } from 'svelte';
 	import { goto } from '$app/navigation';

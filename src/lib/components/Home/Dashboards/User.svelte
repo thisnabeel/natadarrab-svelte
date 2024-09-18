@@ -4,11 +4,13 @@
 </script>
 
 <div class="wrapper">
-	<h1 class="extra-bold">
-		<div class="salam lalezar-regular">السلام عليكم<br /> {$user.first_name}</div>
-	</h1>
+	{#if $user}
+		<h1 class="extra-bold">
+			<div class="salam lalezar-regular">السلام عليكم<br /> {$user.first_name}</div>
+		</h1>
 
-	<i class="fa fa-sign-out sign-out" on:click={() => user.set(null)} />
+		<i class="fa fa-sign-out sign-out" on:click={() => user.set(null)} />
+	{/if}
 </div>
 
 <style>

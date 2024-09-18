@@ -14,6 +14,7 @@
 	export let autostart;
 	export let autoid;
 	let rows = [];
+	export let verses = [];
 
 	onMount(async () => {
 		if (autostart && autostart.length > 1) {
@@ -44,6 +45,29 @@
 		words = res;
 		if (res.length === 0) error = 'No Words for ' + searchInput;
 		rows = [];
+		verses = [];
+	}
+
+	async function findVerse() {
+		console.log({ searchInput });
+		const res = await API.post('/revelations/search.json', {
+			verses: searchInput
+		});
+		console.log({ res });
+		verses = res;
+		words = [];
+
+		// rows = [];
+		// suggesting = false;
+		// const root = convertRomanToArabic(searchInput);
+		// const res = await API.post('/qf/find_by_root.json', {
+		// 	type: 'verb',
+		// 	root: root
+		// });
+		// console.log({ res });
+		// words = res;
+		// if (res.length === 0) error = 'No Words for ' + searchInput;
+		// rows = [];
 	}
 
 	function convertRomanToArabic(letters) {
@@ -169,6 +193,8 @@
 		) {
 			console.log('Input is 3 English or Arabic letters', strippedInput);
 			debounceSearch(findArabicWordsByRoot(), 500);
+		} else if (input.includes(':')) {
+			debounceSearch(findVerse(), 500);
 		} else {
 			// Optionally, you can handle the case when the input doesn't meet the criteria
 			words = [];
@@ -190,33 +216,21 @@
 		suggesting = true;
 	}}
 />
-{#if searchInput.length > 0 && suggesting}
+{#if verses.length > 0}
 	<!-- svelte-ignore a11y-click-events-have-key-events -->
-
-	{#if isVerse(searchInput)}
-		<!-- svelte-ignore a11y-click-events-have-key-events -->
-		<div
-			class="query"
-			on:click={async () => {
-				await deliver({
-					action: 'verse',
-					query: searchInput
-				});
-				rows = [];
-				suggesting = false;
-			}}
-		>
-			{#if searchInput.includes(':')}
-				{#if searchInput.includes('-')}
-					Go To Aayaat: {searchInput}
-				{:else}
-					Go To Aayah: {searchInput}
-				{/if}
-			{:else}
-				Go To Surah: {searchInput}
+	<div class="verses">
+		{#each verses as verse}
+			{#if verse && verse['arabic']}
+				<li>
+					{verse['arabic']}
+				</li>
+			{:else if verse && verse['original']}
+				<li>
+					{@html verse['original']}
+				</li>
 			{/if}
-		</div>
-	{/if}
+		{/each}
+	</div>
 {/if}
 
 {#if rows}
@@ -311,6 +325,17 @@
 		border: 0.1em dashed #dee2c1;
 		padding: 0.9em;
 		cursor: pointer;
+	}
+
+	.verses > li {
+		max-width: 50vw;
+		display: block;
+		margin: 0 auto;
+		padding: 20px;
+		background: #fff;
+		border-radius: 4px;
+		margin-top: 2px;
+		text-align: right;
 	}
 
 	.spotlight {

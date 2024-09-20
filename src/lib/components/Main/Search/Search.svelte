@@ -3,6 +3,7 @@
 	import API from '$lib/api/api';
 	import { onMount } from 'svelte';
 
+	import Verse from './Verses/Show.svelte';
 	export let deliver;
 
 	export let searchInput = '';
@@ -32,6 +33,7 @@
 				suggesting = false;
 			}
 		}
+		fetchJsonData();
 	});
 
 	async function findArabicWordsByRoot() {
@@ -48,7 +50,26 @@
 		verses = [];
 	}
 
+	import { translation } from '$lib/components/QuranFlow/store.js';
+
+	const fetchJsonData = async () => {
+		try {
+			const response = await fetch('/translations/english/eng-abdelhaleem.json');
+
+			if (!response.ok) {
+				throw new Error('Failed to fetch JSON data');
+			}
+			translation.set(await response.json());
+			console.log('translation');
+			console.log($translation);
+		} catch (error) {
+			console.error(error);
+		}
+	};
+
+	let findingVerses = false;
 	async function findVerse() {
+		findingVerses = true;
 		console.log({ searchInput });
 		const res = await API.post('/revelations/search.json', {
 			verses: searchInput
@@ -56,6 +77,7 @@
 		console.log({ res });
 		verses = res;
 		words = [];
+		findingVerses = false;
 
 		// rows = [];
 		// suggesting = false;
@@ -216,21 +238,18 @@
 		suggesting = true;
 	}}
 />
+
+{#if findingVerses}
+	<div class="word">Loading Verses...</div>
+{/if}
+
 {#if verses.length > 0}
 	<!-- svelte-ignore a11y-click-events-have-key-events -->
-	<div class="verses">
+	<ul class="verses clean-list">
 		{#each verses as verse}
-			{#if verse && verse['arabic']}
-				<li>
-					{verse['arabic']}
-				</li>
-			{:else if verse && verse['original']}
-				<li>
-					{@html verse['original']}
-				</li>
-			{/if}
+			<Verse {verse} />
 		{/each}
-	</div>
+	</ul>
 {/if}
 
 {#if rows}
@@ -288,6 +307,7 @@
 		display: block;
 		position: absolute;
 		top: 0;
+		z-index: 99999999;
 	}
 
 	#desc {
@@ -327,17 +347,6 @@
 		cursor: pointer;
 	}
 
-	.verses > li {
-		max-width: 50vw;
-		display: block;
-		margin: 0 auto;
-		padding: 20px;
-		background: #fff;
-		border-radius: 4px;
-		margin-top: 2px;
-		text-align: right;
-	}
-
 	.spotlight {
 		border-radius: 6px;
 		margin: 0 auto;
@@ -349,5 +358,11 @@
 	.results {
 		max-height: 55vh;
 		overflow-y: scroll;
+	}
+
+	.verses {
+		overflow-y: scroll;
+		max-height: 522px;
+		margin-top: 6px;
 	}
 </style>

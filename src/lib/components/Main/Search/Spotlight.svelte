@@ -3,6 +3,7 @@
 	import { onMount } from 'svelte';
 	import Search from './Search.svelte';
 	import { showSpotlight } from '$lib/stores/spotlight';
+	import { gopher } from '$lib/components/QuranFlow/store';
 
 	export let deliver = function () {};
 
@@ -144,8 +145,9 @@
 </script>
 
 {#if $showSpotlight}
+	<!-- svelte-ignore a11y-click-events-have-key-events -->
 	<div class="bgFiller" on:click={handleBackgroundClick}>
-		<div id="spotlight_wrapper">
+		<div class="spotlight_wrapper">
 			<Search />
 		</div>
 	</div>
@@ -177,11 +179,14 @@
 		display: block;
 		position: absolute;
 		top: 0;
+		z-index: 99999999;
 	}
 
-	#spotlight_wrapper {
+	.spotlight_wrapper {
 		position: absolute;
 		top: 15%;
+		display: block;
+		margin: 0 auto;
 		left: 0;
 		right: 0;
 		width: 100%;

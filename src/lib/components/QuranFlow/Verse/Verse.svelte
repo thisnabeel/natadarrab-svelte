@@ -5,10 +5,10 @@
 	import { gopher, grid, translation } from '$lib/components/QuranFlow/store';
 
 	export let verse;
-	export let trans;
+	export let trans = null;
 	export let sliced = true;
 	export let inline = false;
-
+	export let wordHandler;
 	export let expandable = false;
 
 	let showTranslation = false;
@@ -32,34 +32,38 @@
 		return '';
 	}
 
-	function selectSlice(item) {
+	async function selectSlice(item) {
 		// console.log({ slice });
 		console.log({ item });
 		const triggerId = item.slice.getAttribute('data-trigger-id');
 		let triggerType = item.triggerType;
 		console.log({ triggerType });
 
-		getWord(triggerId, triggerType);
+		wordHandler(await getWord(triggerId, triggerType));
 	}
 
 	async function getWord(triggerId, triggerType) {
 		const res = await API.get(`/${triggerType}/${triggerId}.json`);
-		console.log({ res });
-		gopher.set({
+		return {
 			kind: 'word',
-			item: res
-		});
-		console.log($gopher);
-		return res;
+			item: res,
+			verse: verse
+		};
 	}
 
 	$: trans_ref = Number(verse.item.ref.split(':')[1] - 1);
 	// $: translation = trans ? (trans[trans_ref] ? trans[trans_ref].text : null) : null;
-	$: trans = $translation.quran.find(
-		(obj) =>
-			obj.chapter === Number(verse.item.ref.split(':')[0]) &&
-			obj.verse === Number(verse.item.ref.split(':')[1])
-	);
+	$: getTrans(trans);
+
+	function getTrans(item) {
+		if ($translation) {
+			trans = $translation.quran.find(
+				(obj) =>
+					obj.chapter === Number(verse.item.ref.split(':')[0]) &&
+					obj.verse === Number(verse.item.ref.split(':')[1])
+			);
+		}
+	}
 	function toggleTranslation() {
 		console.log('clicked', trans);
 		showTranslation = !showTranslation;

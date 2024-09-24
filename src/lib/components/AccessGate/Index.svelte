@@ -22,7 +22,7 @@
 			confirmButtonText: 'Enter',
 			showLoaderOnConfirm: true,
 			preConfirm: async (key) => {
-				if (['ntdrb', 'luqmaan24'].includes(key)) {
+				if (['ntdrb', 'luqmaan24', 'qsz'].includes(key)) {
 					accessGranted = true;
 					return true;
 				} else {

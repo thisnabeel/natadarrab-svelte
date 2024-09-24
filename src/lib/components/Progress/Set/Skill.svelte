@@ -111,6 +111,9 @@
 						<li on:click={selectedChapter.set(chapter)}>
 							{chapter.title}
 							<div class="btn btn-outline-info"><i class="fa fa-link" /></div>
+							<a class="btn btn-outline-warning" href="/chapters/{chapter.id}"
+								><i class="fa fa-share" /></a
+							>
 						</li>
 					{/each}
 				</ul>

@@ -3,6 +3,7 @@
 	import VerseSliced from '$lib/components/Quran/Verses/Verse/VerseSliced.svelte';
 
 	import { gopher, grid, translation } from '$lib/components/QuranFlow/store';
+	import { device } from '$lib/utils/device';
 
 	export let verse;
 	export let trans = null;
@@ -71,7 +72,7 @@
 </script>
 
 {#if inline}
-	<span class="iraab inline" class:showTranslation>
+	<span class="iraab inline" class:mobile={$device === 'mobile'} class:showTranslation>
 		<VerseSliced {selectSlice} lineHeight={'2.5em'} html={verse.iraab} />
 		<span class="ref" on:click={toggleTranslation}
 			>{verse.item.ref.split(':')[1]}
@@ -92,7 +93,7 @@
 		{/if}
 	</span>
 {:else}
-	<li class="verse">
+	<li class="verse" class:mobile={$device === 'mobile'}>
 		{#if sliced}
 			<div class="iraab" style="padding: 1em;">
 				<VerseSliced {selectSlice} lineHeight={'2.5em'} html={verse.iraab} />
@@ -111,6 +112,18 @@
 {/if}
 
 <style>
+	.mobile.verse .iraab {
+		padding: 0;
+	}
+
+	.mobile.verse {
+		font-size: 19px;
+		line-height: 2.5em;
+		text-align: right;
+		padding: 0;
+		border: 0;
+		margin: 0;
+	}
 	.inline :global(> div) {
 		display: inline;
 		unicode-bidi: bidi-override;

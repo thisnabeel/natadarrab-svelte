@@ -4,6 +4,7 @@
 	import Search from './Search.svelte';
 	import { showSpotlight } from '$lib/stores/spotlight';
 	import { gopher } from '$lib/components/QuranFlow/store';
+	import { device } from '$lib/utils/device';
 
 	export let deliver = function () {};
 
@@ -147,7 +148,7 @@
 {#if $showSpotlight}
 	<!-- svelte-ignore a11y-click-events-have-key-events -->
 	<div class="bgFiller" on:click={handleBackgroundClick}>
-		<div class="spotlight_wrapper">
+		<div class="spotlight_wrapper" class:mobile={$device === 'mobile'}>
 			<Search />
 		</div>
 	</div>
@@ -191,6 +192,10 @@
 		right: 0;
 		width: 100%;
 		/* display: none; */
+	}
+
+	.mobile.spotlight_wrapper {
+		top: 2%;
 	}
 
 	#spotlight {

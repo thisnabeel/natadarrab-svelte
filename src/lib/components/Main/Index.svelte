@@ -6,9 +6,10 @@
 	import { user } from '$lib/stores/user';
 	let expanded = false;
 	import Dashboard from '$lib/components/Home/Dashboards/Index.svelte';
+	import { showSpotlight } from '$lib/stores/spotlight';
 </script>
 
-<div class="dashboard">
+<div class="dashboard" class:blur={$showSpotlight}>
 	{#if $user}
 		<div class="leftShelf" class:expanded>
 			<LeftBar
@@ -30,12 +31,15 @@
 {/if}
 
 <style>
+	.blur {
+		filter: blur(10px);
+	}
 	.leftShelf.expanded {
 		width: 160px;
 	}
 	.dashboard {
 		height: 100vh;
-		min-width: 1200px;
+		/* min-width: 1200px; */
 		display: flex;
 		background-color: rgb(255, 255, 255);
 	}

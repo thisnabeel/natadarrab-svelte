@@ -51,6 +51,9 @@
 	}
 
 	import { translation } from '$lib/components/QuranFlow/store.js';
+	import { device } from '$lib/utils/device';
+	import { closeModal } from 'svelte-modals';
+	import { showSpotlight } from '$lib/stores/spotlight';
 
 	const fetchJsonData = async () => {
 		try {
@@ -229,6 +232,7 @@
 	type="text"
 	id="spotlight"
 	class="spotlight"
+	class:mobile={$device === 'mobile'}
 	placeholder="Search ..."
 	bind:value={searchInput}
 	bind:this={searchElement}
@@ -239,13 +243,21 @@
 	}}
 />
 
+<div
+	class="close-search btn btn-outline-danger"
+	class:mobile={$device === 'mobile'}
+	on:click={() => showSpotlight.set(null)}
+>
+	<i class="fa fa-times" />
+</div>
+
 {#if findingVerses}
 	<div class="word">Loading Verses...</div>
 {/if}
 
 {#if verses.length > 0}
 	<!-- svelte-ignore a11y-click-events-have-key-events -->
-	<ul class="verses clean-list">
+	<ul class="verses clean-list" class:mobile={$device === 'mobile'}>
 		{#each verses as verse}
 			<Verse {verse} />
 		{/each}
@@ -355,6 +367,26 @@
 		width: 50%;
 	}
 
+	input.mobile {
+		font-size: 42px;
+		width: 80%;
+		margin-left: 10px;
+	}
+
+	.close-search {
+		top: 4px;
+		right: 21%;
+		position: absolute;
+	}
+	.close-search.mobile {
+		position: absolute;
+		top: 0%;
+		right: 11px;
+		width: 13%;
+		height: 81px;
+		font-size: 46px;
+	}
+
 	.results {
 		max-height: 55vh;
 		overflow-y: scroll;
@@ -364,5 +396,9 @@
 		overflow-y: scroll;
 		max-height: 522px;
 		margin-top: 6px;
+	}
+
+	.mobile.verses {
+		max-height: 77vh;
 	}
 </style>

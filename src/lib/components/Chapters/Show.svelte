@@ -36,7 +36,10 @@
 				<h1>Practice:</h1>
 				<ul>
 					{#each chapter.games as game}
-						<li on:click={() => goto(`/games/${game.id}`)}>{game.title}</li>
+						<li on:click={() => goto(`/games/${game.id}`)}>
+							{game.title}
+							<div class="btn btn-outline-primary">Begin Test</div>
+						</li>
 					{/each}
 				</ul>
 			</div>

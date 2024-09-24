@@ -11,6 +11,8 @@
 
 	let deeperWord = null;
 
+	export let handleClose;
+
 	async function findMoreRoot() {
 		rootWords = await API.post(`/qf/find_root_words.json`, {
 			root: root
@@ -73,7 +75,7 @@
 					item: null
 				})}
 		>
-			<i class="fa fa-times" />
+			<i class="fa fa-times close" on:click={handleClose} />
 		</div>
 	</div>
 </article>

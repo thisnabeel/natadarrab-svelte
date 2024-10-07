@@ -138,6 +138,7 @@
 
 	function handleBackgroundClick(event) {
 		const spotlightWrapper = document.getElementById('spotlight_wrapper');
+		if (!spotlightWrapper) return;
 		if (!spotlightWrapper.contains(event.target)) {
 			showSpotlight.set(false);
 			// Add any other actions you want to perform when clicking outside

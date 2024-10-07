@@ -264,9 +264,9 @@
 	</ul>
 {/if}
 
-{#if rows}
+{#if words}
 	<div class="results">
-		{#each words as word}
+		{#each words['verbs'] || [] as word}
 			<!-- svelte-ignore a11y-click-events-have-key-events -->
 			<div
 				class="word"
@@ -281,7 +281,25 @@
 					suggesting = false;
 				}}
 			>
-				{word.v_word} <br />{word.v_translation}
+				{word.nv_word} <br />{word.nv_translation}
+			</div>
+		{/each}
+		{#each words['non_verbs'] || [] as word}
+			<!-- svelte-ignore a11y-click-events-have-key-events -->
+			<div
+				class="word"
+				on:click={async () => {
+					await deliver({
+						action: 'word',
+						query: searchInput,
+						word: word
+					});
+					rows = [];
+					words = [];
+					suggesting = false;
+				}}
+			>
+				{word.nv_word} <br />{word.nv_translation}
 			</div>
 		{/each}
 	</div>

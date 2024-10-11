@@ -93,7 +93,7 @@
 	nav {
 		position: fixed;
 		bottom: 0;
-		left: 0;
+		left: 60px;
 		right: 0;
 		height: 50px;
 		background-color: #f0f0f0;

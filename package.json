@@ -35,6 +35,7 @@
 	},
 	"type": "module",
 	"dependencies": {
+		"@excalidraw/excalidraw": "^0.17.6",
 		"@fontsource/jetbrains-mono": "^5.0.18",
 		"@fontsource/manrope": "^5.0.18",
 		"@slidy/core": "^3.7.6",
@@ -48,12 +49,16 @@
 		"axios": "^1.4.0",
 		"cl-editor": "^2.3.0",
 		"moment": "^2.29.4",
+		"react": "^18.3.1",
+		"react-dom": "^18.3.1",
 		"reveal.js": "^5.0.4",
 		"sv-bootstrap-modal": "^1.0.3",
 		"svelte-inview": "^4.0.1",
 		"svelte-modals": "^1.2.1",
 		"svelte-outclick": "^3.5.0",
+		"svelte-preprocess-react": "^0.17.1",
 		"svelte-quill": "^1.2.0",
+		"sveltris": "^0.1.0",
 		"sweetalert2": "^9.7.2"
 	}
 }

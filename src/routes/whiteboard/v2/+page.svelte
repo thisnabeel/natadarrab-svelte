@@ -57,9 +57,11 @@
 	}
 </script>
 
-<div class="excalidraw-container">
-	<ExcalidrawWrapper on:ready={handleReady} />
-</div>
+{#each pages as page, index}
+	<div class="excalidraw-container" class:hidden={currentPageIndex !== index}>
+		<ExcalidrawWrapper on:ready={handleReady} />
+	</div>
+{/each}
 
 <nav>
 	<div class="pages">

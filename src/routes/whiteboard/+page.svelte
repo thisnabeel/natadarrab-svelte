@@ -1,10 +1,10 @@
 <script>
 	import { onMount } from 'svelte';
 	import ExcalidrawWrapper from '$lib/components/WhiteBoard/ExcaliDraw.svelte';
+	import {currentWhiteboardIndex} from "$lib/stores/whiteboard";
 
 	let excalidrawAPI;
 	let pages = [{ id: 1, content: null }];
-	let currentPageIndex = 0;
 
 	function handleReady(event) {
 		excalidrawAPI = event.detail;
@@ -12,8 +12,8 @@
 	}
 
 	function loadPageContent() {
-		if (pages[currentPageIndex].content) {
-			excalidrawAPI.updateScene(JSON.parse(pages[currentPageIndex].content));
+		if (pages[$currentWhiteboardIndex].content) {
+			excalidrawAPI.updateScene(JSON.parse(pages[$currentWhiteboardIndex].content));
 		} else {
 			excalidrawAPI.updateScene({ elements: [], appState: {} });
 		}
@@ -24,7 +24,7 @@
 			const elements = excalidrawAPI.getSceneElements();
 			const appState = excalidrawAPI.getAppState();
 			const scene = { elements, appState };
-			pages[currentPageIndex].content = JSON.stringify(scene);
+			pages[$currentWhiteboardIndex].content = JSON.stringify(scene);
 			pages = pages;
 		}
 	}
@@ -32,12 +32,12 @@
 	function addNewPage() {
 		saveCurrentPage();
 		pages = [...pages, { id: pages.length + 1, content: null }];
-		currentPageIndex = pages.length - 1;
+		currentWhiteboardIndex.set(pages.length - 1);
 	}
 
 	function switchPage(index) {
 		saveCurrentPage();
-		currentPageIndex = index;
+		currentWhiteboardIndex.set(index);
 		loadPageContent();
 	}
 
@@ -51,15 +51,15 @@
 			const url = window.URL.createObjectURL(blob);
 			const link = document.createElement('a');
 			link.href = url;
-			link.download = `excalidraw-page-${currentPageIndex + 1}.png`;
+			link.download = `excalidraw-page-${$currentWhiteboardIndex + 1}.png`;
 			link.click();
 		}
 	}
 </script>
 
 {#each pages as page, index}
-	<div class="excalidraw-container" class:hidden={currentPageIndex !== index}>
-		<ExcalidrawWrapper on:ready={handleReady} />
+	<div class="excalidraw-container" class:hidden={$currentWhiteboardIndex !== index}>
+		<ExcalidrawWrapper {index} on:ready={handleReady} />
 	</div>
 {/each}
 
@@ -67,7 +67,7 @@
 	<div class="pages">
 		{#each pages as page, index}
 			<button
-				class="page-button {currentPageIndex === index ? 'active' : ''}"
+				class="page-button {$currentWhiteboardIndex === index ? 'active' : ''}"
 				on:click={() => switchPage(index)}
 			>
 				{page.id}
@@ -88,6 +88,24 @@
 
 	:global(.excalidraw-container > div) {
 		height: 100%;
+	}
+
+	:global(.dropdown-menu) {
+		position: absolute;
+		z-index: 1000;
+		/* display: none; */
+		border: none;
+		min-width: 10rem;
+		/* padding: .5rem 0; */
+		margin: 0;
+		font-size: 1rem;
+		color: #212529;
+		text-align: left;
+		list-style: none;
+		/* background-color: #fff; */
+		background-clip: padding-box;
+		border: 1px solid rgba(0, 0, 0, .15);
+		border-radius: .25rem;
 	}
 
 	nav {

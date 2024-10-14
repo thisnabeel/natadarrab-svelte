@@ -5,7 +5,7 @@
 	import GopherBlock from '$lib/components/QuranFlow/Gopher/Word.svelte';
 	import { gopher } from '$lib/components/QuranFlow/store';
 	import { device } from '$lib/utils/device';
-
+	import {importVerse, whiteboardActive} from "$lib/stores/whiteboard"
 	export let verse;
 
 	let selectedWord;
@@ -58,6 +58,11 @@
 	<li class:mobile={$device === 'mobile'}>
 		<ArabicVerse {verse} {wordHandler} />
 
+		{#if whiteboardActive}
+			<!-- svelte-ignore a11y-click-events-have-key-events -->
+			<span class="btn btn-outline-primary add-to-whiteboard" on:click={() => importVerse.set(verse)}>Add to Whiteboard</span>
+		{/if}
+
 		{#if selectedWord}
 			<div class="gopher">
 				<GopherBlock word={selectedWord.item} handleClose={() => (selectedWord = null)} />
@@ -101,5 +106,12 @@
 		margin-top: 2px;
 		text-align: right;
 		position: relative;
+	}
+
+	.add-to-whiteboard {
+		position: absolute;
+		right: 10px;
+		top: 10px;
+		z-index: 99999;
 	}
 </style>

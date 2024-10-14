@@ -78,4 +78,14 @@
     right: 200px;
     position: absolute;
   }
+
+  :global(.excalidraw .popover) {
+    position: absolute;
+    z-index: 10;
+    padding: 5px 0 5px;
+    outline: none;
+    height: auto !important;
+    width: auto;
+    border: 0;
+  }
 </style>

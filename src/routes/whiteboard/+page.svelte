@@ -76,7 +76,7 @@
 		<button on:click={addNewPage}>+</button>
 	</div>
 	<div class="controls">
-		<button on:click={exportToPNG}>Export to PNG</button>
+		<!-- <button on:click={exportToPNG}>Export to PNG</button> -->
 	</div>
 </nav>
 

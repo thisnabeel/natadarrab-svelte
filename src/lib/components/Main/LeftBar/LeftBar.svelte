@@ -360,7 +360,7 @@
 
 	@media only screen and (max-width: 600px) {
 		.search-btn {
-			bottom: 120px;
+			bottom: 140px;
 		}
 	}
 </style>

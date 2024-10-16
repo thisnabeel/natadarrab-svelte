@@ -197,6 +197,7 @@
 </div>
 
 <style>
+
 	.search-btn {
 		position: absolute;
 		bottom: 0;
@@ -355,5 +356,11 @@
 		border: 1px solid rgb(255, 255, 255);
 		right: -1px;
 		border-radius: 0px;
+	}
+
+	@media only screen and (max-width: 600px) {
+		.search-btn {
+			bottom: 60px;
+		}
 	}
 </style>

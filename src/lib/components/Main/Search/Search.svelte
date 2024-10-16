@@ -207,6 +207,18 @@
 		};
 	}
 
+	// function debounceSearch(func, delay) {
+	// 	let timeoutId;
+	
+	// 	return function(...args) {
+	// 		clearTimeout(timeoutId);
+			
+	// 		timeoutId = setTimeout(() => {
+	// 		func.apply(this, args);
+	// 		}, delay);
+	// 	};
+	// }
+
 	function tryRootSearch(input) {
 		// Strip whitespace from the input
 		const strippedInput = input.replace(/\s/g, '');

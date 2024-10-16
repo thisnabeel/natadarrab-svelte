@@ -33,6 +33,12 @@
 		url: '/schedule'
 	};
 
+	let whiteboard = {
+		tooltip: 'Whiteboard',
+		img: 'whiteboard.png',
+		url: '/whiteboard'
+	};
+
 	let labs = {
 		tooltip: 'Labs',
 		icon: `fa-flask`,
@@ -104,7 +110,8 @@
 		seerah,
 		quranflow,
 		springs,
-		bibleflow
+		bibleflow,
+		whiteboard
 	];
 
 	let adminButtons = [
@@ -124,7 +131,8 @@
 		seerah,
 		quranflow,
 		divider,
-		bibleflow
+		bibleflow,
+		whiteboard
 	];
 
 	$: console.log('user', $user);
@@ -152,33 +160,35 @@
 
 				<!-- <a on:click={() => admin.set(!$admin)}><span class="fa button fa-toggle-on"></span></a> -->
 
-				{#each ($user && ($user.admin || $user.teacher ? adminButtons : buttons)) || [] as button}
-					{#if button.divider}
-						<hr />
-					{:else}
-						<a
-							href="#"
-							on:click={() => {
-								goto(button.url);
-							}}
-							class:selected={$page.url.pathname.includes(button.url)}
-						>
-							<div class="button">
-								{#if button.svg}
-									{@html button.svg}
-								{:else if button.img}
-									<img src="/{button.img}" alt="" class="icon" />
-								{:else}
-									<div class="fa {button.icon}" />
-								{/if}
-
-								{#if expanded}
-									<span class="title">{button.tooltip}</span>
-								{/if}
-							</div>
-						</a>
-					{/if}
-				{/each}
+				<div class="buttons-list">
+					{#each ($user && ($user.admin || $user.teacher ? adminButtons : buttons)) || [] as button}
+						{#if button.divider}
+							<hr />
+						{:else}
+							<a
+								href="#"
+								on:click={() => {
+									goto(button.url);
+								}}
+								class:selected={$page.url.pathname.includes(button.url)}
+							>
+								<div class="button">
+									{#if button.svg}
+										{@html button.svg}
+									{:else if button.img}
+										<img src="/{button.img}" alt="" class="icon" />
+									{:else}
+										<div class="fa {button.icon}" />
+									{/if}
+	
+									{#if expanded}
+										<span class="title">{button.tooltip}</span>
+									{/if}
+								</div>
+							</a>
+						{/if}
+					{/each}
+				</div>
 			</div>
 		</nav>
 		<div class="mid" />
@@ -256,8 +266,14 @@
 		padding-right: 0px;
 	}
 
+	.buttons-list {
+		overflow-y: scroll;
+    	height: 83vh;
+    	border-bottom: 5px dashed #f3f3f3;
+	}
+
 	.expand {
-		padding: 24px 8px;
+		padding: 0px 8px;
 		display: flex;
 		-webkit-box-align: center;
 		align-items: center;

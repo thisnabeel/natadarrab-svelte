@@ -80,7 +80,9 @@
 		</span>
 		{#if showTranslation}
 			<div class="translation">
-				{trans.text}
+				{verse.translation.english}
+				<hr />
+				{verse.translation.urdu}
 			</div>
 		{/if}
 		{#if showTranslation && expandable}
@@ -105,7 +107,9 @@
 		{/if}
 		{#if showTranslation}
 			<div class="translation">
-				{trans.text}
+				{verse.translation.english}
+				<hr />
+				{verse.translation.urdu}
 			</div>
 		{/if}
 	</li>

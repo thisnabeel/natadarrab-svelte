@@ -121,7 +121,7 @@
 			n: 'ن',
 			w: 'و',
 			v: 'و',
-			h: ['ه', 'ح'],
+			h: ['ه', 'ح', 'خ'],
 			y: 'ي',
 			i: 'ي'
 		};
@@ -209,10 +209,10 @@
 
 	// function debounceSearch(func, delay) {
 	// 	let timeoutId;
-	
+
 	// 	return function(...args) {
 	// 		clearTimeout(timeoutId);
-			
+
 	// 		timeoutId = setTimeout(() => {
 	// 		func.apply(this, args);
 	// 		}, delay);
@@ -277,11 +277,11 @@
 {/if}
 
 {#if words}
-	<div class="results">
-		{#each words['verbs'] || [] as word}
+	<div class="results" class:mobile={$device === 'mobile'}>
+		{#each words['non_verbs'] || [] as word}
 			<!-- svelte-ignore a11y-click-events-have-key-events -->
 			<div
-				class="word"
+				class="word non_verb"
 				on:click={async () => {
 					await deliver({
 						action: 'word',
@@ -296,10 +296,11 @@
 				{word.nv_word} <br />{word.nv_translation}
 			</div>
 		{/each}
-		{#each words['non_verbs'] || [] as word}
+		<br />
+		{#each words['verbs'] || [] as word}
 			<!-- svelte-ignore a11y-click-events-have-key-events -->
 			<div
-				class="word"
+				class="word verb"
 				on:click={async () => {
 					await deliver({
 						action: 'word',
@@ -311,7 +312,7 @@
 					suggesting = false;
 				}}
 			>
-				{word.nv_word} <br />{word.nv_translation}
+				{word.v_word} <br />{word.v_translation}
 			</div>
 		{/each}
 	</div>
@@ -380,6 +381,18 @@
 		border-bottom: 2px dashed;
 		background: #f0f3d7;
 		border: 0.1em dashed #dee2c1;
+		display: inline-block;
+		font-size: 20px;
+		border-radius: 4px;
+		text-align: center;
+	}
+
+	.word.non_verb {
+		background: #beffb3;
+	}
+
+	.word.verb {
+		background: #ffedfe;
 	}
 
 	.word:hover {
@@ -420,6 +433,8 @@
 	.results {
 		max-height: 55vh;
 		overflow-y: scroll;
+		max-width: 50vw;
+		margin: 0 auto;
 	}
 
 	.verses {
@@ -430,5 +445,11 @@
 
 	.mobile.verses {
 		max-height: 77vh;
+	}
+
+	.mobile.results {
+		max-width: 100vw;
+		margin: 0 auto;
+		max-height: 88vh;
 	}
 </style>

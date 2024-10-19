@@ -249,6 +249,10 @@
 </script>
 
 <input
+	autocomplete="off"
+	autocorrect="off"
+	autocapitalize="off"
+	spellcheck="false"
 	type="text"
 	id="spotlight"
 	class="spotlight"

@@ -16,6 +16,7 @@
 	export let autoid;
 	let rows = [];
 	export let verses = [];
+	let selectedWord = {};
 
 	onMount(async () => {
 		if (autostart && autostart.length > 1) {
@@ -50,10 +51,17 @@
 		verses = [];
 	}
 
+	let selectedWordExamples;
+
 	import { translation } from '$lib/components/QuranFlow/store.js';
 	import { device } from '$lib/utils/device';
 	import { closeModal } from 'svelte-modals';
 	import { showSpotlight } from '$lib/stores/spotlight';
+
+	async function selectWord(wordType, id) {
+		selectedWord = { wordType: wordType, id: id };
+		selectedWordExamples = await API.get(`${wordType}/examples/${id}.json`);
+	}
 
 	const fetchJsonData = async () => {
 		try {
@@ -276,21 +284,27 @@
 	</ul>
 {/if}
 
+{#if selectedWord}
+	<div class="details" class:mobile={$device === 'mobile'}>
+		{#if selectedWordExamples}
+			<div class="examples">
+				{#each selectedWordExamples as example}
+					<li>{@html example.ayah_html} - {example.verse_position}</li>
+				{/each}
+			</div>
+		{/if}
+	</div>
+{/if}
+
 {#if words}
 	<div class="results" class:mobile={$device === 'mobile'}>
 		{#each words['non_verbs'] || [] as word}
 			<!-- svelte-ignore a11y-click-events-have-key-events -->
 			<div
 				class="word non_verb"
+				class:selected={selectedWord.id === word.id && selectedWord.wordType === 'nv'}
 				on:click={async () => {
-					await deliver({
-						action: 'word',
-						query: searchInput,
-						word: word
-					});
-					rows = [];
-					words = [];
-					suggesting = false;
+					selectWord('nv', word.id);
 				}}
 			>
 				{word.nv_word} <br />{word.nv_translation}
@@ -301,15 +315,9 @@
 			<!-- svelte-ignore a11y-click-events-have-key-events -->
 			<div
 				class="word verb"
+				class:selected={selectedWord.id === word.id && selectedWord.wordType === 'v'}
 				on:click={async () => {
-					await deliver({
-						action: 'word',
-						query: searchInput,
-						word: word
-					});
-					rows = [];
-					words = [];
-					suggesting = false;
+					selectWord('v', word.id);
 				}}
 			>
 				{word.v_word} <br />{word.v_translation}
@@ -437,14 +445,43 @@
 		margin: 0 auto;
 	}
 
+	.details {
+		max-width: 50vw;
+	}
+
 	.verses {
 		overflow-y: scroll;
 		max-height: 522px;
 		margin-top: 6px;
 	}
 
+	.word.selected {
+		display: block;
+	}
+	.details {
+		background: #fff;
+		padding: 30px;
+		margin: 10px 0;
+		margin: 0 auto;
+	}
+
+	.details .examples {
+		list-style: none;
+		padding: 10px;
+		text-align: right;
+		direction: rtl;
+	}
+
+	.examples li {
+		line-height: 36px;
+	}
+
 	.mobile.verses {
 		max-height: 77vh;
+	}
+
+	.mobile.details {
+		max-width: 100vw;
 	}
 
 	.mobile.results {

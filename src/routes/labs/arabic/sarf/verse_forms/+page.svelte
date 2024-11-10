@@ -12,6 +12,11 @@
 
 	let randomize = true;
 
+	let showCorrectBanner = false;
+	let showWrongBanner = false;
+	onMount(() => {
+		getExamples();
+	});
 	async function getExamples() {
 		examples = await API.post(`/examples/forms_quiz.json`, {
 			starting_verse: randomize ? null : starting_verse,
@@ -88,11 +93,19 @@
 	};
 
 	let showQuizResult = {};
-	function nextQuiz() {
+	function nextQuiz(chosen) {
 		showQuizResult[currentExampleIndex] = true;
+		if (chosen == true) {
+			showCorrectBanner = true;
+		} else {
+			showWrongBanner = true;
+		}
+
 		if (!examples[currentExampleIndex + 1]) return getExamples();
 		setTimeout(function () {
 			currentExampleIndex = currentExampleIndex + 1;
+			showCorrectBanner = false;
+			showWrongBanner = false;
 		}, 2000);
 	}
 
@@ -140,7 +153,7 @@
 					<!-- svelte-ignore a11y-click-events-have-key-events -->
 					<!-- svelte-ignore a11y-no-static-element-interactions -->
 					<div
-						on:click={() => nextQuiz()}
+						on:click={() => nextQuiz(form === examples[currentExampleIndex].form)}
 						class:correct={form === examples[currentExampleIndex].form}
 						class:incorrect={form !== examples[currentExampleIndex].form}
 					>
@@ -151,9 +164,32 @@
 			</div>
 		</div>
 	</div>
+
+	{#if showCorrectBanner}
+		<div class="text-center correct banner"><h1>Correct!</h1></div>
+	{/if}
+
+	{#if showWrongBanner}
+		<div class="text-center wrong banner"><h1>Wrong!</h1></div>
+	{/if}
 {/if}
 
 <style>
+	.banner {
+		font-size: 44px;
+		padding: 1em;
+		margin: 1em 0;
+	}
+
+	.banner.correct {
+		background: #adff2f;
+	}
+
+	.banner.wrong {
+		background: #ff0000;
+		color: #fff;
+	}
+
 	.randomize input {
 		background-color: #000;
 		color: #000;
@@ -198,7 +234,7 @@
 		margin: 0 auto;
 	}
 	:global(.auu) {
-		color: purple;
+		color: #fff;
 	}
 
 	.forms-select button {

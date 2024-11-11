@@ -18,6 +18,7 @@
 		getExamples();
 	});
 	async function getExamples() {
+		clearBanners();
 		examples = await API.post(`/examples/forms_quiz.json`, {
 			starting_verse: randomize ? null : starting_verse,
 			ending_verse: randomize ? null : ending_verse,
@@ -92,9 +93,8 @@
 		}
 	};
 
-	let showQuizResult = {};
+	let showQuizResult = false;
 	function nextQuiz(chosen) {
-		showQuizResult[currentExampleIndex] = true;
 		if (chosen == true) {
 			showCorrectBanner = true;
 		} else {
@@ -104,9 +104,14 @@
 		if (!examples[currentExampleIndex + 1]) return getExamples();
 		setTimeout(function () {
 			currentExampleIndex = currentExampleIndex + 1;
-			showCorrectBanner = false;
-			showWrongBanner = false;
+			clearBanners();
 		}, 2000);
+	}
+
+	function clearBanners() {
+		showQuizResult = false;
+		showCorrectBanner = false;
+		showWrongBanner = false;
 	}
 
 	function dice() {
@@ -148,17 +153,33 @@
 		</div>
 
 		<div class="quiz-options">
-			<div class="forms-select" class:results={showQuizResult[currentExampleIndex] === true}>
+			<div class="forms-select" class:results={showQuizResult}>
 				{#each selectedForms as form}
 					<!-- svelte-ignore a11y-click-events-have-key-events -->
 					<!-- svelte-ignore a11y-no-static-element-interactions -->
 					<div
-						on:click={() => nextQuiz(form === examples[currentExampleIndex].form)}
+						on:click={() => {
+							showQuizResult = true;
+							nextQuiz(form === examples[currentExampleIndex].form);
+						}}
 						class:correct={form === examples[currentExampleIndex].form}
 						class:incorrect={form !== examples[currentExampleIndex].form}
 					>
-						{form_breakdown[form].past}/{form_breakdown[form].present} - {form_breakdown[form]
-							.masdar}
+						<div>
+							<span style="background:#fff; padding: 8px; border-radius: 6px"
+								>{form_breakdown[form].past}</span
+							>
+							{' / '}
+							<span style="background:#fff; padding: 8px; border-radius: 6px"
+								>{form_breakdown[form].present}</span
+							>
+						</div>
+
+						<div
+							style="margin-top: 12px; border: 3px solid rgb(229 229 227); border-radius: 10px; padding-top: 10px; padding-bottom: 8px;"
+						>
+							{form_breakdown[form].masdar}
+						</div>
 					</div>
 				{/each}
 			</div>

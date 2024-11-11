@@ -105,10 +105,13 @@
 			showWrongBanner = true;
 		}
 
-		if (!examples[currentExampleIndex + 1]) return getExamples();
 		setTimeout(function () {
-			currentExampleIndex = currentExampleIndex + 1;
 			clearBanners();
+			if (!examples[currentExampleIndex + 1]) {
+				return getExamples();
+			} else {
+				currentExampleIndex = currentExampleIndex + 1;
+			}
 		}, 2000);
 	}
 

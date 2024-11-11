@@ -18,6 +18,7 @@
 
 	import Main from '$lib/components/Main/Index.svelte';
 	import { user } from '$lib/stores/user';
+	import { roomOpen } from '$lib/stores/interaction_rooms';
 
 	import { width, mobile } from '$lib/utils/device';
 	//receive whether to override and render as mobile
@@ -34,7 +35,29 @@
 		<slot />
 	{:else}
 		<Main>
-			<slot />
+			{#if $roomOpen}
+				<div class="flex">
+					<div class="flex-1">
+						<slot />
+					</div>
+					<div class="flex-2">
+						<ul class="squad clean-list">
+							<li>
+								<span class="status"><i class="fa fa-check" /></span><span class="username"
+									>Lisa</span
+								>
+							</li>
+							<li>
+								<span class="status"><i class="fa fa-times" /></span><span class="username"
+									>Mosley</span
+								>
+							</li>
+						</ul>
+					</div>
+				</div>
+			{:else}
+				<slot />
+			{/if}
 		</Main>
 	{/if}
 </div>
@@ -45,5 +68,19 @@
 <style>
 	div {
 		font-family: 'Poppins', sans-serif;
+	}
+
+	.flex {
+		display: flex;
+	}
+
+	.flex-1 {
+		flex: 1 1 85%;
+	}
+
+	.flex-2 {
+		flex: 1 1 15%;
+		border-left: 1px solid #eee;
+		padding: 10px;
 	}
 </style>

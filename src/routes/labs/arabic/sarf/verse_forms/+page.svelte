@@ -3,12 +3,15 @@
 
 	import API from '$lib/api/api';
 	import { onMount } from 'svelte';
+	import { roomOpen } from '$lib/stores/interaction_rooms';
 
 	let examples = [];
 	let starting_verse = '2:4';
 	let ending_verse = '2:14';
 
 	let currentExampleIndex = 0;
+
+	let includeSickLetters = false;
 
 	let randomize = true;
 
@@ -22,7 +25,8 @@
 		examples = await API.post(`/examples/forms_quiz.json`, {
 			starting_verse: randomize ? null : starting_verse,
 			ending_verse: randomize ? null : ending_verse,
-			forms: selectedForms
+			forms: selectedForms,
+			include_sick_letters: includeSickLetters
 		});
 		currentExampleIndex = 0;
 
@@ -119,81 +123,102 @@
 	}
 </script>
 
-<div
-	class="controls"
-	class:randomize
-	style="display: block; margin: 0 auto; width: max-content;margin-bottom: 60px"
->
-	<button class="button" on:click={dice}><i class="fa fa-dice" /></button>
-	<input type="text" bind:value={starting_verse} /><input
-		type="text"
-		bind:value={ending_verse}
-	/><button class="btn btn-outline-primary" on:click={() => getExamples()}>Find</button>
+<div class="wrapper" style="position: relative">
+	<div
+		class="controls"
+		class:randomize
+		style="display: block; margin: 0 auto; width: max-content;margin-bottom: 60px"
+	>
+		<button class="button" on:click={dice}><i class="fa fa-dice" /></button>
+		<input type="text" bind:value={starting_verse} /><input
+			type="text"
+			bind:value={ending_verse}
+		/><button class="btn btn-outline-primary" on:click={() => getExamples()}>Find</button>
 
-	<div class="forms-select">
-		{#each forms as form}
-			<button class:active={selectedForms.includes(form)} on:click={() => toggleForm(form)}
-				>{form}</button
+		<div class="forms-select">
+			{#each forms as form}
+				<button class:active={selectedForms.includes(form)} on:click={() => toggleForm(form)}
+					>{form}</button
+				>
+			{/each}
+			<!-- svelte-ignore a11y-no-static-element-interactions -->
+			<div
+				class="btn"
+				class:btn-success={includeSickLetters}
+				class:btn-outline-success={!includeSickLetters}
+				on:click={() => {
+					includeSickLetters = !includeSickLetters;
+				}}
 			>
-		{/each}
-	</div>
-</div>
-<!-- <ul class="clean-list">
-	{#each examples as example}
-		<li>
-			{@html example.verse_original}
-		</li>
-	{/each}
-</ul> -->
-
-{#if examples.length > 0}
-	<div class="quiz">
-		<div class="verse">
-			{@html examples[currentExampleIndex].verse_original} - [{examples[currentExampleIndex].ref}]
-		</div>
-
-		<div class="quiz-options">
-			<div class="forms-select" class:results={showQuizResult}>
-				{#each selectedForms as form}
-					<!-- svelte-ignore a11y-click-events-have-key-events -->
-					<!-- svelte-ignore a11y-no-static-element-interactions -->
-					<div
-						on:click={() => {
-							showQuizResult = true;
-							nextQuiz(form === examples[currentExampleIndex].form);
-						}}
-						class:correct={form === examples[currentExampleIndex].form}
-						class:incorrect={form !== examples[currentExampleIndex].form}
-					>
-						<div>
-							<span style="background:#fff; padding: 8px; border-radius: 6px"
-								>{form_breakdown[form].past}</span
-							>
-							{' / '}
-							<span style="background:#fff; padding: 8px; border-radius: 6px"
-								>{form_breakdown[form].present}</span
-							>
-						</div>
-
-						<div
-							style="margin-top: 12px; border: 3px solid rgb(229 229 227); border-radius: 10px; padding-top: 10px; padding-bottom: 8px;"
-						>
-							{form_breakdown[form].masdar}
-						</div>
-					</div>
-				{/each}
+				🤒
 			</div>
 		</div>
 	</div>
+	<!-- <ul class="clean-list">
+		{#each examples as example}
+			<li>
+				{@html example.verse_original}
+			</li>
+		{/each}
+	</ul> -->
 
-	{#if showCorrectBanner}
-		<div class="text-center correct banner"><h1>Correct!</h1></div>
+	{#if examples.length > 0}
+		<div class="quiz">
+			<div class="verse">
+				{@html examples[currentExampleIndex].verse_original} - [{examples[currentExampleIndex].ref}]
+			</div>
+
+			<div class="quiz-options">
+				<div class="forms-select" class:results={showQuizResult}>
+					{#each selectedForms as form}
+						<!-- svelte-ignore a11y-click-events-have-key-events -->
+						<!-- svelte-ignore a11y-no-static-element-interactions -->
+						<div
+							on:click={() => {
+								showQuizResult = true;
+								nextQuiz(form === examples[currentExampleIndex].form);
+							}}
+							class:correct={form === examples[currentExampleIndex].form}
+							class:incorrect={form !== examples[currentExampleIndex].form}
+						>
+							<div>
+								<span style="background:#fff; padding: 8px; border-radius: 6px"
+									>{form_breakdown[form].past}</span
+								>
+								{' / '}
+								<span style="background:#fff; padding: 8px; border-radius: 6px"
+									>{form_breakdown[form].present}</span
+								>
+							</div>
+
+							<div
+								style="margin-top: 12px; border: 3px solid rgb(229 229 227); border-radius: 10px; padding-top: 10px; padding-bottom: 8px;"
+							>
+								{form_breakdown[form].masdar}
+							</div>
+						</div>
+					{/each}
+				</div>
+			</div>
+		</div>
+
+		{#if showCorrectBanner}
+			<div class="text-center correct banner"><h1>Correct!</h1></div>
+		{/if}
+
+		{#if showWrongBanner}
+			<div class="text-center wrong banner"><h1>Wrong!</h1></div>
+		{/if}
 	{/if}
 
-	{#if showWrongBanner}
-		<div class="text-center wrong banner"><h1>Wrong!</h1></div>
-	{/if}
-{/if}
+	<div
+		class="btn btn-outline-info"
+		on:click={() => roomOpen.set(!$roomOpen)}
+		style="position: absolute; top: 10px; right: 10px;"
+	>
+		Room
+	</div>
+</div>
 
 <style>
 	.banner {

@@ -288,7 +288,7 @@
 	</ul>
 {/if}
 
-{#if selectedWord}
+{#if Object.keys(selectedWord).length > 0}
 	<div class="details" class:mobile={$device === 'mobile'}>
 		{#if selectedWordExamples}
 			<div class="examples">

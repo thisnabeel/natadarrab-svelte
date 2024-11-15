@@ -3,7 +3,8 @@
 
 	import API from '$lib/api/api';
 	import { onMount } from 'svelte';
-	import { roomOpen } from '$lib/stores/interaction_rooms';
+	import { roomOpen, currentRoomCode, members } from '$lib/stores/interaction_rooms';
+	import uuid from '$lib/functions/uuid';
 
 	let examples = [];
 	let starting_verse = '2:4';
@@ -26,11 +27,40 @@
 			starting_verse: randomize ? null : starting_verse,
 			ending_verse: randomize ? null : ending_verse,
 			forms: selectedForms,
-			include_sick_letters: includeSickLetters
+			include_sick_letters: includeSickLetters,
+			roomCode: $currentRoomCode
 		});
 		currentExampleIndex = 0;
 
 		examples = examples.filter((e) => e.verse_original.includes('auu'));
+	}
+
+	let roomCode = null;
+
+	roomOpen.subscribe((value) => {
+		if (value == true) {
+			currentRoomCode.set(uuid());
+			makePusherRoom();
+		}
+	});
+
+	currentRoomCode.subscribe((value) => {
+		if (value && value.length > 1) {
+			makePusherRoom(value);
+		}
+	});
+
+	function makePusherRoom(code) {
+		const pusher = new Pusher('7e649cff1bea807a7ce6', {
+			cluster: 'us2'
+		});
+
+		let channel = pusher.subscribe('room-' + code);
+
+		channel.bind('add-member', function (data) {
+			console.log(data);
+			members.set([...$members, data.name]);
+		});
 	}
 
 	let forms = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X'];
@@ -216,11 +246,23 @@
 
 	<div
 		class="btn btn-outline-info"
-		on:click={() => roomOpen.set(!$roomOpen)}
+		on:click={() => {
+			roomOpen.set(!$roomOpen);
+		}}
 		style="position: absolute; top: 10px; right: 10px;"
 	>
 		Room
 	</div>
+	{#if $currentRoomCode}
+		<a
+			href={'/rooms/' + $currentRoomCode}
+			target="_blank"
+			class="btn btn-primary"
+			style="position: absolute; top: 50px; right: 10px;"
+		>
+			<i class="fa fa-link" />
+		</a>
+	{/if}
 </div>
 
 <style>

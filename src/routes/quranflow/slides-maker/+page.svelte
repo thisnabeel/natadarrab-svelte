@@ -12,7 +12,6 @@
 </script>
 
 <div class="wrapper">
-	<h1 style="font-size:34px">Qur'an Slides Maker</h1>
 	<select class="form-control" bind:value={selectedStartingSurah}>
 		{#each allSurahs() as surah}
 			<option value={surah.surah}>{surah.title}</option>
@@ -52,16 +51,7 @@
 							'-' +
 							selectedEndingVerse +
 							'/slides'}
-						target="_blank">English: {selectedStartingVerse} - {selectedEndingVerse}</a
-					>
-					<a
-						class="btn btn-lg btn-primary"
-						href={'http://natadarrab-svelte.vercel.app/quranflow/' +
-							selectedStartingVerse +
-							'-' +
-							selectedEndingVerse +
-							'/urdu/slides'}
-						target="_blank">Urdu: {selectedStartingVerse} - {selectedEndingVerse}</a
+						target="_blank">{selectedStartingVerse} - {selectedEndingVerse}</a
 					>
 					<br /> <br />
 					<div class="input-group">

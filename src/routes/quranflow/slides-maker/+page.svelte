@@ -12,6 +12,7 @@
 </script>
 
 <div class="wrapper">
+	<h1 style="font-size:34px">Qur'an Slides Maker</h1>
 	<select class="form-control" bind:value={selectedStartingSurah}>
 		{#each allSurahs() as surah}
 			<option value={surah.surah}>{surah.title}</option>
@@ -42,28 +43,55 @@
 				</select>
 			</div>
 
-			<div class="link">
-				<a
-					class="btn btn-lg btn-primary"
-					href={'http://natadarrab-svelte.vercel.app/quranflow/' +
-						selectedStartingVerse +
-						'-' +
-						selectedEndingVerse +
-						'/slides'}
-					target="_blank">{selectedStartingVerse} - {selectedEndingVerse}</a
-				>
-				<br /> <br />
-				<input
-					type="text"
-					class="form-control"
-					disabled
-					value={'http://natadarrab-svelte.vercel.app/quranflow/' +
-						selectedStartingVerse +
-						'-' +
-						selectedEndingVerse +
-						'/slides'}
-				/>
-			</div>
+			{#if selectedStartingVerse && selectedEndingVerse}
+				<div class="link">
+					<a
+						class="btn btn-lg btn-primary"
+						href={'http://natadarrab-svelte.vercel.app/quranflow/' +
+							selectedStartingVerse +
+							'-' +
+							selectedEndingVerse +
+							'/slides'}
+						target="_blank">English: {selectedStartingVerse} - {selectedEndingVerse}</a
+					>
+					<a
+						class="btn btn-lg btn-primary"
+						href={'http://natadarrab-svelte.vercel.app/quranflow/' +
+							selectedStartingVerse +
+							'-' +
+							selectedEndingVerse +
+							'/urdu/slides'}
+						target="_blank">Urdu: {selectedStartingVerse} - {selectedEndingVerse}</a
+					>
+					<br /> <br />
+					<div class="input-group">
+						<label for="">English:</label>
+						<input
+							type="text"
+							class="form-control"
+							disabled
+							value={'http://natadarrab.com/quranflow/' +
+								selectedStartingVerse +
+								'-' +
+								selectedEndingVerse +
+								'/slides'}
+						/>
+					</div>
+					<div class="input-group">
+						<label for="">Urdu:</label>
+						<input
+							type="text"
+							class="form-control"
+							disabled
+							value={'http://natadarrab.com/quranflow/' +
+								selectedStartingVerse +
+								'-' +
+								selectedEndingVerse +
+								'/urdu/slides'}
+						/>
+					</div>
+				</div>
+			{/if}
 		</div>
 	{/if}
 </div>

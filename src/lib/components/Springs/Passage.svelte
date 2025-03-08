@@ -1,7 +1,7 @@
 <script>
 	import API from '$lib/api/api';
 	import { onMount } from 'svelte';
-	import {findSurah} from '$lib/functions/surahs';
+	import { findSurah } from '$lib/functions/surahs';
 
 	export let segment;
 
@@ -76,7 +76,7 @@
 {#if printed_verses}
 	<div class="printed_verses">
 		{#each printed_verses as verse}
-			{verse.arabic}<span class="ref">{verse.ref}</span>
+			{verse.arabic}<span class="ref">{verse.item.ref}</span>
 		{/each}
 	</div>
 {/if}

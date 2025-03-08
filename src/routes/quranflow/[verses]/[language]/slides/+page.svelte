@@ -70,28 +70,30 @@
 					</section>
 				{/if}
 				<section data-transition="slide">
-					<h3>
-						<button
-							class="btn btn-primary btn-lg"
-							style="background: #021423;"
-							on:click={() => {
-								getSegment(segment);
-							}}>{segment.verses}</button
-						>
-					</h3>
 					<div class="row">
 						<div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
 							<!-- Left column: Only verses -->
+
 							{#if verses[segment.id]}
 								<ul class="clean-list arabic-verses">
 									{#each verses[segment.id] as verse}
 										<li>{verse.arabic} - {verse.item.ref}</li>
 									{/each}
 								</ul>
+							{:else}
+								<button
+									class="btn btn-primary btn-lg"
+									style="background: #021423;"
+									on:click={() => {
+										getSegment(segment);
+									}}>{segment.verses}</button
+								>
 							{/if}
 						</div>
 						<div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
 							<!-- Right column: Description summary at top, then image -->
+							<article class="summary english">{segment.summary}</article>
+
 							<article class="summary {$page.params.language}">
 								{$page.params.language === 'urdu' && segment.translations
 									? segment.translations[$page.params.language]
@@ -109,6 +111,10 @@
 <style>
 	body {
 		background-color: #292929;
+	}
+
+	.summary.english {
+		font-size: 16px !important;
 	}
 
 	.summary.urdu {

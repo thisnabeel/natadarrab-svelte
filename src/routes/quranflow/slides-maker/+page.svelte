@@ -1,5 +1,6 @@
 <script>
 	import { findSurah, allSurahs } from '$lib/functions/surahs';
+	import { onMount } from 'svelte';
 
 	// $: console.log(allSurahs())
 	let selectedStartingSurah;
@@ -9,6 +10,19 @@
 	let selectedEndingVerse;
 
 	$: console.log(selectedStartingSurah);
+
+	let baseUrl = '';
+
+	onMount(() => {
+		// Get the base URL (protocol + hostname + port)
+		baseUrl = window.location.origin;
+
+		// If you want just the hostname
+		// baseUrl = window.location.hostname;
+
+		// If you want protocol + hostname + port + path (without query params)
+		// baseUrl = window.location.origin + window.location.pathname;
+	});
 </script>
 
 <div class="wrapper">
@@ -46,12 +60,24 @@
 				<div class="link">
 					<a
 						class="btn btn-lg btn-primary"
-						href={'http://natadarrab-svelte.vercel.app/quranflow/' +
+						href={baseUrl +
+							'/quranflow/' +
 							selectedStartingVerse +
 							'-' +
 							selectedEndingVerse +
 							'/slides'}
-						target="_blank">{selectedStartingVerse} - {selectedEndingVerse}</a
+						target="_blank">English: {selectedStartingVerse} - {selectedEndingVerse}</a
+					>
+
+					<a
+						class="btn btn-lg btn-primary"
+						href={baseUrl +
+							'/quranflow/' +
+							selectedStartingVerse +
+							'-' +
+							selectedEndingVerse +
+							'/urdu/slides'}
+						target="_blank">Urdu: {selectedStartingVerse} - {selectedEndingVerse}</a
 					>
 					<br /> <br />
 					<div class="input-group">
@@ -60,7 +86,8 @@
 							type="text"
 							class="form-control"
 							disabled
-							value={'http://natadarrab.com/quranflow/' +
+							value={baseUrl +
+								'/quranflow/' +
 								selectedStartingVerse +
 								'-' +
 								selectedEndingVerse +
@@ -73,7 +100,8 @@
 							type="text"
 							class="form-control"
 							disabled
-							value={'http://natadarrab.com/quranflow/' +
+							value={baseUrl +
+								'/quranflow/' +
 								selectedStartingVerse +
 								'-' +
 								selectedEndingVerse +

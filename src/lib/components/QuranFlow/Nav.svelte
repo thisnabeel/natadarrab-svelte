@@ -79,6 +79,15 @@
 
 <div class="top-nav">
 	<div class="head">
+		{#if $flow}
+			<div
+				class="fa fa-edit btn"
+				style=""
+				on:click={() => editMode.set(!$editMode)}
+				class:btn-outline-warning={!$editMode}
+				class:btn-warning={$editMode}
+			/>
+		{/if}
 		<span on:click={() => flow.set(!$flow)}
 			>Qur'an<span class="gray" class:flow={$flow}>Flow</span></span
 		>
@@ -361,6 +370,6 @@
 	}
 
 	.gray.flow {
-		color: #000;
+		color: #5213ff;
 	}
 </style>

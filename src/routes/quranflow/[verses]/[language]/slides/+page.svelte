@@ -7,6 +7,10 @@
 
 	let segments = [];
 	let names = [];
+	import { inview } from 'svelte-inview';
+
+	let isInView;
+	const options = {};
 
 	onMount(async () => {
 		const res = await API.get(`/quranflow/slides/${$page.params.verses}/urdu.json`);
@@ -39,6 +43,12 @@
 	function isSurahStart(surahNumber, index) {
 		const items = segments.filter((segment) => segment.verses.split(':')[0] === surahNumber);
 	}
+
+	let verses = {};
+	async function getSegment(segment) {
+		verses[segment.id] = await API.get('/quran/verses/' + segment.verses + '.json');
+		console.log({ verses });
+	}
 </script>
 
 <div class="presentation">
@@ -61,20 +71,33 @@
 				{/if}
 				<section data-transition="slide">
 					<h3>
-						<button class="btn btn-primary btn-lg" style="background: #021423;"
-							>{segment.verses}</button
+						<button
+							class="btn btn-primary btn-lg"
+							style="background: #021423;"
+							on:click={() => {
+								getSegment(segment);
+							}}>{segment.verses}</button
 						>
 					</h3>
 					<div class="row">
 						<div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
+							<!-- Left column: Only verses -->
+							{#if verses[segment.id]}
+								<ul class="clean-list arabic-verses">
+									{#each verses[segment.id] as verse}
+										<li>{verse.arabic} - {verse.item.ref}</li>
+									{/each}
+								</ul>
+							{/if}
+						</div>
+						<div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
+							<!-- Right column: Description summary at top, then image -->
 							<article class="summary {$page.params.language}">
 								{$page.params.language === 'urdu' && segment.translations
 									? segment.translations[$page.params.language]
 									: segment.summary}
 							</article>
-						</div>
-						<div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
-							<img class="img-responsive" src={segment.gifs[0]} alt="Image" />
+							<img class="img-responsive verse-image" src={segment.gifs[0]} alt="Image" />
 						</div>
 					</div>
 				</section>
@@ -107,29 +130,49 @@
 
 	.summary {
 		text-align: left;
-
 		color: #f6ff78;
-
-		/* max-height: 70vh !important; */
-		max-height: 50vh !important;
+		max-height: 30vh !important; /* Reduced height to fit above image */
 		overflow-y: scroll;
 		text-align: left;
 		direction: ltr;
 		font-size: 0.58em !important;
-		/* font-size: 4vh !important; */
 		font-family: 'Merriweather', serif !important;
 		line-height: 1.58em !important;
+		margin-bottom: 15px; /* Add space between summary and image */
+	}
+
+	.verse-image {
+		max-height: 40vh; /* Ensure image fits in remaining space */
+	}
+
+	.arabic-verses {
+		list-style: none;
+		text-align: right;
+		direction: rtl;
+		height: 70vh;
+		overflow-y: scroll;
+		padding: 0;
+	}
+
+	.arabic-verses li {
+		margin: 2px 4px;
+		line-height: 42px;
+		padding: 1em 1em;
+		background-color: #292929;
+		color: #fcffd3;
+		border-radius: 10px;
+		font-size: 22px;
 	}
 
 	.summary::-webkit-scrollbar,
-	.verses::-webkit-scrollbar,
+	.arabic-verses::-webkit-scrollbar,
 	.hide-small::-webkit-scrollbar {
 		display: none;
 	}
 
 	/* Hide scrollbar for IE, Edge and Firefox */
 	.summary,
-	.verses,
+	.arabic-verses,
 	.hide-small {
 		-ms-overflow-style: none; /* IE and Edge */
 		scrollbar-width: none; /* Firefox */
@@ -148,25 +191,6 @@
 		border-radius: 10px;
 	}
 
-	.verses {
-		list-style: none;
-	}
-
-	.verse {
-		text-align: right;
-		margin: 2px 4px;
-		line-height: 48px;
-		padding: 1em 1em;
-		background-color: #292929;
-		color: #fcffd3;
-		border-radius: 10px;
-	}
-
-	.verses {
-		overflow-y: scroll;
-		height: 74vh;
-	}
-
 	.hide-small {
 		overflow-y: scroll;
 		height: 74vh;
@@ -177,16 +201,17 @@
 			display: none;
 		}
 
-		.verses {
-			width: 90vw;
-		}
-
 		.row > * {
 			width: 50%;
 		}
 
 		.summary {
 			font-size: 0.4em !important;
+			max-height: 25vh !important;
+		}
+
+		.verse-image {
+			max-height: 35vh;
 		}
 	}
 </style>

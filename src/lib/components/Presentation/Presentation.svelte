@@ -22,7 +22,6 @@
 	let slideNumber = 0;
 	let deck = null;
 	onMount(async () => {
-
 		deck = new Reveal({
 			plugins: [Markdown, Highlight, Notes],
 			autoAnimateEasing: 'ease',
@@ -34,13 +33,14 @@
 		});
 
 		deck.initialize({
-			 scrollActivationWidth: null
+			scrollActivationWidth: null
 		});
 
 		deck.on('slidechanged', (event) => {
 			// event.previousSlide, event.currentSlide, event.indexh, event.indexv
 			//   console.log(event.indexh)
 			slideNumber = event.indexh;
+			console.log(slideNumber);
 		});
 	});
 
@@ -117,7 +117,6 @@
 	@import url('https://fonts.googleapis.com/css?family=Calistoga&display=swap');
 	/* font-family: 'Calistoga', cursive; !important;*/
 
-
 	.add-slide {
 		position: absolute;
 		top: 0;
@@ -152,7 +151,6 @@
 		line-height: 1.58em !important;
 	}
 
-	
 	:global(h1) {
 		/* font-size: 3em !important; */
 		text-align: left;
@@ -212,8 +210,6 @@
 		inset: 0 !important;
 		transform: none !important;
 	}
-
-
 
 	:global(img + p) {
 		text-align: center;
@@ -277,7 +273,6 @@
 		max-height: 70vh;
 		width: auto;
 		max-width: 100%;
-
 	}
 
 	:global(.reveal figcaption) {
@@ -334,16 +329,10 @@
 		border-bottom-color: #ccc;
 	}
 
-
-@media only screen and (max-width: 600px) {
-  :global(.slides) {
-    width: 90vw !important;
-    margin: 5vw !important;
-  }
-
-
-
-}
-
-
+	@media only screen and (max-width: 600px) {
+		:global(.slides) {
+			width: 90vw !important;
+			margin: 5vw !important;
+		}
+	}
 </style>

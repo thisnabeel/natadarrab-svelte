@@ -43,6 +43,7 @@
 		"@splidejs/svelte-splide": "^0.2.9",
 		"@svelte-web-fonts/google": "^1.0.4",
 		"@tiptap/core": "^2.2.4",
+		"@tiptap/extension-text-style": "^2.11.5",
 		"@tiptap/pm": "^2.2.4",
 		"@tiptap/starter-kit": "^2.2.4",
 		"@types/reveal.js": "^5.0.1",

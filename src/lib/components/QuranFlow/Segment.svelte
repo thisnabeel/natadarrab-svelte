@@ -64,6 +64,14 @@
 					bind:value={segment.verses}
 					on:keyup={changed}
 				/>
+				<div
+					class="btn btn-outline-info"
+					on:click={() => {
+						selectedSegment.set(segment);
+					}}
+				>
+					<i class="fa fa-book" />
+				</div>
 				<textarea
 					name=""
 					class="form-control"

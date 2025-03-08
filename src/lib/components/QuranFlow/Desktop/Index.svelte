@@ -35,6 +35,7 @@
 	let listMode = false;
 	let verses;
 	let content_playlists;
+	export let findSegmentByVerse;
 
 	onMount(() => {
 		fetchPlaylists();
@@ -76,23 +77,13 @@
 		selectedSurah = s;
 
 		if ($flow) {
+			alert('hi');
 			segments.set(await Api.get(`/quranflow/surah/${surah}.json`));
 			console.log('segments', $segments);
 			loadingSurah = false;
 
 			findSegmentByVerse(verse.split('-')[0]);
 		}
-	}
-
-	function findSegmentByVerse(verse) {
-		const list = $segments.map((s) => {
-			return { id: s.id, verses: expandRange(s.verses) };
-		});
-		const found = list.find((s) => s.verses.includes(verse));
-		console.log({ found });
-		console.log($segments);
-		selectedSegment.set($segments.find((s) => s.id === found.id));
-		selectSegment($selectedSegment);
 	}
 
 	function selectSegment(segment) {
@@ -106,6 +97,10 @@
 			getSegment(segment);
 		}
 	}
+
+	selectedSegment.subscribe((s) => {
+		getSegment(s);
+	});
 
 	async function getSegment(segment) {
 		verses = await API.get('/quran/verses/' + segment.verses + '.json');

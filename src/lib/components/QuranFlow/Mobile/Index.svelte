@@ -25,6 +25,7 @@
 	import NonFlow from './NonFlow.svelte';
 
 	// Call the function to fetch JSON data when the component is mounted
+	export let findSegmentByVerse;
 
 	let loadingSurah = false;
 	let loadingSegment = false;
@@ -76,18 +77,6 @@
 		loadingSurah = false;
 
 		findSegmentByVerse(verse.split('-')[0]);
-	}
-
-	function findSegmentByVerse(verse) {
-		const list = $segments.map((s) => {
-			return { id: s.id, verses: expandRange(s.verses) };
-		});
-		const found = list.find((s) => s.verses.includes(verse));
-		console.log({ found });
-		if (!found) return;
-		console.log($segments);
-		selectedSegment.set($segments.find((s) => s.id === found.id));
-		selectSegment($selectedSegment);
 	}
 
 	function selectSegment(segment) {
@@ -150,7 +139,7 @@
 	.wrapper {
 		max-width: 100%;
 		overflow-x: hidden;
-		margin-top: 70px;
+		margin-top: 8em;
 	}
 	.nav li {
 		padding: 10px;

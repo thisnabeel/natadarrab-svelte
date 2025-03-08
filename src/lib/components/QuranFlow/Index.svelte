@@ -100,8 +100,10 @@
 		const found = list.find((s) => s.verses.includes(verse));
 		console.log({ found });
 		console.log($segments);
-		selectedSegment.set($segments.find((s) => s.id === found.id));
-		selectSegment($selectedSegment);
+		try {
+			selectedSegment.set($segments.find((s) => s.id === found.id));
+			selectSegment($selectedSegment);
+		} catch (error) {}
 	}
 
 	function selectSegment(segment) {
@@ -137,7 +139,7 @@
 </svelte:head>
 
 {#if $device === 'mobile'}
-	<Mobile />
+	<Mobile {findSegmentByVerse} />
 {:else}
-	<Desktop />
+	<Desktop {findSegmentByVerse} />
 {/if}

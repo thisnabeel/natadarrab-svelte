@@ -5,6 +5,7 @@
 	import { onMount } from 'svelte';
 
 	import { translation } from '$lib/components/QuranFlow/store.js';
+	import Spinner from '$lib/components/Spinner/Spinner.svelte';
 
 	const fetchJsonData = async () => {
 		try {
@@ -39,16 +40,19 @@
 	});
 	let verses = [];
 
-	const pusher = new Pusher('31a3d875bb3c4cb1e303', {
-		cluster: 'us3',
-		authEndpoint: 'http://localhost:3000/pusher_jsonp_auth'
-	});
+	let pusher;
 
 	// Subscribe to a channel
 	let channel = null;
 
 	page.subscribe((p) => {
 		const code = p.url.searchParams.get('code');
+
+		const baseUrl = window.location.origin;
+		pusher = new Pusher('31a3d875bb3c4cb1e303', {
+			cluster: 'us3',
+			authEndpoint: baseUrl + '/pusher_jsonp_auth'
+		});
 
 		channel = pusher.subscribe('private-presentation-' + code);
 
@@ -61,6 +65,10 @@
 		verses = await API.get('/quran/verses/' + str + '.json');
 	}
 </script>
+
+{#if !pusher}
+	<h1>Connecting to your presentation <Spinner /></h1>
+{/if}
 
 <ul class="clean-list arabic-verses">
 	{#each verses || [] as verse}

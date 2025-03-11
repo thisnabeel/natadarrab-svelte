@@ -135,21 +135,20 @@
 								suffix}
 						/>
 					</div>
-
-					{#if suffix}
-						<QrCode
-							url={baseUrl +
-								'/quranflow/' +
-								selectedStartingVerse +
-								'-' +
-								selectedEndingVerse +
-								'/urdu/slides/notes' +
-								suffix}
-						/>
-					{/if}
 				</div>
 			{/if}
 		</div>
+	{/if}
+	{#if suffix}
+		<QrCode
+			url={baseUrl +
+				'/quranflow/' +
+				selectedStartingVerse +
+				'-' +
+				selectedEndingVerse +
+				'/urdu/slides/notes' +
+				suffix}
+		/>
 	{/if}
 </div>
 

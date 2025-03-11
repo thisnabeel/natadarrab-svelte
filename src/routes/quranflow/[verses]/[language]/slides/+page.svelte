@@ -30,7 +30,7 @@
 			});
 			const code = p.url.searchParams.get('code');
 
-			channel = pusher.subscribe('private-presentation-' + code);
+			channel = pusher.subscribe('private-presentation-notes');
 		});
 	}
 
@@ -72,16 +72,20 @@
 		console.log({ verses });
 	}
 
-	let currentSlide = 0;
+	let currentSlideIndex = 0;
 
 	function handleSlideChange(event) {
 		try {
-			const verses = segments[currentSlide] ? segments[currentSlide].verses : null;
+			currentSlideIndex = event.detail.index - 1;
+
+			console.log({ currentSlideIndex });
+			console.log(segments[currentSlideIndex]);
+
+			const verses = segments[currentSlideIndex] ? segments[currentSlideIndex].verses : null;
 			console.log(verses);
-			if (currentSlide > 0) {
+			if (currentSlideIndex > -1) {
 				channel.trigger('client-slide-change', { verses });
 			}
-			currentSlide = event.detail.index;
 		} catch (error) {}
 	}
 	//

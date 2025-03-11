@@ -40,9 +40,13 @@
 			scrollActivationWidth: null
 		});
 
+		// deck.on('beforeslidechanged', (event) => {});
+
 		deck.on('slidechanged', (event) => {
 			// event.previousSlide, event.currentSlide, event.indexh, event.indexv
 			//   console.log(event.indexh)
+			// console.log('slide test', event.currentSlide);
+			console.log(event.currentSlide.querySelector('[jf-ext-button-ct]').text);
 			slideNumber = event.indexh;
 			dispatch('slideChange', { index: event.indexh }); // Emit event to parent
 

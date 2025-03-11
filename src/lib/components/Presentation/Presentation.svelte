@@ -1,11 +1,11 @@
 <script>
-	import { onMount } from 'svelte';
+	import { createEventDispatcher, onMount } from 'svelte';
 
 	import Reveal from 'reveal.js';
 	import Highlight from 'reveal.js/plugin/highlight/highlight';
 	import Markdown from 'reveal.js/plugin/markdown/markdown';
 	import Notes from 'reveal.js/plugin/notes/notes';
-
+	import Pusher from 'pusher-js';
 	import './app.postcss';
 	import 'reveal.js/dist/reveal.css';
 	import 'reveal.js/dist/theme/black.css';
@@ -21,6 +21,10 @@
 	let presentation = null;
 	let slideNumber = 0;
 	let deck = null;
+
+	// Initialize Pusher (Use your Pusher credentials)
+	const dispatch = createEventDispatcher(); // Create dispatcher
+
 	onMount(async () => {
 		deck = new Reveal({
 			plugins: [Markdown, Highlight, Notes],
@@ -40,6 +44,8 @@
 			// event.previousSlide, event.currentSlide, event.indexh, event.indexv
 			//   console.log(event.indexh)
 			slideNumber = event.indexh;
+			dispatch('slideChange', { index: event.indexh }); // Emit event to parent
+
 			console.log(slideNumber);
 		});
 	});

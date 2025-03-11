@@ -2,6 +2,7 @@
 	import API from '$lib/api/api';
 	import { onMount } from 'svelte';
 	import { findSurah } from '$lib/functions/surahs';
+	import Verse from './Verse.svelte';
 
 	export let segment;
 
@@ -76,7 +77,7 @@
 {#if printed_verses}
 	<div class="printed_verses">
 		{#each printed_verses as verse}
-			{verse.arabic}<span class="ref">{verse.item.ref}</span>
+			<Verse {verse} />
 		{/each}
 	</div>
 {/if}
@@ -103,14 +104,6 @@
 		font-size: 24px;
 		font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
 		padding: 10px;
-	}
-
-	.ref {
-		padding: 4px 10px;
-		background: beige;
-		border-radius: 10px;
-		margin: 10px;
-		font-size: 20px;
 	}
 
 	.surah-name {

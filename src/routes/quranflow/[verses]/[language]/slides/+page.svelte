@@ -4,6 +4,7 @@
 	import API from '$lib/api/api';
 	import { page } from '$app/stores';
 	import VerseSliced from '$lib/components/Quran/Verses/Verse/VerseSliced.svelte';
+	import Pusher from 'pusher-js';
 
 	let segments = [];
 	let names = [];
@@ -11,6 +12,20 @@
 
 	let isInView;
 	const options = {};
+
+	const pusher = new Pusher('31a3d875bb3c4cb1e303', {
+		cluster: 'us3',
+		authEndpoint: 'http://localhost:3000/pusher_jsonp_auth'
+	});
+
+	// Subscribe to a channel
+	let channel = null;
+
+	page.subscribe((p) => {
+		const code = p.url.searchParams.get('code');
+
+		channel = pusher.subscribe('private-presentation-' + code);
+	});
 
 	onMount(async () => {
 		const res = await API.get(`/quranflow/slides/${$page.params.verses}/urdu.json`);
@@ -49,6 +64,20 @@
 		verses[segment.id] = await API.get('/quran/verses/' + segment.verses + '.json');
 		console.log({ verses });
 	}
+
+	let currentSlide = 0;
+
+	function handleSlideChange(event) {
+		try {
+			const verses = segments[currentSlide] ? segments[currentSlide].verses : null;
+			console.log(verses);
+			if (currentSlide > 0) {
+				channel.trigger('client-slide-change', { verses });
+			}
+			currentSlide = event.detail.index;
+		} catch (error) {}
+	}
+	//
 </script>
 
 <div class="presentation">
@@ -62,7 +91,7 @@
 	{/if}
 	{#if segments && segments[0]}
 		<div class="verses-ref">{$page.params.verses}</div>
-		<Presentation>
+		<Presentation on:slideChange={handleSlideChange}>
 			{#each segments as segment, index}
 				{#if segment.header}
 					<section data-transition="slide">
@@ -99,7 +128,11 @@
 									? segment.translations[$page.params.language]
 									: segment.summary}
 							</article>
-							<img class="img-responsive verse-image" src={segment.gifs[0]} alt="Image" />
+							<img
+								class="img-responsive verse-image"
+								src={segment.gifs ? segment.gifs[0] : null}
+								alt="Image"
+							/>
 						</div>
 					</div>
 				</section>

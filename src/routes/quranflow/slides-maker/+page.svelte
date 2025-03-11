@@ -1,5 +1,8 @@
 <script>
+	import QrCode from '$lib/components/QRCode/QRCode.svelte';
 	import { findSurah, allSurahs } from '$lib/functions/surahs';
+	import uuid from '$lib/functions/uuid';
+	import Pusher from 'pusher-js';
 	import { onMount } from 'svelte';
 
 	// $: console.log(allSurahs())
@@ -12,10 +15,14 @@
 	$: console.log(selectedStartingSurah);
 
 	let baseUrl = '';
+	let suffix = '?code=';
 
 	onMount(() => {
 		// Get the base URL (protocol + hostname + port)
 		baseUrl = window.location.origin;
+
+		const code = uuid();
+		suffix += code;
 
 		// If you want just the hostname
 		// baseUrl = window.location.hostname;
@@ -65,7 +72,8 @@
 							selectedStartingVerse +
 							'-' +
 							selectedEndingVerse +
-							'/slides'}
+							'/slides' +
+							suffix}
 						target="_blank">English: {selectedStartingVerse} - {selectedEndingVerse}</a
 					>
 
@@ -76,7 +84,8 @@
 							selectedStartingVerse +
 							'-' +
 							selectedEndingVerse +
-							'/urdu/slides'}
+							'/urdu/slides' +
+							suffix}
 						target="_blank">Urdu: {selectedStartingVerse} - {selectedEndingVerse}</a
 					>
 					<br /> <br />
@@ -91,7 +100,8 @@
 								selectedStartingVerse +
 								'-' +
 								selectedEndingVerse +
-								'/slides'}
+								'/slides' +
+								suffix}
 						/>
 					</div>
 					<div class="input-group">
@@ -105,9 +115,38 @@
 								selectedStartingVerse +
 								'-' +
 								selectedEndingVerse +
-								'/urdu/slides'}
+								'/urdu/slides' +
+								suffix}
 						/>
 					</div>
+
+					<div class="input-group">
+						<label for="">Notes:</label>
+						<input
+							type="text"
+							class="form-control"
+							disabled
+							value={baseUrl +
+								'/quranflow/' +
+								selectedStartingVerse +
+								'-' +
+								selectedEndingVerse +
+								'/urdu/slides/notes' +
+								suffix}
+						/>
+					</div>
+
+					{#if suffix}
+						<QrCode
+							url={baseUrl +
+								'/quranflow/' +
+								selectedStartingVerse +
+								'-' +
+								selectedEndingVerse +
+								'/urdu/slides/notes' +
+								suffix}
+						/>
+					{/if}
 				</div>
 			{/if}
 		</div>

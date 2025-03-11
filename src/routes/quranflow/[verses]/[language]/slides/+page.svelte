@@ -13,23 +13,26 @@
 	let isInView;
 	const options = {};
 
-	baseUrl = window.location.origin;
-
 	let pusher;
 
 	// Subscribe to a channel
 	let channel = null;
+	const baseURL =
+		process.env.NODE_ENV === 'production' ? process.env.API_URL : import.meta.env.VITE_API_URL;
 
-	page.subscribe((p) => {
-		const baseUrl = window.location.origin;
-		pusher = new Pusher('31a3d875bb3c4cb1e303', {
-			cluster: 'us3',
-			authEndpoint: baseUrl + '/pusher_jsonp_auth'
+	$: subNow(baseURL);
+	function subNow(base) {
+		if (!base) return;
+		page.subscribe((p) => {
+			pusher = new Pusher('31a3d875bb3c4cb1e303', {
+				cluster: 'us3',
+				authEndpoint: baseURL + '/pusher_jsonp_auth'
+			});
+			const code = p.url.searchParams.get('code');
+
+			channel = pusher.subscribe('private-presentation-' + code);
 		});
-		const code = p.url.searchParams.get('code');
-
-		channel = pusher.subscribe('private-presentation-' + code);
-	});
+	}
 
 	onMount(async () => {
 		const res = await API.get(`/quranflow/slides/${$page.params.verses}/urdu.json`);

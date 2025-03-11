@@ -4,12 +4,15 @@ import { csrf_token } from '$lib/stores/api.js';
 import storage from '$lib/stores/storage';
 // import { BASE_URL } from '$lib/Env';
 
+const baseURL =
+	process.env.NODE_ENV === 'production' ? process.env.API_URL : import.meta.env.VITE_API_URL;
+
+console.log({ baseURL });
+
 // Create a instance of axios to use the same base url.
 const axiosAPI = axios.create({
-	// baseURL: BASE_URL
-
-	baseURL: 'https://natadarrab-api-7-4298623a0ae3.herokuapp.com/'
-	// baseURL: 'http://localhost:3000/'
+	baseURL: baseURL
+	// baseURL: 'https://natadarrab-api-7-4298623a0ae3.herokuapp.com/'
 });
 
 // let csrfToken;

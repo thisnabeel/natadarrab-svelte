@@ -35,6 +35,9 @@
 		}
 	}
 
+	const baseURL =
+		process.env.NODE_ENV === 'production' ? process.env.API_URL : import.meta.env.VITE_API_URL;
+
 	onMount(() => {
 		fetchJsonData();
 	});
@@ -45,21 +48,25 @@
 	// Subscribe to a channel
 	let channel = null;
 
-	page.subscribe((p) => {
-		const code = p.url.searchParams.get('code');
+	$: subNow(baseURL);
 
-		const baseUrl = window.location.origin;
-		pusher = new Pusher('31a3d875bb3c4cb1e303', {
-			cluster: 'us3',
-			authEndpoint: baseUrl + '/pusher_jsonp_auth'
+	function subNow(base) {
+		if (!base) return;
+		page.subscribe((p) => {
+			const code = p.url.searchParams.get('code');
+
+			pusher = new Pusher('31a3d875bb3c4cb1e303', {
+				cluster: 'us3',
+				authEndpoint: base + '/pusher_jsonp_auth'
+			});
+
+			channel = pusher.subscribe('private-presentation-' + code);
+
+			channel.bind('client-slide-change', (data) => {
+				getVerses(data.verses);
+			});
 		});
-
-		channel = pusher.subscribe('private-presentation-' + code);
-
-		channel.bind('client-slide-change', (data) => {
-			getVerses(data.verses);
-		});
-	});
+	}
 
 	async function getVerses(str) {
 		verses = await API.get('/quran/verses/' + str + '.json');

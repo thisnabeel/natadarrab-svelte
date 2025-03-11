@@ -13,15 +13,19 @@
 	let isInView;
 	const options = {};
 
-	const pusher = new Pusher('31a3d875bb3c4cb1e303', {
-		cluster: 'us3',
-		authEndpoint: 'http://localhost:3000/pusher_jsonp_auth'
-	});
+	baseUrl = window.location.origin;
+
+	let pusher;
 
 	// Subscribe to a channel
 	let channel = null;
 
 	page.subscribe((p) => {
+		const baseUrl = window.location.origin;
+		pusher = new Pusher('31a3d875bb3c4cb1e303', {
+			cluster: 'us3',
+			authEndpoint: 'http://localhost:3000/pusher_jsonp_auth'
+		});
 		const code = p.url.searchParams.get('code');
 
 		channel = pusher.subscribe('private-presentation-' + code);

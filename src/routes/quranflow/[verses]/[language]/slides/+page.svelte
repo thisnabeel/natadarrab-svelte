@@ -88,7 +88,31 @@
 			}
 		} catch (error) {}
 	}
-	//
+
+	// Function to check if summary text is more than 3 lines
+	function shouldMoveToLeft(summary) {
+		if (!summary) return false;
+
+		// Count number of lines by estimating with line height
+		const lineHeight = 1.58; // from CSS line-height property
+		const fontSize = 0.58; // from CSS font-size property
+		const actualLineHeight = lineHeight * fontSize * 16; // assuming base font size of 16px
+
+		const numberOfLines = summary.length / 80; // rough estimate of chars per line
+
+		return numberOfLines > 3;
+	}
+
+	// Function to decide layout based on summary length
+	function shouldUseLeftLayout(segment) {
+		const englishSummary = segment.summary || '';
+		const urduSummary =
+			segment.translations && segment.translations.urdu
+				? segment.translations.urdu
+				: segment.summary || '';
+
+		return shouldMoveToLeft(englishSummary) || shouldMoveToLeft(urduSummary);
+	}
 </script>
 
 <div class="presentation">
@@ -111,38 +135,78 @@
 				{/if}
 				<section data-transition="slide">
 					<div class="row">
-						<div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
-							<!-- Left column: Only verses -->
-
-							{#if verses[segment.id]}
-								<ul class="clean-list arabic-verses">
-									{#each verses[segment.id] as verse}
-										<li>{verse.arabic} - {verse.item.ref}</li>
-									{/each}
-								</ul>
+						<!-- Left column -->
+						<div class="col-xs-6 col-sm-6 col-md-6 col-lg-6 left-column">
+							{#if !shouldUseLeftLayout(segment)}
+								<!-- Regular layout: verses/button only in left column -->
+								{#if verses[segment.id]}
+									<ul class="clean-list arabic-verses">
+										{#each verses[segment.id] as verse}
+											<li>{verse.arabic} - {verse.item.ref}</li>
+										{/each}
+									</ul>
+								{:else}
+									<button
+										class="btn btn-primary btn-lg load-button"
+										on:click={() => {
+											getSegment(segment);
+										}}>{segment.verses}</button
+									>
+								{/if}
 							{:else}
-								<button
-									class="btn btn-primary btn-lg"
-									style="background: #021423;"
-									on:click={() => {
-										getSegment(segment);
-									}}>{segment.verses}</button
-								>
+								<!-- Long text layout: summaries moved to left column, then verses/button -->
+								<div class="summaries-container">
+									<article class="summary english moved">
+										{segment.summary}
+									</article>
+
+									<article class="summary {$page.params.language} moved">
+										{$page.params.language === 'urdu' && segment.translations
+											? segment.translations[$page.params.language]
+											: segment.summary}
+									</article>
+								</div>
+
+								{#if verses[segment.id]}
+									<ul class="clean-list arabic-verses smaller">
+										{#each verses[segment.id] as verse}
+											<li>{verse.arabic} - {verse.item.ref}</li>
+										{/each}
+									</ul>
+								{:else}
+									<button
+										class="btn btn-primary btn-lg load-button"
+										on:click={() => {
+											getSegment(segment);
+										}}>{segment.verses}</button
+									>
+								{/if}
 							{/if}
 						</div>
-						<div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
-							<!-- Right column: Description summary at top, then image -->
-							<article class="summary english">{segment.summary}</article>
 
-							<article class="summary {$page.params.language}">
-								{$page.params.language === 'urdu' && segment.translations
-									? segment.translations[$page.params.language]
-									: segment.summary}
-							</article>
+						<!-- Right column -->
+						<div class="col-xs-6 col-sm-6 col-md-6 col-lg-6 right-column">
+							{#if !shouldUseLeftLayout(segment)}
+								<!-- Regular layout: summaries in right column -->
+								<div class="summaries-container">
+									<article class="summary english">
+										{segment.summary}
+									</article>
+
+									<article class="summary {$page.params.language}">
+										{$page.params.language === 'urdu' && segment.translations
+											? segment.translations[$page.params.language]
+											: segment.summary}
+									</article>
+								</div>
+							{/if}
+
+							<!-- Image always stays in right column -->
 							<img
 								class="img-responsive verse-image"
 								src={segment.gifs ? segment.gifs[0] : null}
 								alt="Image"
+								class:full-height={shouldUseLeftLayout(segment)}
 							/>
 						</div>
 					</div>
@@ -181,18 +245,20 @@
 	.summary {
 		text-align: left;
 		color: #f6ff78;
-		max-height: 30vh !important; /* Reduced height to fit above image */
+		/* max-height: 30vh !important; */
 		overflow-y: scroll;
 		text-align: left;
 		direction: ltr;
 		font-size: 0.58em !important;
 		font-family: 'Merriweather', serif !important;
 		line-height: 1.58em !important;
-		margin-bottom: 15px; /* Add space between summary and image */
+		margin-bottom: 15px;
 	}
 
 	.verse-image {
-		max-height: 40vh; /* Ensure image fits in remaining space */
+		max-height: 40vh;
+		width: 100%;
+		object-fit: contain;
 	}
 
 	.arabic-verses {
@@ -246,6 +312,49 @@
 		height: 74vh;
 	}
 
+	/* New styles for responsive layout */
+	.left-column,
+	.right-column {
+		display: flex;
+		flex-direction: column;
+	}
+
+	.right-column {
+		height: 80vh;
+	}
+
+	.load-button {
+		background: #021423 !important;
+		margin-bottom: 15px;
+	}
+
+	.summaries-container {
+		width: 100%;
+		overflow: hidden;
+	}
+
+	.summaries-container.hidden {
+		display: none;
+	}
+
+	.summaries-container.visible {
+		display: block;
+	}
+
+	/* When summaries move to left column */
+	.summary.moved {
+		/* max-height: 25vh !important; */
+	}
+
+	/* Make verses smaller when summaries are moved left */
+	.arabic-verses.smaller {
+		height: 40vh;
+	}
+
+	.verse-image.full-height {
+		max-height: 75vh;
+	}
+
 	@media only screen and (max-width: 600px) {
 		.hide-small {
 			display: none;
@@ -262,6 +371,19 @@
 
 		.verse-image {
 			max-height: 35vh;
+		}
+
+		/* Adjust for mobile when summaries are moved */
+		.summary.moved {
+			max-height: 20vh !important;
+		}
+
+		.arabic-verses.smaller {
+			height: 25vh;
+		}
+
+		.verse-image.full-height {
+			max-height: 70vh;
 		}
 	}
 </style>

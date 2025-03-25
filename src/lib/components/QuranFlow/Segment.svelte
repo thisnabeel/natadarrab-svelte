@@ -36,10 +36,8 @@
 	}
 
 	async function saveSegment() {
-		springs = await API.put(`/segments/${segment.id}.json`, {
-			gifs: segment.gifs
-		});
-		console.log({ springs });
+		await API.put(`/segments/${segment.id}.json`, segment);
+		getSprings();
 		unsaved = false;
 	}
 	$: lang = $page.params.language;
@@ -72,15 +70,27 @@
 				>
 					<i class="fa fa-book" />
 				</div>
-				<textarea
-					name=""
-					class="form-control"
-					id=""
-					cols="30"
-					rows="5"
-					bind:value={segment.summary}
-					on:keyup={changed}
-				/>
+				{#if lang}
+					<textarea
+						name=""
+						class="form-control"
+						id=""
+						cols="30"
+						rows="5"
+						bind:value={segment.translations[lang]}
+						on:keyup={changed}
+					/>
+				{:else}
+					<textarea
+						name=""
+						class="form-control"
+						id=""
+						cols="30"
+						rows="5"
+						bind:value={segment.summary}
+						on:keyup={changed}
+					/>
+				{/if}
 				<div class="gifs">
 					<ul class="clean-list">
 						{#each segment.gifs as gif, index}
@@ -104,7 +114,7 @@
 				{#if springs}
 					<div class="springs">
 						<ul class="clean-list">
-							{#each springs as item}
+							{#each springs || [] as item}
 								<li class="spring">{item.spring.title}</li>
 							{/each}
 							<div class="btn btn-outline-info"><i class="fa fa-plus" /></div>

@@ -26,6 +26,31 @@
 		}
 	}
 
+	let generating = false;
+
+	async function cleanUp() {
+		const body = $page.params.language ? segment.translations[lang] : segment.summary;
+		if (!generating) {
+			generating = true;
+			try {
+				const res = await API.post('/smart_wizard/generate.json', {
+					message: `fix this, and make it a bit smaller (regarding ${segment.verses}): ${body}`
+				});
+				console.log({ res });
+				const response = res.response;
+				if ($page.params.language) {
+					segment.translations[lang] = response;
+				} else {
+					segment.summary = response;
+				}
+			} catch (error) {
+				generating = false;
+			}
+		} else {
+			return;
+		}
+	}
+
 	async function getSprings() {
 		springs = await API.get(`/segments/${segment.id}/springs.json`);
 		console.log({ springs });
@@ -69,6 +94,10 @@
 					}}
 				>
 					<i class="fa fa-book" />
+				</div>
+				<div class="btn btn-outline-warning" on:click={() => cleanUp()}>
+					<i class="fa fa-wrench" />
+					<i class="fa fa-bolt" />
 				</div>
 				{#if lang}
 					<textarea

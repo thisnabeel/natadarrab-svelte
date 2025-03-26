@@ -119,6 +119,7 @@
 	}
 
 	async function getSegment(segment) {
+		if (!segment && !segment.verses) return;
 		verses = await API.get('/quran/verses/' + segment.verses + '.json');
 		console.log({ verses });
 		loadingSegment = false;

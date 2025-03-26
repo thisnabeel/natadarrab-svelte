@@ -77,12 +77,13 @@
 		selectedSurah = s;
 
 		if ($flow) {
-			alert('hi');
 			segments.set(await Api.get(`/quranflow/surah/${surah}.json`));
 			console.log('segments', $segments);
 			loadingSurah = false;
 
 			findSegmentByVerse(verse.split('-')[0]);
+		} else {
+			loadingSurah = false;
 		}
 	}
 

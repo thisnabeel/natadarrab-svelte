@@ -47,6 +47,7 @@
 				generating = false;
 			}
 		} else {
+			generating = false;
 			return;
 		}
 	}
@@ -106,6 +107,7 @@
 						id=""
 						cols="30"
 						rows="5"
+						disabled={generating}
 						bind:value={segment.translations[lang]}
 						on:keyup={changed}
 					/>

@@ -202,6 +202,11 @@
 			</div>
 
 			<div class="quiz-options">
+				{#if selectedForms.length > 0}
+					<div class="cta-instruction">
+						Click to select the correct form for the highlighted (purple) verb
+					</div>
+				{/if}
 				<div class="forms-select" class:results={showQuizResult}>
 					{#each selectedForms as form}
 						<!-- svelte-ignore a11y-click-events-have-key-events -->
@@ -214,6 +219,7 @@
 							class:correct={form === examples[currentExampleIndex].form}
 							class:incorrect={form !== examples[currentExampleIndex].form}
 						>
+							<div class="form-number">{form}</div>
 							<div>
 								<span style="background:#fff; padding: 8px; border-radius: 6px"
 									>{form_breakdown[form].past}</span
@@ -225,7 +231,7 @@
 							</div>
 
 							<div
-								style="margin-top: 12px; border: 3px solid rgb(229 229 227); border-radius: 10px; padding-top: 10px; padding-bottom: 8px;"
+								style="margin-top: 12px; padding: 10px; border: 3px solid rgb(229 229 227); border-radius: 10px; padding-top: 10px; padding-bottom: 8px;"
 							>
 								{form_breakdown[form].masdar}
 							</div>
@@ -303,19 +309,54 @@
 		margin: 0 auto;
 	}
 
+	.cta-instruction {
+		text-align: center;
+		font-size: 18px;
+		color: #555;
+		margin-bottom: 20px;
+		padding: 12px 20px;
+		background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+		border-radius: 8px;
+		border-left: 4px solid #6c757d;
+		font-weight: 500;
+		box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+	}
+
 	.quiz-options .forms-select {
-		display: flex;
+		display: grid;
+		grid-template-columns: repeat(3, 1fr);
+		gap: 8px;
 		width: 100%;
+		max-width: 900px;
 		margin: 0 auto;
+		justify-content: center;
 	}
 
 	.quiz-options .forms-select > div {
-		flex: 1 1;
 		font-size: 24px;
 		text-align: center;
 		background-color: #eee;
 		padding: 24px;
-		margin: 4px;
+		border-radius: 8px;
+		min-height: 120px;
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		align-items: center;
+		position: relative;
+	}
+
+	.form-number {
+		position: absolute;
+		top: 8px;
+		right: 8px;
+		background-color: #8f8f8f;
+		color: white;
+		padding: 4px 8px;
+		border-radius: 12px;
+		font-size: 14px;
+		font-weight: bold;
+		z-index: 1;
 	}
 	.verse {
 		text-align: right;
@@ -328,6 +369,10 @@
 		color: #fff;
 	}
 
+	.forms-select {
+		padding-bottom: 20px;
+	}
+
 	.forms-select button {
 		padding: 6px;
 		margin: 6px;
@@ -336,5 +381,26 @@
 
 	.forms-select button.active {
 		background-color: greenyellow;
+	}
+
+	/* Responsive design for smaller screens */
+	@media (max-width: 768px) {
+		.quiz-options .forms-select {
+			grid-template-columns: repeat(2, 1fr);
+			max-width: 600px;
+		}
+	}
+
+	@media (max-width: 480px) {
+		.quiz-options .forms-select {
+			grid-template-columns: 1fr;
+			max-width: 400px;
+		}
+
+		.quiz-options .forms-select > div {
+			font-size: 20px;
+			padding: 16px;
+			min-height: 100px;
+		}
 	}
 </style>

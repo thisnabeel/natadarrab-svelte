@@ -1,0 +1,199 @@
+{
+	"version": 3,
+	"routes": [
+		{
+			"src": "/_app/immutable/.+",
+			"headers": {
+				"cache-control": "public, immutable, max-age=31536000"
+			}
+		},
+		{
+			"handle": "filesystem"
+		},
+		{
+			"src": "^/?(?:/__data.json)?$",
+			"dest": "/"
+		},
+		{
+			"src": "^/arabic/verbs/?(?:/__data.json)?$",
+			"dest": "/arabic/verbs"
+		},
+		{
+			"src": "^/bibleflow/?(?:/__data.json)?$",
+			"dest": "/bibleflow"
+		},
+		{
+			"src": "^/chapters/?(?:/__data.json)?$",
+			"dest": "/chapters"
+		},
+		{
+			"src": "^/chapters/([^/]+?)/?(?:/__data.json)?$",
+			"dest": "/chapters/[id]"
+		},
+		{
+			"src": "^/content_playlists/?(?:/__data.json)?$",
+			"dest": "/content_playlists"
+		},
+		{
+			"src": "^/content_playlists/([^/]+?)/?(?:/__data.json)?$",
+			"dest": "/content_playlists/[id]"
+		},
+		{
+			"src": "^/dashboard/?(?:/__data.json)?$",
+			"dest": "/dashboard"
+		},
+		{
+			"src": "^/games/?(?:/__data.json)?$",
+			"dest": "/games"
+		},
+		{
+			"src": "^/games/iraaber/?(?:/__data.json)?$",
+			"dest": "/games/iraaber"
+		},
+		{
+			"src": "^/games/iraaber/([^/]+?)/?(?:/__data.json)?$",
+			"dest": "/games/iraaber/[verse]"
+		},
+		{
+			"src": "^/games/([^/]+?)/?(?:/__data.json)?$",
+			"dest": "/games/[id]"
+		},
+		{
+			"src": "^/games/([^/]+?)/edit/?(?:/__data.json)?$",
+			"dest": "/games/[id]/edit"
+		},
+		{
+			"src": "^/labs/?(?:/__data.json)?$",
+			"dest": "/labs"
+		},
+		{
+			"src": "^/labs/arabic/isms/nahw/?(?:/__data.json)?$",
+			"dest": "/labs/arabic/isms/nahw"
+		},
+		{
+			"src": "^/labs/arabic/sarf/forms/?(?:/__data.json)?$",
+			"dest": "/labs/arabic/sarf/forms"
+		},
+		{
+			"src": "^/labs/arabic/sarf/verse_forms/?(?:/__data.json)?$",
+			"dest": "/labs/arabic/sarf/verse_forms"
+		},
+		{
+			"src": "^/labs/arabic/sarf/verse_forms/interact/([^/]+?)/?(?:/__data.json)?$",
+			"dest": "/labs/arabic/sarf/verse_forms/interact/[code]"
+		},
+		{
+			"src": "^/labs/arabic/verbs/conjugator/?(?:/__data.json)?$",
+			"dest": "/labs/arabic/verbs/conjugator"
+		},
+		{
+			"src": "^/labs/greek/verbs/conjugator/?(?:/__data.json)?$",
+			"dest": "/labs/greek/verbs/conjugator"
+		},
+		{
+			"src": "^/labs/hebrew/verbs/conjugator/?(?:/__data.json)?$",
+			"dest": "/labs/hebrew/verbs/conjugator"
+		},
+		{
+			"src": "^/pager/?(?:/__data.json)?$",
+			"dest": "/pager"
+		},
+		{
+			"src": "^/planner/?(?:/__data.json)?$",
+			"dest": "/planner"
+		},
+		{
+			"src": "^/profile/?(?:/__data.json)?$",
+			"dest": "/profile"
+		},
+		{
+			"src": "^/progress/?(?:/__data.json)?$",
+			"dest": "/progress"
+		},
+		{
+			"src": "^/quranflow/?(?:/__data.json)?$",
+			"dest": "/quranflow"
+		},
+		{
+			"src": "^/quranflow/sketcher/?(?:/__data.json)?$",
+			"dest": "/quranflow/sketcher"
+		},
+		{
+			"src": "^/quranflow/slides-maker/?(?:/__data.json)?$",
+			"dest": "/quranflow/slides-maker"
+		},
+		{
+			"src": "^/quranflow/([^/]+?)/?(?:/__data.json)?$",
+			"dest": "/quranflow/[verses]"
+		},
+		{
+			"src": "^/quranflow/([^/]+?)/slides/?(?:/__data.json)?$",
+			"dest": "/quranflow/[verses]/slides"
+		},
+		{
+			"src": "^/quranflow/([^/]+?)/([^/]+?)/?(?:/__data.json)?$",
+			"dest": "/quranflow/[verses]/[language]"
+		},
+		{
+			"src": "^/quranflow/([^/]+?)/([^/]+?)/slides/?(?:/__data.json)?$",
+			"dest": "/quranflow/[verses]/[language]/slides"
+		},
+		{
+			"src": "^/quranflow/([^/]+?)/([^/]+?)/slides/notes/?(?:/__data.json)?$",
+			"dest": "/quranflow/[verses]/[language]/slides/notes"
+		},
+		{
+			"src": "^/quran/randomizer/?(?:/__data.json)?$",
+			"dest": "/quran/randomizer"
+		},
+		{
+			"src": "^/quran/verses/([^/]+?)/?(?:/__data.json)?$",
+			"dest": "/quran/verses/[verses]"
+		},
+		{
+			"src": "^/quran/words/synonyms/?(?:/__data.json)?$",
+			"dest": "/quran/words/synonyms"
+		},
+		{
+			"src": "^/rooms/([^/]+?)/?(?:/__data.json)?$",
+			"dest": "/rooms/[code]"
+		},
+		{
+			"src": "^/schedule/?(?:/__data.json)?$",
+			"dest": "/schedule"
+		},
+		{
+			"src": "^/springs/?(?:/__data.json)?$",
+			"dest": "/springs"
+		},
+		{
+			"src": "^/students/?(?:/__data.json)?$",
+			"dest": "/students"
+		},
+		{
+			"src": "^/teachers/?(?:/__data.json)?$",
+			"dest": "/teachers"
+		},
+		{
+			"src": "^/testing/?(?:/__data.json)?$",
+			"dest": "/testing"
+		},
+		{
+			"src": "^/testing/dashboard/?(?:/__data.json)?$",
+			"dest": "/testing/dashboard"
+		},
+		{
+			"src": "^/whiteboard/?(?:/__data.json)?$",
+			"dest": "/whiteboard"
+		},
+		{
+			"src": "^/whiteboard/v2/?(?:/__data.json)?$",
+			"dest": "/whiteboard/v2"
+		},
+		{
+			"src": "/.*",
+			"dest": "/![-]/catchall"
+		}
+	],
+	"overrides": {}
+}

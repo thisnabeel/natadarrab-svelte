@@ -1,0 +1,1 @@
+import{A as s}from"./B8Bu-ZRe.js";let t;function p(o,r,n=""){return new Promise((a,i)=>{clearTimeout(t),t=setTimeout(async()=>{try{let e;n==="post"?e=await s.post(o+".json",r):e=await s.put(o+".json",r),console.log("response",e),a(e)}catch(e){console.error("Error:",e),i(e)}},1e3)})}export{p as s};

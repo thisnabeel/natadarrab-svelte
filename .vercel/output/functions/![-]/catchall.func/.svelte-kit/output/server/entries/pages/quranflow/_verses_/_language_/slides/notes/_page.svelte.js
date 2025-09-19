@@ -1,0 +1,35 @@
+import { c as create_ssr_component, a as subscribe, v as validate_component, e as each, d as escape } from "../../../../../../../chunks/ssr.js";
+import { p as page } from "../../../../../../../chunks/stores.js";
+import "../../../../../../../chunks/api.js";
+import "pusher-js";
+import { t as translation } from "../../../../../../../chunks/store.js";
+import { S as Spinner } from "../../../../../../../chunks/Spinner.js";
+const css = {
+  code: ".trans.svelte-1knskix.svelte-1knskix{background:black;padding:15px;line-height:30px;margin-top:12px}.arabic-verses.svelte-1knskix.svelte-1knskix{list-style:none;text-align:right;direction:rtl;padding:0}.arabic-verses.svelte-1knskix li.svelte-1knskix{margin:2px 4px;line-height:42px;padding:1em 1em;background-color:#292929;color:#fcffd3;border-radius:10px;font-size:22px}.jumbotron.svelte-1knskix.svelte-1knskix{padding:14px;background-color:#fcffd3}",
+  map: `{"version":3,"file":"+page.svelte","sources":["+page.svelte"],"sourcesContent":["<script>\\n\\timport { page } from '$app/stores';\\n\\timport API from '$lib/api/api';\\n\\timport Pusher from 'pusher-js';\\n\\timport { onMount } from 'svelte';\\n\\n\\timport { translation } from '$lib/components/QuranFlow/store.js';\\n\\timport Spinner from '$lib/components/Spinner/Spinner.svelte';\\n\\n\\t// Initialize variables\\n\\tlet verses = [];\\n\\tlet pusher;\\n\\tlet channel = null;\\n\\tlet versesString = '';\\n\\tlet loadingVerses = 0;\\n\\tlet baseURL = '';\\n\\n\\tconst fetchJsonData = async () => {\\n\\t\\ttry {\\n\\t\\t\\tconst response = await fetch('/translations/english/urd-abulaalamaududi.json');\\n\\n\\t\\t\\tif (!response.ok) {\\n\\t\\t\\t\\tthrow new Error('Failed to fetch JSON data');\\n\\t\\t\\t}\\n\\t\\t\\ttranslation.set(await response.json());\\n\\t\\t\\tconsole.log('translation loaded');\\n\\t\\t} catch (error) {\\n\\t\\t\\tconsole.error('Error fetching translation:', error);\\n\\t\\t}\\n\\t};\\n\\n\\tfunction getTrans(ref) {\\n\\t\\tif ($translation) {\\n\\t\\t\\treturn $translation.quran.find(\\n\\t\\t\\t\\t(obj) =>\\n\\t\\t\\t\\t\\tobj.chapter === Number(ref.split(':')[0]) && obj.verse === Number(ref.split(':')[1])\\n\\t\\t\\t);\\n\\t\\t} else {\\n\\t\\t\\treturn {\\n\\t\\t\\t\\ttext: ''\\n\\t\\t\\t};\\n\\t\\t}\\n\\t}\\n\\n\\tfunction initializePusher() {\\n\\t\\tif (!baseURL) {\\n\\t\\t\\tconsole.error('baseURL not initialized yet');\\n\\t\\t\\treturn;\\n\\t\\t}\\n\\n\\t\\tconst code = $page.url.searchParams.get('code');\\n\\n\\t\\tpusher = new Pusher('31a3d875bb3c4cb1e303', {\\n\\t\\t\\tcluster: 'us3',\\n\\t\\t\\tauthEndpoint: baseURL + '/pusher_jsonp_auth'\\n\\t\\t});\\n\\n\\t\\tchannel = pusher.subscribe('private-presentation-notes');\\n\\n\\t\\tchannel.bind('client-slide-change', (data) => {\\n\\t\\t\\tversesString = data.verses;\\n\\t\\t\\tgetVerses(versesString);\\n\\t\\t});\\n\\n\\t\\tconsole.log('Pusher initialized with baseURL:', baseURL);\\n\\t}\\n\\n\\tasync function getVerses(str) {\\n\\t\\tif (!str) return;\\n\\n\\t\\tloadingVerses = 1;\\n\\t\\ttry {\\n\\t\\t\\tverses = await API.get(\\n\\t\\t\\t\\t'/quran/verses/' + str + '?includeTranslation=false&includeBlocks=false.json'\\n\\t\\t\\t);\\n\\t\\t\\tloadingVerses = 2;\\n\\t\\t} catch (error) {\\n\\t\\t\\tconsole.error('Error fetching verses:', error);\\n\\t\\t\\tloadingVerses = 0;\\n\\t\\t}\\n\\t}\\n\\n\\tonMount(async () => {\\n\\t\\t// Set baseURL first\\n\\t\\tbaseURL =\\n\\t\\t\\tprocess.env.NODE_ENV === 'production' ? process.env.API_URL : import.meta.env.VITE_API_URL;\\n\\t\\tconsole.log('baseURL initialized:', baseURL);\\n\\n\\t\\t// Load translation data\\n\\t\\tawait fetchJsonData();\\n\\n\\t\\t// Initialize Pusher after baseURL is set\\n\\t\\tinitializePusher();\\n\\n\\t\\t// Clean up on component unmount\\n\\t\\treturn () => {\\n\\t\\t\\tif (channel) {\\n\\t\\t\\t\\tchannel.unbind_all();\\n\\t\\t\\t\\tif (pusher) {\\n\\t\\t\\t\\t\\tpusher.unsubscribe('private-presentation-notes');\\n\\t\\t\\t\\t}\\n\\t\\t\\t}\\n\\t\\t};\\n\\t});\\n\\n\\t// Listen for page changes and reinitialize if needed\\n\\tpage.subscribe((p) => {\\n\\t\\tif (baseURL && !channel) {\\n\\t\\t\\tinitializePusher();\\n\\t\\t}\\n\\t});\\n<\/script>\\n\\n{#if !pusher}\\n\\t<div class=\\"jumbotron\\">\\n\\t\\t<h1>Connecting to your presentation <Spinner /></h1>\\n\\t</div>\\n{:else}\\n\\t<div class=\\"jumbotron\\">\\n\\t\\t<h1>Succesfully Connected to your presentation, Please move slide around</h1>\\n\\t</div>\\n{/if}\\n\\n{#if loadingVerses === 1}\\n\\t<div class=\\"jumbotron\\">\\n\\t\\t<h1>Loading Verses... <code>{versesString}</code></h1>\\n\\t</div>\\n{/if}\\n\\n<ul class=\\"clean-list arabic-verses\\">\\n\\t{#each verses || [] as verse}\\n\\t\\t<li>\\n\\t\\t\\t{verse.arabic} - {verse.item.ref}\\n\\n\\t\\t\\t<br />\\n\\t\\t\\t<div class=\\"trans\\">\\n\\t\\t\\t\\t{getTrans(verse.item.ref).text}\\n\\t\\t\\t</div>\\n\\t\\t</li>\\n\\t{/each}\\n</ul>\\n\\n<style>\\n\\t.trans {\\n\\t\\tbackground: black;\\n\\t\\tpadding: 15px;\\n\\t\\tline-height: 30px;\\n\\t\\tmargin-top: 12px;\\n\\t}\\n\\t.arabic-verses {\\n\\t\\tlist-style: none;\\n\\t\\ttext-align: right;\\n\\t\\tdirection: rtl;\\n\\n\\t\\tpadding: 0;\\n\\t}\\n\\n\\t.arabic-verses li {\\n\\t\\tmargin: 2px 4px;\\n\\t\\tline-height: 42px;\\n\\t\\tpadding: 1em 1em;\\n\\t\\tbackground-color: #292929;\\n\\t\\tcolor: #fcffd3;\\n\\t\\tborder-radius: 10px;\\n\\t\\tfont-size: 22px;\\n\\t}\\n\\n\\t.jumbotron {\\n\\t\\tpadding: 14px;\\n\\t\\tbackground-color: #fcffd3;\\n\\t}\\n</style>\\n"],"names":[],"mappings":"AA+IC,oCAAO,CACN,UAAU,CAAE,KAAK,CACjB,OAAO,CAAE,IAAI,CACb,WAAW,CAAE,IAAI,CACjB,UAAU,CAAE,IACb,CACA,4CAAe,CACd,UAAU,CAAE,IAAI,CAChB,UAAU,CAAE,KAAK,CACjB,SAAS,CAAE,GAAG,CAEd,OAAO,CAAE,CACV,CAEA,6BAAc,CAAC,iBAAG,CACjB,MAAM,CAAE,GAAG,CAAC,GAAG,CACf,WAAW,CAAE,IAAI,CACjB,OAAO,CAAE,GAAG,CAAC,GAAG,CAChB,gBAAgB,CAAE,OAAO,CACzB,KAAK,CAAE,OAAO,CACd,aAAa,CAAE,IAAI,CACnB,SAAS,CAAE,IACZ,CAEA,wCAAW,CACV,OAAO,CAAE,IAAI,CACb,gBAAgB,CAAE,OACnB"}`
+};
+const Page = create_ssr_component(($$result, $$props, $$bindings, slots) => {
+  let $$unsubscribe_page;
+  let $translation, $$unsubscribe_translation;
+  $$unsubscribe_page = subscribe(page, (value) => value);
+  $$unsubscribe_translation = subscribe(translation, (value) => $translation = value);
+  let verses = [];
+  function getTrans(ref) {
+    if ($translation) {
+      return $translation.quran.find((obj) => obj.chapter === Number(ref.split(":")[0]) && obj.verse === Number(ref.split(":")[1]));
+    } else {
+      return { text: "" };
+    }
+  }
+  page.subscribe((p) => {
+  });
+  $$result.css.add(css);
+  $$unsubscribe_page();
+  $$unsubscribe_translation();
+  return `${`<div class="jumbotron svelte-1knskix"><h1>Connecting to your presentation ${validate_component(Spinner, "Spinner").$$render($$result, {}, {}, {})}</h1></div>`} ${``} <ul class="clean-list arabic-verses svelte-1knskix">${each(verses || [], (verse) => {
+    return `<li class="svelte-1knskix">${escape(verse.arabic)} - ${escape(verse.item.ref)} <br> <div class="trans svelte-1knskix">${escape(getTrans(verse.item.ref).text)}</div> </li>`;
+  })} </ul>`;
+});
+export {
+  Page as default
+};

@@ -10,6 +10,13 @@ export default defineConfig({
 		hmr: false
 	},
 	ssr: {
-		noExternal: ['@splidejs/svelte-splide', '@svelte-web-fonts/google', 'cl-editor', 'sv-bootstrap-modal', 'svelte-carousel', '@splidejs/splide']
+		noExternal: [
+			'@splidejs/svelte-splide',
+			'@svelte-web-fonts/google',
+			'cl-editor',
+			'sv-bootstrap-modal',
+			'svelte-carousel',
+			'@splidejs/splide'
+		]
 	}
 });

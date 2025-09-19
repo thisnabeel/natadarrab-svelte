@@ -1,15 +1,15 @@
 import { sveltekit } from '@sveltejs/kit/vite';
-import { defineConfig } from 'vitest/config';
+import { defineConfig } from 'vite';
 
 export default defineConfig({
 	plugins: [sveltekit()],
 	test: {
 		include: ['src/**/*.{test,spec}.{js,ts}']
 	},
-	optimizeDeps: {
-		include: ['lodash.get', 'lodash.isequal', 'lodash.clonedeep']
+	server: {
+		hmr: false
 	},
-	define: {
-		'process.env': process.env
+	ssr: {
+		noExternal: ['@splidejs/svelte-splide', '@svelte-web-fonts/google', 'cl-editor', 'sv-bootstrap-modal', 'svelte-carousel', '@splidejs/splide']
 	}
 });
